@@ -7,3 +7,9 @@
   JavaScript, PHP
 
 - Instalação e Configuração:
+  npm init vite@latest
+  project name: barbely
+  cd barbely
+  npm install
+  npm run dev
+  npm install axios react-router-dom styled-components
