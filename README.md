@@ -13,3 +13,4 @@
   npm install
   npm run dev
   npm install axios react-router-dom styled-components
+  npm install remixicon
