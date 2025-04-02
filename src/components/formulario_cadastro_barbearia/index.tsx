@@ -1,6 +1,6 @@
 import { useState } from "react"
 import * as S from './styles'
-import logo  from '../../assets/images/logo.png'
+import logo  from '../../assets/images/logo_laranja.png'
 import { Link } from "react-router-dom"
 
 const FormularioCadastro = () => {

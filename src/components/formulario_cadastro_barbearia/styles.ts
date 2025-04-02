@@ -8,7 +8,7 @@ export const FormularioContainer = styled.div`
     align-items: center;
     position: relative;
     height: 700px;
-    width: 35%;
+    width: 500px;
     padding: 48px;
     border-radius: 8px;
     margin: 60px auto 0 auto;

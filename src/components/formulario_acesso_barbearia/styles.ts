@@ -7,8 +7,8 @@ export const FormularioContainer = styled.div`
     justify-content: center;
     align-items: center;
     position: relative;
-    height: 480px;
-    width: 35%;
+    height: 500px;
+    width: 500px;
     padding: 48px;
     border-radius: 8px;
     margin: 60px auto 0 auto;
@@ -126,5 +126,11 @@ export const inputGroup = styled.div`
             cursor: pointer;
         }
     }
+`
+
+export const ErrorMessage = styled.p`
+    color: red;
+    font-size: 14px;
+    margin-top: 8px;
 `
 

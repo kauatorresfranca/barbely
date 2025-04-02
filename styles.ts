@@ -6,7 +6,7 @@ export const breakpoints = {
 }
 
 export const colors = {
-    amarelo: '#ffb800',
+    amarelo: '#ff5c00',
     cinzaEscuro: '#181b20',
     cinzaClaro: '#2e333a',
     branco: '#ffffff',
