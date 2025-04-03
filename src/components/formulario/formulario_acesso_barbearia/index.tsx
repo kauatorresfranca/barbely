@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import * as S from "./styles"
-import logo from "../../assets/images/logo_laranja.png"
+import logo from "../../../assets/images/logo.png"
 
 const FormularioLogin = () => {
     const [formData, setFormData] = useState({ email: "", senha: "" })
@@ -14,29 +14,39 @@ const FormularioLogin = () => {
     };
 
     const handleLogin = async (e: React.FormEvent) => {
-        e.preventDefault()
-        setError("")
-
+        e.preventDefault();
+        setError("");
+    
         try {
             const response = await fetch("http://localhost:8000/api/barbearias/login/", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email: formData.email, password: formData.senha }),
             });
-
+    
             const data = await response.json();
-
+    
             if (response.ok) {
                 sessionStorage.setItem("access_token", data.access_token);
                 sessionStorage.setItem("refresh_token", data.refresh_token);
-                
-                // Dispara um evento para atualizar o estado de autenticação
-                window.dispatchEvent(new Event("storage"))
-
-                alert("Login realizado com sucesso!")
+    
+                // Agora, buscar os detalhes completos da barbearia
+                const barbeariaResponse = await fetch(`http://localhost:8000/api/barbearias/${data.barbearia_id}/`, {
+                    method: "GET",
+                    headers: { "Authorization": `Bearer ${data.access_token}` },
+                });
+    
+                const barbeariaData = await barbeariaResponse.json();
+    
+                if (barbeariaResponse.ok) {
+                    sessionStorage.setItem("barbearia", JSON.stringify(barbeariaData));
+                }
+    
+                // Disparar evento para atualizar a aplicação
+                window.dispatchEvent(new Event("storage"));
                 navigate("/dashboard");
             } else {
-                setError(data.error || "Erro ao fazer login.")
+                setError(data.error || "Erro ao fazer login.");
             }
         } catch {
             setError("Erro ao conectar com o servidor.");
@@ -47,7 +57,7 @@ const FormularioLogin = () => {
         <S.FormularioContainer>
             <img src={logo} alt="Logo" />
             <h2>Acesse sua conta</h2>
-            <p>Gerencie sua barbearia de forma fácil e rápida</p>
+            <p>Administre sua barbearia de maneira simples e eficiente</p>
             
             {error && <S.ErrorMessage>{error}</S.ErrorMessage>}
             

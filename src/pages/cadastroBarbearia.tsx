@@ -1,4 +1,4 @@
-import FormularioCadastro from "../components/formulario_cadastro_barbearia"
+import FormularioCadastro from "../components/formulario/formulario_cadastro_barbearia"
 
 const CadastroBarbearia = () => {
     

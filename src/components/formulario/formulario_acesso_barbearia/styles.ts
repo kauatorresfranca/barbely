@@ -1,5 +1,5 @@
 import styled from "styled-components"
-import { colors } from "../../../styles"
+import { colors } from "../../../../styles"
 
 export const FormularioContainer = styled.div`
     display: flex;
@@ -43,7 +43,7 @@ export const Form = styled.form`
     width: 100%;
 
     a {
-        color: ${colors.amarelo};
+        color: ${colors.corPrimaria};
         margin-top: 16px;
         font-weight: 500;
 
@@ -63,7 +63,7 @@ export const Form = styled.form`
         margin-top: 16px;
         border: none;
         border-radius: 3px;
-        background-color: ${colors.amarelo};
+        background-color: ${colors.corPrimaria};
         color: ${colors.cinzaClaro};
         font-weight: bold;
         font-size: 16px;
@@ -92,7 +92,7 @@ export const inputGroup = styled.div`
         }
 
         &:focus {
-            border: 1px solid ${colors.amarelo};
+            border: 1px solid ${colors.corPrimaria};
             outline: none;
             }
 

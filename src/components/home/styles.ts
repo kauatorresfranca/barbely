@@ -4,7 +4,7 @@ import { colors } from "../../../styles"
 
 export const Container = styled.div`
     min-height: 100vh;
-    background-color: #1a1a1a;
+    background-color: ${colors.cinzaEscuro};
     color: white;
     display: flex;
     flex-direction: column;
@@ -19,7 +19,7 @@ export const Header = styled.header`
     justify-content: space-between;
     align-items: center;
     padding: 1rem;
-    background-color: #333;
+    background-color: ${colors.cinzaClaro};
     border-radius: 40px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 
@@ -29,9 +29,9 @@ export const Header = styled.header`
 `
 
 export const Button = styled(Link)`
-    background: ${colors.amarelo};
+    background: ${colors.corPrimaria};
     color: "black";
-    border: 2px solid ${colors.amarelo};
+    border: 2px solid ${colors.corPrimaria};
     margin-right: 8px;
     padding: 0.5rem 1rem;
     border-radius: 5px;
@@ -39,7 +39,7 @@ export const Button = styled(Link)`
     transition: 0.3s;
 
     &:hover {
-        background: ${colors.amarelo};
+        background: ${colors.corPrimaria};
         color: black;
     }
 `

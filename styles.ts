@@ -6,7 +6,7 @@ export const breakpoints = {
 }
 
 export const colors = {
-    amarelo: '#ff5c00',
+    corPrimaria: '#00c1fe',
     cinzaEscuro: '#181b20',
     cinzaClaro: '#2e333a',
     branco: '#ffffff',
@@ -22,6 +22,7 @@ export const GlobalStyle = createGlobalStyle`
         box-sizing: border-box;
         font-family: Roboto, sans-serif;
         color: #fff;
+        list-style: none;
     }
 
     a {
