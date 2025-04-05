@@ -9,6 +9,7 @@ export const colors = {
     corPrimaria: '#00c1fe',
     cinzaEscuro: '#181b20',
     cinzaClaro: '#2e333a',
+    cinzaTransparent: 'rgba(134, 126, 126, 0.53)',
     branco: '#ffffff',
     titulo: '',
     texto: '#aeb0b2',
@@ -34,7 +35,9 @@ export const GlobalStyle = createGlobalStyle`
     }
 
     .container {
-        
-    }
+    max-width: 1024px;
+    width: 100%;
+    margin: 0 auto;
+}
 `
 

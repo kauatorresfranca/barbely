@@ -7,6 +7,19 @@ const Overview = () => {
             <S.Header>
                 <h2>Visão Geral</h2>
             </S.Header>
+            <S.Filtro>
+                <S.InputsContainer>
+                    <S.InputGroup>
+                        <p>Inicio</p>
+                        <input type="date" />
+                    </S.InputGroup>
+                    <S.InputGroup>
+                        <p>Fim</p>
+                        <input type="date" />
+                    </S.InputGroup>
+                </S.InputsContainer>
+                <button>Filtrar</button>
+            </S.Filtro>
             <S.FirstLine>
                 <S.Card>
                     <i className="ri-line-chart-line"></i>
@@ -49,20 +62,20 @@ const Overview = () => {
                     <GraficoVendas />
                 </S.GraficoContainer>
                 <S.Services>
-                <S.Card id="secondline">
-                    <i className="ri-swap-line"></i>
-                    <div>
-                        <h3>Serviços</h3>
-                        <p>americano, moica</p>
-                    </div>
-                </S.Card>
-                <S.Card id="secondline">
-                    <i className="ri-swap-line"></i>
-                    <div>
-                        <h3>Serviços</h3>
-                        <p>americano, moica</p>
-                    </div>
-                </S.Card>
+                    <S.Card id="secondline">
+                        <i className="ri-swap-line"></i>
+                        <div>
+                            <h3>Serviços</h3>
+                            <p>americano, moica</p>
+                        </div>
+                    </S.Card>
+                    <S.Card id="secondline">
+                        <i className="ri-swap-line"></i>
+                        <div>
+                            <h3>Serviços</h3>
+                            <p>americano, moica</p>
+                        </div>
+                    </S.Card>
                 </S.Services>
             </S.SecondLine>
         </S.Container>

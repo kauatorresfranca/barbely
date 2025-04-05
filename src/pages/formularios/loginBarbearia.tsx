@@ -1,4 +1,4 @@
-import FormularioLogin from "../components/formulario/formulario_acesso_barbearia"
+import FormularioLogin from "../../components/formularios/formulario_acesso_barbearia"
 
 const LoginBarbearia = () => {
 

@@ -5,7 +5,8 @@ export interface Barbearia {
     nome_proprietario: string
     email: string
     username: string
-    cnpj: string
+    cnpj: string | null
     plano: string
     data_criacao: string
+    slug: string
 }

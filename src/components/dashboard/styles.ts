@@ -3,15 +3,20 @@ import { colors } from "../../../styles"
 
 export const Container = styled.div`
     display: flex;
+    height: 100vh;
+    overflow: hidden;
 `
 
 export const SideBar = styled.div`
     position: relative;
     background-color: ${colors.cinzaEscuro};
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
     height: 100vh;
-    width: 260px;
+    width: 270px;
     padding: 16px;
-    border-right: 1px solid ${colors.corPrimaria};
+    border-right: 1px solid ${colors.cinzaTransparent};
 
     #logo_barberly {
         width: 120px;
@@ -76,34 +81,99 @@ export const SidebarList = styled.ul`
 export const Content = styled.div`
     padding: 24px;
     width: 100%;
+    flex: 1;
+    overflow-y: auto;
+    height: 100vh;
 `
 
-export const Header = styled.header`
-    position: relative;
-    width: 100%;
-    height: 80px;
+export const Filtro = styled.div`
+    display: flex;
+    align-items: center;
     margin-bottom: 20px;
-    border-bottom: 2px solid rgba(252, 247, 247, 0.44);
+
+    input {
+        height: 40px;
+        width: 100%;
+        padding: 8px;
+        color: ${colors.branco};
+        background-color: transparent;
+        border-radius: 8px;
+        border: 1px solid ${colors.texto};
+        font-weight: bold;
+    }
+
+    button {
+        height: 40px;
+        width: 180px;
+        color: ${colors.cinzaEscuro};
+        background-color: ${colors.corPrimaria};
+        border: none;
+        border-radius: 10px;
+    }
 `
 
 export const Profile = styled.div`
-    position: absolute;
-    right: 24px;
     display: flex;
     align-items: center;
+    margin-top: 32px;
+    padding: 12px 8px;
+    background-color: ${colors.cinzaClaro};
+    border-radius: 10px;
 
     img {
         display: block;
         width: 60px;
         height: 60px;
-        border-radius: 50%;
+        border-radius: 10px;
         background-color: ${colors.cinzaEscuro};
-        margin-right: 8px;
+        margin-right: 12px;
     }
 
-    p {
+    h3 {
+        font-size: 16px;
         text-align: center;
         color: ${colors.branco};
         font-weight: bold;
     }
+`
+
+export const Activity = styled.div`
+    display: flex;
+    align-items: center;
+    margin-top: 8px;
+    padding: 8px 0;
+    border-radius: 25px;
+    background-color: ${colors.cinzaEscuro};
+    cursor: pointer;
+    
+    span {
+        display: inline-block;
+        height: 12px;
+        width: 12px;
+        margin: 0 8px;
+        background-color: green;
+        border-radius: 50%;
+    }
+
+    p { 
+        text-align: center;
+        font-size: 14px;
+        color: ${colors.texto};
+    }
+
+    i {
+        margin-left: 8px;
+        color: ${colors.branco};
+    }
+`
+
+export const InputsContainer = styled.div`
+    display: flex;
+    width: 40%; 
+`
+
+export const InputGroup = styled.div`
+    width: 100%; 
+    margin-right: 8px;
+    margin-bottom: 16px;
 `
