@@ -59,6 +59,7 @@ const HorarioFuncionamentoForm = () => {
     const dadosParaEnviar = horarios.map((h) => ({
       dia_semana: mapaDias[h.dia as keyof typeof mapaDias],
       aberto: h.aberto,
+      fechado: !h.aberto, // <- incluir fechado explicitamente
       horario_abertura: h.aberto ? h.abre_as : null,
       horario_fechamento: h.aberto ? h.fecha_as : null,
     }));
@@ -75,21 +76,22 @@ const HorarioFuncionamentoForm = () => {
         body: JSON.stringify(dadosParaEnviar),
       });
   
+      const responseData = await response.json(); // Lê a resposta uma única vez
+  
       if (response.ok) {
-        alert('Alterações salvas com sucesso!');
+        alert("Alterações salvas com sucesso!");
       } else {
-        const erro = await response.json();
-        console.error("Erro do servidor:", erro);
+        console.error("Erro do servidor:", responseData);
         alert("Erro ao salvar horários.");
       }
   
-      const data = await response.json();
-      console.log("Resposta do servidor:", data);
+      console.log("Resposta do servidor:", responseData);
     } catch (error) {
       console.error("Erro ao enviar os horários:", error);
       alert("Erro ao conectar com o servidor.");
     }
-  }
+  };
+  
 
   return (
     <S.Container>

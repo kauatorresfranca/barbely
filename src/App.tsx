@@ -15,11 +15,12 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/login" element={<LoginBarbearia />} />
                 <Route path="/cadastro" element={<CadastroBarbearia />} />
-                <Route path="/barbearia/login" element={<LoginCliente />} />
-                <Route path="/barbearia/cadastro" element={<CadastroCliente />} />
+                <Route path="/barbearia/:slug/login" element={<LoginCliente />} />
+                <Route path="/barbearia/:slug/cadastro" element={<CadastroCliente />} />
                 <Route element={<ProtectedRoute />}>
                     <Route path="/dashboard" element={<Dashboard />} />
                 </Route>
+                <Route path="/cliente/dashboard" element={<h1>funcionou, você fez o login com sucesso !</h1>}/>
                 <Route path="/barbearia/:slug" element={<PaginaBarbearia />} />
                 <Route path="*" element={<h1>Página não encontrada</h1>} />
             </Routes>

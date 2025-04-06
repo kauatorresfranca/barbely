@@ -1,16 +1,16 @@
-import { useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
-import * as S from "./styles"
-import logo from "../../../assets/images/logo.png"
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import * as S from "./styles";
+import logo from "../../../assets/images/logo.png";
 
 const FormularioLogin = () => {
-    const [formData, setFormData] = useState({ email: "", senha: "" })
-    const [showPassword, setShowPassword] = useState(false)
-    const [error, setError] = useState("")
-    const navigate = useNavigate()
+    const [formData, setFormData] = useState({ email: "", senha: "" });
+    const [showPassword, setShowPassword] = useState(false);
+    const [error, setError] = useState("");
+    const navigate = useNavigate();
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value })
+        setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
     const handleLogin = async (e: React.FormEvent) => {
@@ -26,11 +26,12 @@ const FormularioLogin = () => {
     
             const data = await response.json();
     
-            if (response.ok) {
+            if (response.ok && data.barbearia_id) {
                 sessionStorage.setItem("access_token", data.access_token);
                 sessionStorage.setItem("refresh_token", data.refresh_token);
+                sessionStorage.setItem("barbearia_token", data.barbearia_id);  // Armazena o ID da barbearia
     
-                // Agora, buscar os detalhes completos da barbearia
+                // Buscar os detalhes completos da barbearia
                 const barbeariaResponse = await fetch(`http://localhost:8000/api/barbearias/${data.barbearia_id}/`, {
                     method: "GET",
                     headers: { "Authorization": `Bearer ${data.access_token}` },
@@ -42,7 +43,7 @@ const FormularioLogin = () => {
                     sessionStorage.setItem("barbearia", JSON.stringify(barbeariaData));
                 }
     
-                // Disparar evento para atualizar a aplicação
+                // Atualizar a aplicação
                 window.dispatchEvent(new Event("storage"));
                 navigate("/dashboard");
             } else {
@@ -52,26 +53,43 @@ const FormularioLogin = () => {
             setError("Erro ao conectar com o servidor.");
         }
     };
+    
 
     return (
         <S.FormularioContainer>
             <img src={logo} alt="Logo" />
             <h2>Acesse sua conta</h2>
             <p>Administre sua barbearia de maneira simples e eficiente</p>
-            
+
             {error && <S.ErrorMessage>{error}</S.ErrorMessage>}
-            
+
             <S.Form onSubmit={handleLogin}>
                 <S.inputGroup>
                     <label htmlFor="email">E-mail</label>
-                    <input type="email" id="email" name="email" value={formData.email} onChange={handleChange} placeholder="E-mail" required />
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        placeholder="E-mail"
+                        required
+                    />
                 </S.inputGroup>
                 <S.inputGroup>
                     <label htmlFor="senha">Senha</label>
                     <div className="input-wrapper">
-                        <input type={showPassword ? "text" : "password"} id="senha" name="senha" value={formData.senha} onChange={handleChange} placeholder="Senha" required />
-                        <i 
-                            className={showPassword ? "ri-eye-fill" : "ri-eye-off-fill"} 
+                        <input
+                            type={showPassword ? "text" : "password"}
+                            id="senha"
+                            name="senha"
+                            value={formData.senha}
+                            onChange={handleChange}
+                            placeholder="Senha"
+                            required
+                        />
+                        <i
+                            className={showPassword ? "ri-eye-fill" : "ri-eye-off-fill"}
                             onClick={() => setShowPassword(!showPassword)}
                             role="button"
                             tabIndex={0}

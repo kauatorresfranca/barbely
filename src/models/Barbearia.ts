@@ -1,5 +1,6 @@
 // models/Barbearia.ts
 export interface Barbearia {
+    descricao: string
     id: number
     nome_barbearia: string
     nome_proprietario: string

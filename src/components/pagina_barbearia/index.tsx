@@ -1,48 +1,39 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { Barbearia } from "../../models/Barbearia";
 
-import logo from '../../assets/images/logo.png'
-import logoBarbearia from '../../assets/images/logo_barbearia_exemplo.webp'
+import logo from '../../assets/images/logo.png';
+import logoBarbearia from '../../assets/images/logo_barbearia_exemplo.webp';
 
-import * as S from './styles'
-import { authFetch } from "../../utils/authFetch";
+import * as S from './styles';
+import { useCliente } from "../../hooks/useClienteAuth";
 
 const PaginaBarbearia = () => {
+    const { cliente, loading } = useCliente();
     const { slug } = useParams();
-    const navigate = useNavigate();
     const [barbearia, setBarbearia] = useState<Barbearia | null>(null);
     const [horarios, setHorarios] = useState<{ dia_semana: number; horario_abertura: string; horario_fechamento: string }[]>([]);
 
     const diasSemana = ["Domingo", "Segunda Feira", "Terça Feira", "Quarta Feira", "Quinta Feira", "Sexta Feira", "Sábado"];
 
     useEffect(() => {
-        const dataStorage = sessionStorage.getItem("barbearia");
-
-        if (dataStorage) {
-            const barbeariaLogada = JSON.parse(dataStorage) as Barbearia;
-
-            if (barbeariaLogada.slug === slug) {
-                setBarbearia(barbeariaLogada);
-            } else {
-                navigate("/erro");
+        const fetchBarbearia = async () => {
+            try {
+                const response = await fetch(`http://localhost:8000/api/barbearias/buscar-por-slug/${slug}/`);
+                const data = await response.json();
+                setBarbearia(data);
+            } catch (error) {
+                console.error("Erro ao buscar barbearia:", error);
             }
-        } else {
-            navigate("/login");
-        }
+        };
+
+        if (slug) fetchBarbearia();
     }, [slug]);
 
     useEffect(() => {
         const fetchHorarios = async () => {
-            const token = sessionStorage.getItem("access_token");
-
             try {
-                const response = await authFetch("http://localhost:8000/api/horarios/", {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
-
+                const response = await fetch(`http://localhost:8000/api/horarios/?slug=${slug}`);
                 const data = await response.json();
                 setHorarios(data);
             } catch (error) {
@@ -51,7 +42,7 @@ const PaginaBarbearia = () => {
         };
 
         fetchHorarios();
-    }, []);
+    }, [slug]);
 
     return (
         <div>
@@ -60,8 +51,13 @@ const PaginaBarbearia = () => {
                     <S.Header>
                         <img src={logo} alt="logo barberly" />
                         <S.ButtonGroup>
-                            <S.Button to='/barbearia/login'>Login</S.Button>
-                            <S.Button to='/barbearia/cadastro'>Cadastrar</S.Button>
+                            {!loading && (
+                                cliente ? (
+                                    <p>Bem-vindo, {cliente.user.nome}!</p>
+                                ) : (
+                                    <S.Button to={`/barbearia/${slug}/login`}>Login</S.Button>
+                                )
+                            )}
                         </S.ButtonGroup>
                     </S.Header>
                     <S.BarbeariaProfile>
@@ -70,30 +66,29 @@ const PaginaBarbearia = () => {
                                 <img src={logoBarbearia} alt="logo barbearia" />
                                 <div>
                                     <h2>{barbearia.nome_barbearia}</h2>
-                                    <p>Avenida coronel salustiano sarmento, 258 - Maceió, Alagoas</p>
+                                    <p>Endereço fictício da barbearia</p>
                                     <h5><i className="ri-store-2-line"></i> Aberto agora - <i className="ri-phone-line"></i> 82 996124145</h5>
                                 </div>
                             </S.ResumeGroup>
-                            <S.AgendarHorario>Agendar Horario</S.AgendarHorario>
+                            <S.AgendarHorario>Agendar Horário</S.AgendarHorario>
                         </S.BarbeariaResume>
                         <S.BarbeariaInfos>
                             <S.AboutUs>
                                 <h3><i className="ri-information-line"></i> Sobre Nós</h3>
-                                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsam quos ipsum optio aperiam provident odio nisi molestiae, eveniet a, earum repellat facere culpa consequuntur dolorem minus nam magnam repellendus nulla.</p>
+                                <p>Texto sobre a barbearia.{barbearia.descricao}</p>
                             </S.AboutUs>
                             <S.Hours>
                                 <h3><i className="ri-time-line"></i> Horários</h3>
                                 <S.TableHours>
                                     {diasSemana.map((dia, index) => {
                                         const horario = horarios.find(h => h.dia_semana === index);
-
                                         return (
                                             <S.Day key={index}>
                                                 <p>{dia}</p>
                                                 <p>
                                                     {horario?.horario_abertura && horario?.horario_fechamento
-                                                    ? `${horario.horario_abertura.slice(0, 5)} - ${horario.horario_fechamento.slice(0, 5)}`
-                                                    : "Fechado"}
+                                                        ? `${horario.horario_abertura.slice(0, 5)} - ${horario.horario_fechamento.slice(0, 5)}`
+                                                        : "Fechado"}
                                                 </p>
                                             </S.Day>
                                         );

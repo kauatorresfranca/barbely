@@ -141,7 +141,7 @@ export const Activity = styled.div`
     display: flex;
     align-items: center;
     margin-top: 8px;
-    padding: 8px 0;
+    padding: 8px 0px;
     border-radius: 25px;
     background-color: ${colors.cinzaEscuro};
     cursor: pointer;
@@ -162,7 +162,8 @@ export const Activity = styled.div`
     }
 
     i {
-        margin-left: 8px;
+        margin-left: 6px;
+        margin-right: 6px;
         color: ${colors.branco};
     }
 `

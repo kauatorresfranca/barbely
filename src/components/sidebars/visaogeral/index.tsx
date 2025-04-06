@@ -2,6 +2,12 @@ import GraficoVendas from "../../gradico_vendas";
 import * as S from "./styles";
 
 const Overview = () => {
+    const hoje = new Date().toISOString().split("T")[0]
+    const novaData = new Date();
+    novaData.setDate(novaData.getDate() - 7);
+
+    const UmaSemanaAtrás = novaData.toISOString().split("T")[0];
+
     return (
         <S.Container>
             <S.Header>
@@ -11,11 +17,11 @@ const Overview = () => {
                 <S.InputsContainer>
                     <S.InputGroup>
                         <p>Inicio</p>
-                        <input type="date" />
+                        <input type="date" defaultValue={UmaSemanaAtrás}/>
                     </S.InputGroup>
                     <S.InputGroup>
                         <p>Fim</p>
-                        <input type="date" />
+                        <input type="date" defaultValue={hoje}/>
                     </S.InputGroup>
                 </S.InputsContainer>
                 <button>Filtrar</button>
