@@ -1,6 +1,6 @@
 import * as S from './styles'
 import { useState } from 'react';
-import Planos from '../../planos';
+import Planos from '../../sub_sidebars/planos';
 
 const Financeiro = () => {
     const [activeTab, setActiveTab] = useState('planos')

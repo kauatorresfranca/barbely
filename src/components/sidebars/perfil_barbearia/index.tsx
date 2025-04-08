@@ -1,6 +1,6 @@
 import * as S from './styles'
 import HorarioFuncionamentoForm from '../../formularios/perfil_da_barbearia/formulario_horarios_funcionamento';
-import CompartilharBarbearia from '../../compartilhar_barbearia'
+import CompartilharBarbearia from '../../sub_sidebars/compartilhar_barbearia'
 import { useState } from 'react';
 import DadosBarbearia from '../../formularios/perfil_da_barbearia/formulario_informacoes';
 import Localizacao from '../../formularios/perfil_da_barbearia/formulario_localizacao';

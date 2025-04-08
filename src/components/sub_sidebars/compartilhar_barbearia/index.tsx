@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Barbearia } from "../../models/Barbearia";
+import { Barbearia } from "../../../models/Barbearia";
 
 import * as S from './styles'
 
