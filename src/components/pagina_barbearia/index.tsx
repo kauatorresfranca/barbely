@@ -1,29 +1,32 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { Barbearia } from "../../models/Barbearia";
+import { useEffect, useState } from "react"
+import { useNavigate, useParams } from "react-router-dom"
+import { Barbearia } from "../../models/Barbearia"
 
-import logo from '../../assets/images/logo.png';
-import logoBarbearia from '../../assets/images/logo_barbearia_exemplo.webp';
+import logo from '../../assets/images/logo.png'
+import logoBarbearia from '../../assets/images/logo_barbearia_exemplo.webp'
 
-import * as S from './styles';
-import { useCliente } from "../../hooks/useClienteAuth";
+import * as S from './styles'
+import { useCliente } from "../../hooks/useClienteAuth"
+import Agendamento from "../agendamento"
 
 const PaginaBarbearia = () => {
-    const { cliente, loading } = useCliente();
-    const { slug } = useParams();
-    const [barbearia, setBarbearia] = useState<Barbearia | null>(null);
-    const [horarios, setHorarios] = useState<{ dia_semana: number; horario_abertura: string; horario_fechamento: string }[]>([]);
+    const navigate = useNavigate()
+    const { cliente, loading } = useCliente()
+    const { slug } = useParams()
+    const [barbearia, setBarbearia] = useState<Barbearia | null>(null)
+    const [horarios, setHorarios] = useState<{ dia_semana: number; horario_abertura: string; horario_fechamento: string }[]>([])
+    const [modalIsOpen, setModalIsOpen] = useState(false)
 
-    const diasSemana = ["Domingo", "Segunda Feira", "Terça Feira", "Quarta Feira", "Quinta Feira", "Sexta Feira", "Sábado"];
+    const diasSemana = ["Domingo", "Segunda Feira", "Terça Feira", "Quarta Feira", "Quinta Feira", "Sexta Feira", "Sábado"]
 
     useEffect(() => {
         const fetchBarbearia = async () => {
             try {
-                const response = await fetch(`http://localhost:8000/api/barbearias/buscar-por-slug/${slug}/`);
-                const data = await response.json();
-                setBarbearia(data);
+                const response = await fetch(`http://localhost:8000/api/barbearias/buscar-por-slug/${slug}/`)
+                const data = await response.json()
+                setBarbearia(data)
             } catch (error) {
-                console.error("Erro ao buscar barbearia:", error);
+                console.error("Erro ao buscar barbearia:", error)
             }
         };
 
@@ -43,6 +46,50 @@ const PaginaBarbearia = () => {
 
         fetchHorarios();
     }, [slug]);
+
+    // TESTE: Chamada para os horários disponíveis
+    useEffect(() => {
+        const fetchHorariosDisponiveis = async () => {
+            console.log("Iniciando fetchHorariosDisponiveis"); // ← Diagnóstico 1
+
+            try {
+                const funcionarioId = 1; // Substitua por um ID válido
+                const servicoId = 1;     // Substitua também
+                const data = '2025-04-10'; // Formato YYYY-MM-DD
+
+                const url = `http://localhost:8000/api/agendamentos/horarios-disponiveis/?funcionario=${funcionarioId}&servico=${servicoId}&data=${data}`;
+                console.log("URL da requisição:", url); // ← Diagnóstico 2
+
+                const response = await fetch(url, {
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                });
+
+                console.log("Response bruto:", response); // ← Diagnóstico 3
+
+                if (!response.ok) {
+                    throw new Error(`Erro ${response.status} - ${response.statusText}`);
+                }
+
+                const dataJson = await response.json();
+                console.log("Horários disponíveis (debug):", dataJson); // ← Diagnóstico 4
+            } catch (error) {
+                console.error("Erro ao buscar horários disponíveis:", error); // ← Diagnóstico 5
+            }
+        };
+
+        fetchHorariosDisponiveis();
+    }, []);
+
+    function ToAgendamento() {
+        if (cliente) {
+            setModalIsOpen(true)
+        }
+        else {
+            navigate(`/barbearia/${slug}/login`)
+        }
+    }
 
     return (
         <div>
@@ -70,12 +117,12 @@ const PaginaBarbearia = () => {
                                     <h5><i className="ri-store-2-line"></i> Aberto agora - <i className="ri-phone-line"></i> 82 996124145</h5>
                                 </div>
                             </S.ResumeGroup>
-                            <S.AgendarHorario>Agendar Horário</S.AgendarHorario>
+                            <S.AgendarHorario onClick={() => ToAgendamento()}>Agendar Horário</S.AgendarHorario>
                         </S.BarbeariaResume>
                         <S.BarbeariaInfos>
                             <S.AboutUs>
                                 <h3><i className="ri-information-line"></i> Sobre Nós</h3>
-                                <p>Texto sobre a barbearia.{barbearia.descricao}</p>
+                                <p>Texto sobre a barbearia. {barbearia.descricao}</p>
                             </S.AboutUs>
                             <S.Hours>
                                 <h3><i className="ri-time-line"></i> Horários</h3>
@@ -95,6 +142,13 @@ const PaginaBarbearia = () => {
                                     })}
                                 </S.TableHours>
                             </S.Hours>
+
+                            {/* Teste visual */}
+                            <S.AboutUs>
+                                <h3><i className="ri-check-line"></i> Teste: Horários Disponíveis</h3>
+                                <p>Veja no console os horários disponíveis para o funcionário <strong>1</strong>, serviço <strong>1</strong>, no dia <strong>10/04/2025</strong>.</p>
+                            </S.AboutUs>
+
                             <S.Services>
                                 <h3><i className="ri-scissors-2-fill"></i> Serviços</h3>
                                 <S.ServicesList>
@@ -123,6 +177,7 @@ const PaginaBarbearia = () => {
                             </S.Services>
                         </S.BarbeariaInfos>
                     </S.BarbeariaProfile>
+                    < Agendamento modalIsOpen={modalIsOpen} onClose={() => setModalIsOpen(false)} />
                 </S.Container>
             ) : (
                 <p>Carregando barbearia...</p>
