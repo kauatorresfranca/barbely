@@ -1,38 +1,33 @@
-import * as S from './styles';
+import * as S from './styles'
 import { useState } from 'react';
+import Planos from '../../planos';
 
 const Financeiro = () => {
-    const [saldo] = useState(1520.75);
-    const [transacoes] = useState([
-        { id: 1, descricao: 'Corte de cabelo', valor: 50.0, tipo: 'entrada' },
-        { id: 2, descricao: 'Compra de produtos', valor: 200.0, tipo: 'saida' },
-        { id: 3, descricao: 'Barba e cabelo', valor: 80.0, tipo: 'entrada' },
-    ]);
+    const [activeTab, setActiveTab] = useState('planos')
 
+    const tabs = [
+        { id: 'planos', title: 'Planos', icon_left: 'ri-shake-hands-fill', icon_right: 'ri-arrow-right-s-line', component: <Planos /> },
+        { id: 'faturamento', title: 'Faturamento', icon_left: 'ri-bank-line', icon_right: 'ri-arrow-right-s-line', component: 'faturamento' },
+    
+    ]
     return (
         <S.Container>
-            <h1>Financeiro</h1>
-            <S.Balance>Saldo Atual: R$ {saldo.toFixed(2)}</S.Balance>
-            <S.Table>
-                <thead>
-                    <tr>
-                        <th>Descrição</th>
-                        <th>Valor</th>
-                        <th>Tipo</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {transacoes.map((transacao) => (
-                        <tr key={transacao.id}>
-                            <td>{transacao.descricao}</td>
-                            <td>R$ {transacao.valor.toFixed(2)}</td>
-                            <td>{transacao.tipo === 'entrada' ? 'Entrada' : 'Saída'}</td>
-                        </tr>
-                    ))}
-                </tbody>
-            </S.Table>
+            <h2>Financeiro</h2>
+            <S.Financeiro>
+                <S.SiderBarPerfil>
+                        {tabs.map((tab) => (
+                            <S.Tab className={activeTab === tab.id ? 'active' : ''} id={tab.id} onClick={() => setActiveTab(tab.id)}>
+                                <i className={`${tab.icon_left} icon_left`}></i>
+                                <h3>{tab.title}</h3>
+                                <i className={`${tab.icon_right} icon_right`}></i>
+                            </S.Tab>
+                        ))}
+                </S.SiderBarPerfil>
+                {tabs.find(tab => tab.id === activeTab)?.component}
+            </S.Financeiro>
         </S.Container>
-    );
-};
+        
+    )
+}
 
-export default Financeiro;
+export default Financeiro

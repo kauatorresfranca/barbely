@@ -24,7 +24,8 @@ export const ListItem = styled.li`
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px;
+    height: 60px;
+    padding: 20px;
     background-color: ${colors.cinzaClaro};
     margin-bottom: 8px;
     border-radius: 4px;

@@ -1,4 +1,4 @@
-import FormularioCadastro from "../../components/formularios/formulario_cadastro_cliente"
+import FormularioCadastro from "../../components/formularios/login_cadastro/formulario_cadastro_cliente"
 
 const CadastroCliente = () => {
     

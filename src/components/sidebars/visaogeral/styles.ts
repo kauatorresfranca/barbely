@@ -51,12 +51,13 @@ export const Filtro = styled.div`
 
     button {
         height: 42px;
-        width: 180px;
+        width: 140px;
         font-weight: bold;
         color: ${colors.cinzaEscuro};
         background-color: ${colors.corPrimaria};
         border: none;
         border-radius: 10px;
+        cursor: pointer;
     }
 `
 
@@ -105,12 +106,6 @@ export const Card = styled.div`
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     border-left: 4px solid ${colors.corPrimaria};
 
-    &#secondline {
-        height: 175px;
-        width: 100%;
-        border: none;
-    }
-
     .valor {
         position: absolute;
         right: 70px;
@@ -131,6 +126,17 @@ export const Card = styled.div`
         font-size: 22px;
         font-weight: bold;
         color: ${colors.branco}
+    }
+
+    &#secondline {
+        height: 175px;
+        width: 100%;
+        border: none;
+
+        .valor {
+        position: absolute;
+        right: 240px;
+    }
     }
 `
 

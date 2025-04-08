@@ -69,17 +69,17 @@ const Overview = () => {
                 </S.GraficoContainer>
                 <S.Services>
                     <S.Card id="secondline">
-                        <i className="ri-swap-line"></i>
-                        <div>
-                            <h3>Serviços</h3>
-                            <p>americano, moica</p>
-                        </div>
+                            <i className="ri-calendar-schedule-line"></i>
+                            <div className="valor">
+                                <h3>Agendametos</h3>
+                                <p>24</p>
+                            </div>
                     </S.Card>
                     <S.Card id="secondline">
-                        <i className="ri-swap-line"></i>
-                        <div>
-                            <h3>Serviços</h3>
-                            <p>americano, moica</p>
+                        <i className="ri-user-add-line"></i>
+                        <div className="valor">
+                            <h3>Clientes Novos</h3>
+                            <p>7</p>
                         </div>
                     </S.Card>
                 </S.Services>

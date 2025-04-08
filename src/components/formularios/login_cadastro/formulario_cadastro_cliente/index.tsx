@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import * as S from './styles';
-import logo from '../../../assets/images/logo.png';
+import logo from '../../../../assets/images/logo.png';
 import { Link, useParams } from "react-router-dom";
 
 const FormularioCadastroCliente = () => {

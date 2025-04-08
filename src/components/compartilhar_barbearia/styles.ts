@@ -15,10 +15,11 @@ export const Container = styled.div`
 
 export const ToBarberClientLink = styled(Link)`
     background-color: transparent;
-    width: 240px;
+    width: 100%;
     border: 2px solid ${colors.corPrimaria};
     color: ${colors.corPrimaria};
     padding: 12px;
     text-align: center;
     border-radius: 10px;
+    font-weight: bold;
 `

@@ -38,20 +38,26 @@ const Clientes = () => {
 
     return (
         <S.Container>
-            <h1>Meus Clientes</h1>
+            <h2>Meus Clientes</h2>
             <S.Head>
-                <p>Nome</p>
-                <p>Celular</p>
-                <p>Detalhes</p>
+            {(clientes.length <= 0 ? (
+                    <p>Os clientes aparecerão aqui</p>
+                ) : (
+                <>
+                    <p>Nome</p>
+                    <p>Celular</p>
+                    <p>Detalhes</p>
+                </>
+                ))}
             </S.Head>
             <S.List>
-                {clientes.map((cliente) => (
-                    <S.ListItem key={cliente.id}>
-                        <p>{cliente.user.nome}</p>
-                        <p>{cliente.user.telefone}</p>
-                        <S.Button>Detalhes</S.Button>
-                    </S.ListItem>
-                ))}
+                    {clientes.map((cliente) => (
+                        <S.ListItem key={cliente.id}>
+                            <p>{cliente.user.nome}</p>
+                            <p>{cliente.user.telefone}</p>
+                            <S.Button>Detalhes</S.Button>
+                        </S.ListItem>
+                    ))}
             </S.List>
         </S.Container>
     );

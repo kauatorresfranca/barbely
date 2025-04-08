@@ -1,28 +1,66 @@
-import styled from 'styled-components';
+import styled from 'styled-components'
+import { colors } from '../../../../styles'
 
 export const Container = styled.div`
-    color: #333;
-    border-radius: 8px;
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-`;
 
-export const Balance = styled.h2`
-    margin: 16px 0;
-    color: #28a745;
-`;
+    h2 {
+        padding-bottom: 20px;
+    }
+`
 
-export const Table = styled.table`
-    width: 100%;
-    border-collapse: collapse;
+export const Financeiro = styled.div`
+    display: flex;
+    gap: 40px;
+`
 
-    th, td {
-        padding: 12px;
-        text-align: left;
-        border-bottom: 1px solid #ccc;
+export const SiderBarPerfil = styled.div`
+    display: flex;
+    flex-direction: column;
+`
+
+export const Tab = styled.div`
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: 58px;
+    width: 320px;
+    padding: 12px;
+    margin-bottom: 12px;
+    border: 2px solid ${colors.cinzaTransparent};
+    border-radius: 10px;
+    background-color: ${colors.cinzaClaro};
+    cursor: pointer;
+    transition: .3s;
+
+    h3 {
+        color: ${colors.texto};
+        font-size: 16px;
+        font-weight: 500;
     }
 
-    th {
-        background-color: #007bff;
-        color: #fff;
+    .icon_left {
+        margin-right: 6px;
+        font-size: 20px;
     }
-`;
+
+    .icon_right {
+        position: absolute;
+        right: 8px;
+        font-size: 20px;
+        color: ${colors.texto};
+    }
+
+    &:hover {
+        border: 2px solid ${colors.branco};
+    }
+
+    &.active {
+        border: 2px solid ${colors.corPrimaria};
+
+        .icon_right {
+        position: absolute;
+        right: 8px;
+        color: ${colors.corPrimaria};
+    }
+    }
+`

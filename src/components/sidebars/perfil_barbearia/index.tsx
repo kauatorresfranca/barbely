@@ -2,11 +2,15 @@ import * as S from './styles'
 import HorarioFuncionamentoForm from '../../formularios/perfil_da_barbearia/formulario_horarios_funcionamento';
 import CompartilharBarbearia from '../../compartilhar_barbearia'
 import { useState } from 'react';
+import DadosBarbearia from '../../formularios/perfil_da_barbearia/formulario_informacoes';
+import Localizacao from '../../formularios/perfil_da_barbearia/formulario_localizacao';
 
 const PerfilBarbearia = () => {
-    const [activeTab, setActiveTab] = useState('horario_de_funcionamento')
+    const [activeTab, setActiveTab] = useState('informacoes_da_barbearia')
 
     const tabs = [
+        { id: 'informacoes_da_barbearia', title: 'Informações da Barbearia', icon_left: 'ri-article-fill', icon_right: 'ri-arrow-right-s-line', component: <DadosBarbearia /> },
+        { id: 'localizacao', title: 'Localização da Barbearia', icon_left: 'ri-map-pin-fill', icon_right: 'ri-arrow-right-s-line', component: <Localizacao /> },
         { id: 'horario_de_funcionamento', title: 'Horários de Funcionamento', icon_left: 'ri-time-line', icon_right: 'ri-arrow-right-s-line', component: <HorarioFuncionamentoForm /> },
         { id: 'compartilhar_barbearia', title: 'Compartilhar Barbearia', icon_left: 'ri-share-circle-line', icon_right: 'ri-arrow-right-s-line', component: <CompartilharBarbearia /> }
     ]

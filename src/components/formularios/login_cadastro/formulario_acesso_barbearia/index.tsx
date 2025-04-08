@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import * as S from "./styles";
-import logo from "../../../assets/images/logo.png";
+import logo from "../../../../assets/images/logo.png";
 
 const FormularioLogin = () => {
     const [formData, setFormData] = useState({ email: "", senha: "" });

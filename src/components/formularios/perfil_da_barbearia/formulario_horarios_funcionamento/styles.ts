@@ -96,7 +96,7 @@ export const Input = styled.input`
 export const Button = styled.button`
     background: ${colors.corPrimaria};
     color: #000;
-    padding: 10px;
+    padding: 14px;
     font-size: 16px;
     font-weight: bold;
     border: none;

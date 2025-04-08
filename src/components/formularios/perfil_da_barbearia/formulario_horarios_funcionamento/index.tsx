@@ -1,5 +1,5 @@
 import { useState } from "react";
-import * as S from "./styles"; // Importa os estilos
+import * as S from "./styles"
 import { authFetch } from "../../../../utils/authFetch";
 
 const diasDaSemana = [
@@ -84,8 +84,9 @@ const HorarioFuncionamentoForm = () => {
         console.error("Erro do servidor:", responseData);
         alert("Erro ao salvar horários.");
       }
-  
+      console.log("Status:", response.status);
       console.log("Resposta do servidor:", responseData);
+
     } catch (error) {
       console.error("Erro ao enviar os horários:", error);
       alert("Erro ao conectar com o servidor.");
