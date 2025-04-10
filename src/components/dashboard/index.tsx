@@ -62,7 +62,7 @@ const Dash = () => {
                     <S.SidebarList>
                         {tabs.map(tab => (
                             <li key={tab.id}>
-                                <button 
+                                <button
                                     className={activeTab === tab.id ? 'active' : ''}
                                     onClick={() => setActiveTab(tab.id)}
                                 >
@@ -72,7 +72,7 @@ const Dash = () => {
                         ))}
                         <li className='logout'>
                             <button onClick={handleLogout}>
-                                <i className="ri-logout-box-line"></i> 
+                                <i className="ri-logout-box-line"></i>
                                 Sair
                             </button>
                         </li>

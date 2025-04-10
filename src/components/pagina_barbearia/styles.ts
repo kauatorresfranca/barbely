@@ -25,7 +25,18 @@ export const Header = styled.header`
 `
 
 export const ButtonGroup = styled.div`
+
+`
+
+export const UserResume = styled.div`
+    display: flex;
+    align-items: center;
     right: 16px;
+    cursor: pointer;
+
+    img {
+        width: 40px;
+    }
 `
 
 export const Button = styled(Link)`

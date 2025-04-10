@@ -4,17 +4,17 @@ type Props = {
     setActiveTab: (tab: string) => void
 }
 
-const HorariosStep = ({ setActiveTab }: Props) => {
+const ConfirmacaoStep = ({ setActiveTab }: Props) => {
     const handleNext = () => {
     setActiveTab('dia')
     }
 
     return (
         <S.Container>
-        <h3>Escolha o horário</h3>
-        <S.Button onClick={() => handleNext()}>Prosseguir</S.Button>
+        <h3>Sessão agendada com sucesso !</h3>
+        <S.Button onClick={() => handleNext()}>Confirmar sessão</S.Button>
         </S.Container>
     )
 }
 
-export default HorariosStep
+export default ConfirmacaoStep

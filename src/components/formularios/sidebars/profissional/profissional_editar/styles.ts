@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { colors } from '../../../styles'
+import { colors } from '../../../../../../styles'
 
 export const Overlay = styled.div`
     position: fixed;
@@ -41,23 +41,6 @@ export const Modal = styled.div`
     }
 `
 
-export const Etapas = styled.div`
-    display: flex;
-    justify-content: space-between;
-
-    span {
-        height: 8px;
-        width: 30%;
-        background-color: ${colors.branco};
-        border-radius: 10px;
-        transition: .7s;
-
-        &.active {
-            background-color: ${colors.corPrimaria};
-        }
-    }
-`
-
 export const CloseButton = styled.button`
     position: absolute;
     top: 8px;
@@ -67,9 +50,4 @@ export const CloseButton = styled.button`
     border: none;
     cursor: pointer;
     color: #fff;
-`
-
-export const Step = styled.div`
-    display: flex;
-    flex-direction: column;
 `

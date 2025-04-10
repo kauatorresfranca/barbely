@@ -1,9 +1,9 @@
 import * as S from './styles'
-import HorarioFuncionamentoForm from '../../formularios/perfil_da_barbearia/formulario_horarios_funcionamento';
+import HorarioFuncionamentoForm from '../../formularios/sidebars/perfil_da_barbearia/formulario_horarios_funcionamento';
 import CompartilharBarbearia from '../../sub_sidebars/compartilhar_barbearia'
 import { useState } from 'react';
-import DadosBarbearia from '../../formularios/perfil_da_barbearia/formulario_informacoes';
-import Localizacao from '../../formularios/perfil_da_barbearia/formulario_localizacao';
+import DadosBarbearia from '../../formularios/sidebars/perfil_da_barbearia/formulario_informacoes';
+import Localizacao from '../../formularios/sidebars/perfil_da_barbearia/formulario_localizacao';
 
 const PerfilBarbearia = () => {
     const [activeTab, setActiveTab] = useState('informacoes_da_barbearia')
@@ -30,7 +30,7 @@ const PerfilBarbearia = () => {
                 {tabs.find(tab => tab.id === activeTab)?.component}
             </S.PerfilBarbearia>
         </S.Container>
-        
+
     )
 }
 
