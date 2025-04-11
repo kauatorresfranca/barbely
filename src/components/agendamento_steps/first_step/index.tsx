@@ -2,19 +2,15 @@ import { useEffect, useState } from 'react';
 import * as S from './styles';
 import user from '../../../assets/images/user.png';
 import { Funcionario } from '../../../models/funcionario';
+import { useParams } from 'react-router-dom';
+import { Servico } from '../../../models/servico';
 
 type Props = {
-    setActiveTab: (tab: string, data?: { servicoId: number; funcionarioId: number | null }) => void;
-};
-
-type Servico = {
-    id: number;
-    nome: string;
-    duracao: string;
-    preco: string;
+    setActiveTab: (tab: string, data?: { servico: Servico; funcionario: Funcionario | null }) => void;
 };
 
 const FirstStep = ({ setActiveTab }: Props) => {
+    const { slug } = useParams();
     const [servicos, setServicos] = useState<Servico[]>([]);
     const [funcionarios, setFuncionarios] = useState<Funcionario[]>([]);
     const [selectedServiceId, setSelectedServiceId] = useState<number | null>(null);
@@ -24,8 +20,8 @@ const FirstStep = ({ setActiveTab }: Props) => {
         const fetchData = async () => {
             try {
                 const [servicosRes, funcionariosRes] = await Promise.all([
-                    fetch('http://localhost:8000/api/servicos/'),
-                    fetch('http://localhost:8000/api/funcionarios/')
+                    fetch(`http://localhost:8000/api/servicos/?barbearia_slug=${slug}`),
+                    fetch(`http://localhost:8000/api/funcionarios/?barbearia_slug=${slug}`)
                 ]);
 
                 if (servicosRes.ok) {
@@ -45,14 +41,14 @@ const FirstStep = ({ setActiveTab }: Props) => {
         };
 
         fetchData();
-    }, []);
+    }, [slug]);
 
     const handleNext = () => {
         if (selectedServiceId !== null) {
-            setActiveTab('horarios', {
-                servicoId: selectedServiceId,
-                funcionarioId: selectedFuncionarioId ?? null, // Garante que sempre passe um número ou null
-            });
+            const servico = servicos.find(s => s.id === selectedServiceId)!;
+            const funcionario = funcionarios.find(f => f.id === selectedFuncionarioId!) ?? null;
+
+            setActiveTab('horarios', { servico, funcionario });
         } else {
             alert('Por favor, selecione um serviço!');
         }
@@ -82,7 +78,6 @@ const FirstStep = ({ setActiveTab }: Props) => {
                     </S.EmployeeItem>
                 </S.EmployeeList>
             </S.Employee>
-
             <S.Service>
                 <h3>Escolha o serviço</h3>
                 <S.ServicesList>
@@ -94,9 +89,9 @@ const FirstStep = ({ setActiveTab }: Props) => {
                         >
                             <div>
                                 <h4>{servico.nome}</h4>
-                                <p>{servico.duracao}</p>
+                                <p>{servico.duracao_minutos} min</p>
                             </div>
-                            <p>{servico.preco}</p>
+                            <p>R$ {servico.preco}</p>
                         </S.ServiceItem>
                     ))}
                 </S.ServicesList>

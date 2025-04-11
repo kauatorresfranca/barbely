@@ -2,6 +2,6 @@ export interface Servico {
     id: number
     nome: string
     preco: number
-    duracao: number
+    duracao_minutos: number
     barbearia: number
 }

@@ -5,7 +5,9 @@ import { useState } from 'react';
 import DadosBarbearia from '../../formularios/sidebars/perfil_da_barbearia/formulario_informacoes';
 import Localizacao from '../../formularios/sidebars/perfil_da_barbearia/formulario_localizacao';
 
+
 const PerfilBarbearia = () => {
+
     const [activeTab, setActiveTab] = useState('informacoes_da_barbearia')
 
     const tabs = [

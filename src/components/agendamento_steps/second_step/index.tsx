@@ -1,79 +1,142 @@
-import { useEffect, useState } from 'react';
-import * as S from './styles';
+import { useEffect, useState } from 'react'
+import { formatInTimeZone } from 'date-fns-tz'
+import { DayPicker } from 'react-day-picker'
+import { ptBR } from 'date-fns/locale'
+import 'react-day-picker/dist/style.css'
+
+import * as S from './styles'
+import { Funcionario } from '../../../models/funcionario'
+import { Servico } from '../../../models/servico'
 
 type Props = {
-    setActiveTab: (tab: string) => void;
-    servicoId: number;
-    funcionarioId: number | null;
-};
+    setActiveTab: (tab: string, data?: { data?: string, horario?: string, servico: Servico, funcionario: Funcionario | null }) => void;
+    servico: Servico;
+    funcionario: Funcionario | null;
+  };
 
-const HorariosStep = ({ setActiveTab, servicoId, funcionarioId }: Props) => {
+  const HorariosStep = ({ setActiveTab, servico, funcionario }: Props) => {
+    const hoje = new Date();
     const [horariosDisponiveis, setHorariosDisponiveis] = useState<string[]>([]);
+    const [dataSelecionada, setDataSelecionada] = useState<Date | undefined>(hoje);
+    const [turnoSelecionado, setTurnoSelecionado] = useState<'manha' | 'tarde' | 'noite'>('manha');
+    const [horarioSelecionado, setHorarioSelecionado] = useState<string | null>(null);
 
-    useEffect(() => {
-        const fetchHorarios = async () => {
-            if (servicoId == null) return; // evita chamada errada
+    const horariosManha = horariosDisponiveis.filter(h => parseInt(h.split(':')[0]) < 12);
+    const horariosTarde = horariosDisponiveis.filter(h => {
+      const hora = parseInt(h.split(':')[0]);
+      return hora >= 12 && hora < 18;
+    });
+    const horariosNoite = horariosDisponiveis.filter(h => parseInt(h.split(':')[0]) >= 18);
 
-            try {
-                const data = '2025-04-10'; // futuramente será dinâmico
-                const url = new URL('http://localhost:8000/api/agendamentos/horarios-disponiveis/');
-                url.searchParams.append('servico', String(servicoId));
-                url.searchParams.append('data', data);
-
-                if (funcionarioId != null) {
-                    url.searchParams.append('funcionario', String(funcionarioId));
-                } else {
-                    console.log('Sem preferência de funcionário');
-                }
-
-                const response = await fetch(url.toString(), {
-                    headers: { 'Content-Type': 'application/json' },
-                });
-
-                if (!response.ok) {
-                    throw new Error(`Erro ${response.status} - ${response.statusText}`);
-                }
-
-                const dataJson = await response.json();
-                setHorariosDisponiveis(dataJson.horarios_disponiveis || []);
-            } catch (error) {
-                console.error('Erro ao buscar horários disponíveis:', error);
-            }
-        };
-
-        fetchHorarios();
-    }, [servicoId, funcionarioId]);
-
-
-    const handleNext = () => {
-        setActiveTab('dia');
+    const horariosPorTurno = {
+      manha: horariosManha,
+      tarde: horariosTarde,
+      noite: horariosNoite,
     };
 
-    return (
-        <S.Container>
-            <S.Data>
-                <h3>Escolha a data</h3>
-                {/* Aqui futuramente entrará um componente de seleção de datas */}
-            </S.Data>
+    useEffect(() => {
+      const fetchHorarios = async () => {
+        if (!dataSelecionada) return;
 
-            <S.Horario>
-                <h3>Escolha o melhor horário</h3>
-                <S.HorarioList>
-                    {horariosDisponiveis.length > 0 ? (
-                        horariosDisponiveis.map(horario => (
-                            <S.HorarioItem key={horario}>
-                                <p>{horario}</p>
-                            </S.HorarioItem>
-                        ))
-                    ) : (
-                        <p>Nenhum horário disponível</p>
-                    )}
-                </S.HorarioList>
-            </S.Horario>
+        try {
+          const dataFormatada = formatInTimeZone(dataSelecionada, 'America/Sao_Paulo', 'yyyy-MM-dd');
+          const url = new URL('http://localhost:8000/api/agendamentos/horarios-disponiveis/');
+          url.searchParams.append('servico', String(servico.id));
+          url.searchParams.append('data', dataFormatada);
 
-            <S.Button onClick={handleNext}>Prosseguir</S.Button>
-        </S.Container>
-    );
-};
+          if (funcionario?.id != null) {
+            url.searchParams.append('funcionario', String(funcionario.id));
+          }
 
-export default HorariosStep;
+          const response = await fetch(url.toString(), {
+            headers: { 'Content-Type': 'application/json' },
+          });
+
+          if (!response.ok) throw new Error(`Erro ${response.status} - ${response.statusText}`);
+
+          const dataJson = await response.json();
+          setHorariosDisponiveis(dataJson.horarios_disponiveis || []);
+        } catch (error) {
+          console.error('Erro ao buscar horários disponíveis:', error);
+        }
+      };
+
+      fetchHorarios();
+    }, [servico.id, funcionario?.id, dataSelecionada]);
+
+    const handleNext = () => {
+      if (!dataSelecionada || !horarioSelecionado) {
+        alert('Selecione uma data e um horário antes de prosseguir.');
+        return;
+      }
+
+      const dataFormatada = formatInTimeZone(dataSelecionada, 'America/Sao_Paulo', 'yyyy-MM-dd');
+
+      setActiveTab('dia', {
+        data: dataFormatada,
+        horario: horarioSelecionado,
+        servico,
+        funcionario,
+      });
+    };
+
+  return (
+    <S.Container>
+      <S.Data>
+        <h3>Escolha a data</h3>
+        <S.DataPickWrapper>
+          <DayPicker
+            mode="single"
+            selected={dataSelecionada}
+            onSelect={setDataSelecionada}
+            disabled={[{ before: new Date() }, { dayOfWeek: [5] }]}
+
+            // Localização
+            locale={ptBR}
+          />
+        </S.DataPickWrapper>
+      </S.Data>
+
+      <S.Horario>
+        <h3>Escolha o melhor horário</h3>
+        {horariosDisponiveis.length > 0 ? (
+          <>
+            <S.TurnosList>
+              <S.TurnoItem onClick={() => setTurnoSelecionado('manha')} selected={turnoSelecionado === 'manha'}>
+                <p>Manhã</p>
+              </S.TurnoItem>
+              <S.TurnoItem onClick={() => setTurnoSelecionado('tarde')} selected={turnoSelecionado === 'tarde'}>
+                <p>Tarde</p>
+              </S.TurnoItem>
+              <S.TurnoItem onClick={() => setTurnoSelecionado('noite')} selected={turnoSelecionado === 'noite'}>
+                <p>Noite</p>
+              </S.TurnoItem>
+            </S.TurnosList>
+
+            <S.HorarioList>
+              {horariosPorTurno[turnoSelecionado].length > 0 ? (
+                horariosPorTurno[turnoSelecionado].map((horario) => (
+                  <S.HorarioItem
+                    key={horario}
+                    onClick={() => setHorarioSelecionado(horario)}
+                    selected={horarioSelecionado === horario}
+                  >
+                    <p>{horario}</p>
+                  </S.HorarioItem>
+                ))
+              ) : (
+                <p className="nenhum_horario">Nenhum horário disponível nesse turno</p>
+              )}
+            </S.HorarioList>
+          </>
+        ) : (
+          <p className="nenhum_horario">Nenhum horário disponível nesse dia</p>
+        )}
+      </S.Horario>
+
+      <S.Button onClick={handleNext}>Prosseguir</S.Button>
+    </S.Container>
+  )
+}
+
+export default HorariosStep

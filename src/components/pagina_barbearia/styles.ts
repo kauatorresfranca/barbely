@@ -34,6 +34,14 @@ export const UserResume = styled.div`
     right: 16px;
     cursor: pointer;
 
+    span {
+        font-weight: 300;
+    }
+
+    p {
+        font-weight: 700;
+    }
+
     img {
         width: 40px;
     }

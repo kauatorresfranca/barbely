@@ -12,8 +12,8 @@ export const Container = styled.div`
 `;
 
 export const Employee = styled.div`
-    margin-top: 12px;
-`;
+
+`
 
 export const EmployeeList = styled.div`
     display: grid;
@@ -57,12 +57,15 @@ export const EmployeeItem = styled.div<SelectableProps>`
     }
 `;
 
-export const Service = styled.div``;
+export const Service = styled.div`
+
+`
 
 export const ServicesList = styled.div`
     display: flex;
     flex-direction: column;
     gap: 12px;
+    margin-top: 12px;
 `;
 
 export const ServiceItem = styled.div<SelectableProps>`
@@ -88,7 +91,7 @@ export const ServiceItem = styled.div<SelectableProps>`
 
     p {
         margin: 2px 0;
-        color: ${colors.branco};
+        color: ${colors.texto};
     }
 `;
 

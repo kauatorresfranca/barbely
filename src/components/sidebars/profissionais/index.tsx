@@ -17,7 +17,12 @@ const Profissionais = () => {
 
     const fetchFuncionarios = async () => {
         try {
-            const response = await fetch('http://localhost:8000/api/funcionarios/');
+            const token = sessionStorage.getItem('access_token')
+            const response = await fetch('http://localhost:8000/api/funcionarios/', {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
             if (response.ok) {
                 const data = await response.json();
                 setFuncionarios(data);

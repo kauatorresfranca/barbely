@@ -9,16 +9,39 @@ import user from '../../assets/images/user.png'
 import * as S from './styles'
 import { useCliente } from "../../hooks/useClienteAuth"
 import Agendamento from "../agendamento"
+import { Servico } from "../../models/servico"
 
 const PaginaBarbearia = () => {
     const navigate = useNavigate()
     const { cliente, loading } = useCliente()
     const { slug } = useParams()
+
     const [barbearia, setBarbearia] = useState<Barbearia | null>(null)
     const [horarios, setHorarios] = useState<{ dia_semana: number; horario_abertura: string; horario_fechamento: string }[]>([])
     const [modalIsOpen, setModalIsOpen] = useState(false)
+    const [servicos, setServicos] = useState<Servico[]>([]);
 
     const diasSemana = ["Domingo", "Segunda Feira", "Terça Feira", "Quarta Feira", "Quinta Feira", "Sexta Feira", "Sábado"]
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const [servicosRes] = await Promise.all([
+                    fetch(`http://localhost:8000/api/servicos/?barbearia_slug=${slug}`)
+                ]);
+
+                if (servicosRes.ok) {
+                    setServicos(await servicosRes.json());
+                } else {
+                    console.error('Erro ao buscar serviços');
+                }
+            } catch (error) {
+                console.error('Erro ao buscar dados:', error);
+            }
+        };
+
+        fetchData();
+    }, [slug]);
 
     useEffect(() => {
         const fetchBarbearia = async () => {
@@ -68,7 +91,7 @@ const PaginaBarbearia = () => {
                                 cliente ? (
                                     <S.UserResume>
                                         <img src={user} alt="" />
-                                        <p>{cliente.user.nome}</p>
+                                        <p><span>Olá,</span> {cliente.user.nome.split(' ')[0]}</p>
                                         <i className="ri-arrow-down-s-line"></i>
                                     </S.UserResume>
                                 ) : (
@@ -115,27 +138,17 @@ const PaginaBarbearia = () => {
                             <S.Services>
                                 <h3><i className="ri-scissors-2-fill"></i> Serviços</h3>
                                 <S.ServicesList>
-                                    <S.Service>
-                                        <div>
-                                            <h4>Corte de cabelo</h4>
-                                            <p>15 m</p>
-                                        </div>
-                                        <p>R$ 35,00</p>
-                                    </S.Service>
-                                    <S.Service>
-                                        <div>
-                                            <h4>Barba</h4>
-                                            <p>10 m</p>
-                                        </div>
-                                        <p>R$ 20,00</p>
-                                    </S.Service>
-                                    <S.Service>
-                                        <div>
-                                            <h4>Nevou</h4>
-                                            <p>2 h</p>
-                                        </div>
-                                        <p>R$ 95,00</p>
-                                    </S.Service>
+                                    {servicos.map(servico => (
+                                        <S.Service
+                                            key={servico.id}
+                                        >
+                                            <div>
+                                                <h4>{servico.nome}</h4>
+                                                <p>{servico.duracao_minutos} min</p>
+                                            </div>
+                                            <p>R$ {servico.preco}</p>
+                                        </S.Service>
+                                    ))}
                                 </S.ServicesList>
                             </S.Services>
                         </S.BarbeariaInfos>

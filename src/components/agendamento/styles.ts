@@ -44,6 +44,7 @@ export const Modal = styled.div`
 export const Etapas = styled.div`
     display: flex;
     justify-content: space-between;
+    margin-bottom: 20px;
 
     span {
         height: 8px;
@@ -51,6 +52,7 @@ export const Etapas = styled.div`
         background-color: ${colors.branco};
         border-radius: 10px;
         transition: .7s;
+        cursor: pointer;
 
         &.active {
             background-color: ${colors.corPrimaria};

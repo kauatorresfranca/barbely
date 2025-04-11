@@ -17,7 +17,12 @@ const Servicos = () => {
 
     const fetchServicos = async () => {
         try {
-            const response = await fetch('http://localhost:8000/api/servicos/')
+            const token = sessionStorage.getItem('access_token')
+            const response = await fetch('http://localhost:8000/api/servicos/', {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
             if (response.ok) {
                 const data = await response.json()
                 setServicos(data)

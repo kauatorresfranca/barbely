@@ -5,6 +5,12 @@ export const Container = styled.div`
 
 `
 
+export const Confirmacao = styled.div`
+    background-color: ${colors.cinzaEscuro};
+    padding: 12px 20px;
+    border-radius: 10px;
+`
+
 export const Button = styled.button`
     width: 100%;
     padding: 12px;
