@@ -30,6 +30,7 @@ export const Head = styled.div`
 
     p {
         font-weight: 500;
+        width: 50%;
     }
 `
 
@@ -52,6 +53,7 @@ export const ListItem = styled.li`
 
     p {
         color: ${colors.branco};
+        width: 50%;
     }
 `
 

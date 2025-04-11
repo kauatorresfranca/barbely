@@ -70,7 +70,6 @@ const Profissionais = () => {
                 </S.ServiceHeader>
                 <S.Head>
                     <p>Nome</p>
-                    <p>Cargo</p>
                     <i className="ri-tools-line"></i>
                 </S.Head>
                 <S.List>

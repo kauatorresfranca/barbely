@@ -58,6 +58,16 @@ const HorarioFuncionamentoForm = () => {
           />
         </S.inputGroup>
         <S.inputGroup>
+          <label htmlFor="numero_barbearia">Número Da Barbearia</label>
+          <S.Input
+            type="text"
+            id="numero_barbearia"
+            name="numero_barbearia"
+            placeholder="(00) 0 0000-0000"
+            required
+          />
+        </S.inputGroup>
+        <S.inputGroup>
           <label htmlFor="cpf">CPF</label>
           <S.Input
             type="text"

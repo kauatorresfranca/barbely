@@ -3,7 +3,7 @@ import HorarioFuncionamentoForm from '../../formularios/sidebars/perfil_da_barbe
 import CompartilharBarbearia from '../../sub_sidebars/compartilhar_barbearia'
 import { useState } from 'react';
 import DadosBarbearia from '../../formularios/sidebars/perfil_da_barbearia/formulario_informacoes';
-import Localizacao from '../../formularios/sidebars/perfil_da_barbearia/formulario_localizacao';
+import Localizacao from '../../formularios/sidebars/perfil_da_barbearia/formulario_endereco';
 
 
 const PerfilBarbearia = () => {

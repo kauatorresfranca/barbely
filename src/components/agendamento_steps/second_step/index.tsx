@@ -89,7 +89,7 @@ type Props = {
             mode="single"
             selected={dataSelecionada}
             onSelect={setDataSelecionada}
-            disabled={[{ before: new Date() }, { dayOfWeek: [5] }]}
+            disabled={[{ before: new Date() }]}
 
             // Localização
             locale={ptBR}

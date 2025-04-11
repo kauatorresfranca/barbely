@@ -26,10 +26,11 @@ export const ServiceHeader = styled.div`
 export const Head = styled.div`
     display: flex;
     justify-content: space-between;
-    padding: 10px 10px 0 10px;
+    padding: 10px 20px 0 10px;
 
     p {
         font-weight: 500;
+        width: 25%;
     }
 `
 
@@ -52,6 +53,7 @@ export const ListItem = styled.li`
 
     p {
         color: ${colors.branco};
+        width: 25%;
     }
 `
 

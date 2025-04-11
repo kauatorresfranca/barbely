@@ -20,6 +20,8 @@ const PaginaBarbearia = () => {
     const [horarios, setHorarios] = useState<{ dia_semana: number; horario_abertura: string; horario_fechamento: string }[]>([])
     const [modalIsOpen, setModalIsOpen] = useState(false)
     const [servicos, setServicos] = useState<Servico[]>([]);
+    const [endereco, setEndereco] = useState<string | null>(null);
+
 
     const diasSemana = ["Domingo", "Segunda Feira", "Terça Feira", "Quarta Feira", "Quinta Feira", "Sexta Feira", "Sábado"]
 
@@ -41,6 +43,28 @@ const PaginaBarbearia = () => {
         };
 
         fetchData();
+    }, [slug]);
+
+    useEffect(() => {
+        const fetchEndereco = async () => {
+            try {
+                const response = await fetch(`http://localhost:8000/api/endereco-barbearia-publico/${slug}/`);
+
+                if (response.ok) {
+                    const data = await response.json();
+                    const enderecoFormatado = `${data.endereco}, ${data.numero} - ${data.bairro}, ${data.cidade} - ${data.estado}, ${data.cep}`;
+                    setEndereco(enderecoFormatado);
+                } else {
+                    console.error("Erro ao buscar endereço");
+                }
+            } catch (error) {
+                console.error("Erro ao buscar endereço:", error);
+            }
+        };
+
+        if (slug) {
+            fetchEndereco();
+        }
     }, [slug]);
 
     useEffect(() => {
@@ -91,7 +115,7 @@ const PaginaBarbearia = () => {
                                 cliente ? (
                                     <S.UserResume>
                                         <img src={user} alt="" />
-                                        <p><span>Olá,</span> {cliente.user.nome.split(' ')[0]}</p>
+                                        <p><span>Olá,</span> {cliente?.user?.nome?.split(' ')[0]}</p>
                                         <i className="ri-arrow-down-s-line"></i>
                                     </S.UserResume>
                                 ) : (
@@ -106,7 +130,7 @@ const PaginaBarbearia = () => {
                                 <img src={logoBarbearia} alt="logo barbearia" />
                                 <div>
                                     <h2>{barbearia.nome_barbearia}</h2>
-                                    <p>Endereço fictício da barbearia</p>
+                                    <p>{endereco || "Endereço não disponível"}</p>
                                     <h5><i className="ri-store-2-line"></i> Aberto agora - <i className="ri-phone-line"></i> 82 996124145</h5>
                                 </div>
                             </S.ResumeGroup>

@@ -71,6 +71,7 @@ const Servicos = () => {
                 <S.Head>
                     <p>Nome</p>
                     <p>Valor</p>
+                    <p>Duração</p>
                     <i className="ri-tools-line"></i>
                 </S.Head>
                 <S.List>
@@ -78,6 +79,7 @@ const Servicos = () => {
                         <S.ListItem key={servico.id}>
                             <p>{servico.nome}</p>
                             <p>R$ {Number(servico.preco).toFixed(2)}</p>
+                            <p>{servico.duracao_minutos}</p>
                             <S.IconsGroup>
                                 <i className="ri-edit-2-line edit" onClick={openEditModal}></i>
                                 <i className="ri-delete-bin-line delete" onClick={() => handleDelete(servico.id)}></i>
