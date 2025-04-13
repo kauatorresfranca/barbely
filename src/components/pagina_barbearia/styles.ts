@@ -47,6 +47,39 @@ export const UserResume = styled.div`
     }
 `
 
+export const DropdownMenu = styled.ul`
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    top: 60px;
+    right: 80px;
+    display: none;
+    background-color: ${colors.cinzaClaro};
+    border: 1px solid ${colors.cinzaTransparent};
+    border-radius: 8px;
+    width: 200px;
+    box-shadow: 0px 8px 16px rgba(0,0,0,0.1);
+    z-index: 10;
+
+    li {
+        list-style: none;
+        padding: 12px 20px;
+        cursor: pointer;
+        transition: background 0.3s;
+        color: ${colors.branco};
+        border-radius: 8px;
+
+        &:hover {
+            background-color: ${colors.cinzaEscuro};
+        }
+    }
+
+    &.active {
+        display: flex;
+    }
+`;
+
+
 export const Button = styled(Link)`
     background: ${colors.corPrimaria};
     color: ${colors.cinzaEscuro};

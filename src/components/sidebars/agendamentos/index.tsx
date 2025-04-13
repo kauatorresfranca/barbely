@@ -1,27 +1,7 @@
+import { useState, useEffect } from 'react'
 import * as S from './styles'
 
-const hoje = new Date().toISOString().split("T")[0]
-
-const agendamentos = [
-  {
-    id: 1,
-    cliente: 'João Silva',
-    servico: 'Corte',
-    hora: '09:00',
-  },
-  {
-    id: 2,
-    cliente: 'Lucas Pereira',
-    servico: 'Barba',
-    hora: '11:30',
-  },
-  {
-    id: 3,
-    cliente: 'Marcos Lima',
-    servico: 'Combo Corte + Barba',
-    hora: '15:00',
-  },
-]
+const hoje = new Date().toISOString().split('T')[0]
 
 const gerarHoras = (intervalo: number) => {
   const horas = []
@@ -38,74 +18,107 @@ const gerarHoras = (intervalo: number) => {
 }
 
 const AgendaGrafico = () => {
+  const [dataSelecionada, setDataSelecionada] = useState(hoje)
+  const [agendamentos, setAgendamentos] = useState([])
+  const [carregando, setCarregando] = useState(false)
+
   const intervalo = 30
   const horas = gerarHoras(intervalo)
 
-  const alturaPorMinuto = 1.5 // controle da altura
+  const alturaPorMinuto = 1.5
   const totalMinutos = (20 - 8) * 60
   const alturaTimeline = totalMinutos * alturaPorMinuto
 
+  const buscarAgendamentos = async (data: string) => {
+    try {
+      setCarregando(true)
+      const res = await fetch(`/api/agendamentos/?data=${data}`)
+      const dados = await res.json()
+      setAgendamentos(dados)
+    } catch (err) {
+      console.error('Erro ao buscar agendamentos:', err)
+    } finally {
+      setCarregando(false)
+    }
+  }
+
+  useEffect(() => {
+    buscarAgendamentos(dataSelecionada)
+  }, [dataSelecionada])
+
   return (
     <>
-        <h2>Meus Agendamentos</h2>
-        <S.Filtro>
-            <S.InputsContainer>
-                <S.InputGroup>
-                    <p>Data</p>
-                    <input type="date" defaultValue={hoje}/>
-                </S.InputGroup>
-            </S.InputsContainer>
-            <button>Filtrar</button>
-        </S.Filtro>
-    <S.Container>
-      <S.Timeline style={{ height: `${alturaTimeline}px` }}>
-        <S.Horarios>
-          {horas.map((hora) => {
-            const [h, m] = hora.split(':').map(Number)
-            const minutosDesde8h = (h - 8) * 60 + m
-            const top = minutosDesde8h * alturaPorMinuto
+      <h2>Meus Agendamentos</h2>
 
-            return (
-              <S.Hora key={hora} style={{ top: `${top}px` }}>
-                {hora}
-              </S.Hora>
-            )
-          })}
-        </S.Horarios>
+      <S.Filtro>
+        <S.InputsContainer>
+          <S.InputGroup>
+            <p>Data</p>
+            <input
+              type="date"
+              value={dataSelecionada}
+              onChange={(e) => setDataSelecionada(e.target.value)}
+            />
+          </S.InputGroup>
+        </S.InputsContainer>
+        <button onClick={() => buscarAgendamentos(dataSelecionada)}>
+            Filtrar
+        </button>
+      </S.Filtro>
 
-        <S.AgendamentosArea>
-          {horas.map((hora) => {
-            const [h, m] = hora.split(':').map(Number)
-            const minutosDesde8h = (h - 8) * 60 + m
-            const top = minutosDesde8h * alturaPorMinuto
+      {carregando ? (
+        <p>Carregando agendamentos...</p>
+      ) : (
+        <S.Container>
+          <S.Timeline style={{ height: `${alturaTimeline}px` }}>
+            <S.Horarios>
+              {horas.map((hora) => {
+                const [h, m] = hora.split(':').map(Number)
+                const minutosDesde8h = (h - 8) * 60 + m
+                const top = minutosDesde8h * alturaPorMinuto
 
-            return <S.LinhaHora key={hora} top={top} />
-          })}
+                return (
+                  <S.Hora key={hora} style={{ top: `${top}px` }}>
+                    {hora}
+                  </S.Hora>
+                )
+              })}
+            </S.Horarios>
 
-          {agendamentos.map((agendamento) => {
-            const [h, m] = agendamento.hora.split(':').map(Number)
-            const minutosDesde8h = (h - 8) * 60 + m
-            const top = minutosDesde8h * alturaPorMinuto
+            <S.AgendamentosArea>
+              {horas.map((hora) => {
+                const [h, m] = hora.split(':').map(Number)
+                const minutosDesde8h = (h - 8) * 60 + m
+                const top = minutosDesde8h * alturaPorMinuto
 
-            return (
-            <S.AgendamentoBlock
-                key={agendamento.id}
-                hora={agendamento.hora}
-                style={{ top: `${top}px` }}
-            >
-                <div>
-                    <p className='cliente'>{agendamento.cliente}</p>
-                    <p>{agendamento.servico}</p>
-                </div>
-                <S.Button>Detalhes do Agendamento</S.Button>
-            </S.AgendamentoBlock>
-            )
-        })}
-        </S.AgendamentosArea>
-    </S.Timeline>
-    </S.Container>
+                return <S.LinhaHora key={`linha-${hora}`} top={top} />
+              })}
+
+              {agendamentos.map((agendamento: any) => {
+                const [h, m] = agendamento.hora.split(':').map(Number)
+                const minutosDesde8h = (h - 8) * 60 + m
+                const top = minutosDesde8h * alturaPorMinuto
+
+                return (
+                  <S.AgendamentoBlock
+                    key={agendamento.id}
+                    hora={agendamento.hora}
+                    style={{ top: `${top}px` }}
+                  >
+                    <div>
+                      <p className="cliente">{agendamento.cliente}</p>
+                      <p>{agendamento.servico}</p>
+                    </div>
+                    <S.Button>Detalhes do Agendamento</S.Button>
+                  </S.AgendamentoBlock>
+                )
+              })}
+            </S.AgendamentosArea>
+          </S.Timeline>
+        </S.Container>
+      )}
     </>
-)
+  )
 }
 
 export default AgendaGrafico

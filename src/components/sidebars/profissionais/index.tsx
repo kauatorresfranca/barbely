@@ -69,8 +69,14 @@ const Profissionais = () => {
                     <button onClick={openModal}>+ Novo Profissional</button>
                 </S.ServiceHeader>
                 <S.Head>
-                    <p>Nome</p>
-                    <i className="ri-tools-line"></i>
+                    {funcionarios.length <= 0 ? (
+                        <p className='empty'>Você ainda não tem profissionais cadastrados</p>
+                    ): (
+                        <>
+                            <p>Nome</p>
+                            <i className="ri-tools-line"></i>
+                        </>
+                    )}
                 </S.Head>
                 <S.List>
                     {funcionarios.map((func) => (

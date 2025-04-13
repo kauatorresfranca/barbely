@@ -29,7 +29,7 @@ export const Filtro = styled.div`
             border: 1px solid ${colors.corPrimaria};
             outline: none;
             }
-            
+
         &::-webkit-calendar-picker-indicator {
             filter: invert(1); /* Inverte a cor do ícone */
             cursor: pointer;
@@ -50,11 +50,11 @@ export const Filtro = styled.div`
 
 export const InputsContainer = styled.div`
     display: flex;
-    width: 15%; 
+    width: 15%;
 `
 
 export const InputGroup = styled.div`
-    width: 100%; 
+    width: 100%;
     margin-right: 8px;
     margin-bottom: 25px;
 

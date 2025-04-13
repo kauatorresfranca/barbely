@@ -28,6 +28,12 @@ export const Head = styled.div`
     justify-content: space-between;
     padding: 10px 20px 0 10px;
 
+    .empty {
+        width: 100%;
+        font-weight: 400;
+        color: ${colors.texto};
+    }
+
     p {
         font-weight: 500;
         width: 25%;

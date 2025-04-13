@@ -9,6 +9,12 @@ export const Head = styled.div`
     justify-content: space-between;
     padding: 10px 20px 0 20px;
 
+    .empty {
+        width: 100%;
+        font-weight: 400;
+        color: ${colors.texto};
+    }
+
     p {
         font-weight: 500;
     }
@@ -32,6 +38,7 @@ export const ListItem = styled.li`
     box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
 
     p {
+        width: 35%;
         color: ${colors.branco};
     }
 `;
@@ -47,4 +54,4 @@ export const Button = styled.button`
     &:hover {
         background-color: #0056b3;
     }
-`;
+`

@@ -59,7 +59,7 @@ return (
     </S.inputGroup>
     <S.inputGroup>
         <label htmlFor="password">Senha</label>
-        <div className="input-wrapper"> 
+        <div className="input-wrapper">
             <input type={showPassword ? "text":  "password"} id="password" name="password" value={formData.password} onChange={handleChange} placeholder="Senha" />
             <i className={showPassword ? "ri-eye-fill" : "ri-eye-off-fill"} onClick={() => setShowPassword(!showPassword)}></i>
         </div>

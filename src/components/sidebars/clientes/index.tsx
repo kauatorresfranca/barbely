@@ -1,12 +1,14 @@
 import { Cliente } from '../../../models/cliente';
 import { authFetch } from '../../../utils/authFetch';
+import ClienteDetail from '../../formularios/sidebars/clientes/cliente_detail';
 import * as S from './styles';
 import { useState, useEffect } from 'react';
 
 const Clientes = () => {
-    const [clientes, setClientes] = useState<Cliente[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [erro, setErro] = useState<string | null>(null);
+    const [clientes, setClientes] = useState<Cliente[]>([])
+    const [loading, setLoading] = useState(true)
+    const [erro, setErro] = useState<string | null>(null)
+    const [modalIsOpen, setModalIsOpen] = useState<boolean>(false)
 
     useEffect(() => {
         const token = sessionStorage.getItem("access_token");
@@ -23,7 +25,7 @@ const Clientes = () => {
             headers: {
                 "Authorization": `Bearer ${token}`,
             },
-        })        
+        })
             .then((res) => {
                 if (!res.ok) throw new Error("Erro ao buscar clientes.");
                 return res.json();
@@ -41,7 +43,7 @@ const Clientes = () => {
             <h2>Meus Clientes</h2>
             <S.Head>
             {(clientes.length <= 0 ? (
-                    <p>Os clientes aparecerão aqui</p>
+                    <p className='empty'>Você ainda não tem clientes cadastrados</p>
                 ) : (
                 <>
                     <p>Nome</p>
@@ -55,10 +57,13 @@ const Clientes = () => {
                         <S.ListItem key={cliente.id}>
                             <p>{cliente.user.nome}</p>
                             <p>{cliente.user.telefone}</p>
-                            <S.Button>Detalhes</S.Button>
+                            <S.Button onClick={() => setModalIsOpen(true)}>Detalhes</S.Button>
                         </S.ListItem>
                     ))}
             </S.List>
+            {modalIsOpen &&
+                <ClienteDetail closeModal={() => setModalIsOpen(false)} />
+            }
         </S.Container>
     );
 };

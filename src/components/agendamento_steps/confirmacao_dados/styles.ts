@@ -28,6 +28,10 @@ export const Button = styled.button`
         background-color: #0056b3;
     }
 
+    &.back {
+        background-color: ${colors.texto};
+    }
+
     &:disabled {
         background-color: #ccc;
         cursor: not-allowed;

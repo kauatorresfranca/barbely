@@ -199,4 +199,5 @@ export const HorarioItem = styled.div<HorarioItemProps>`
     font-weight: 500;
     border-radius: 10px;
     transition: 0.3s;
+    cursor: pointer;
 `

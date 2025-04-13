@@ -21,7 +21,11 @@ const PaginaBarbearia = () => {
     const [modalIsOpen, setModalIsOpen] = useState(false)
     const [servicos, setServicos] = useState<Servico[]>([]);
     const [endereco, setEndereco] = useState<string | null>(null);
+    const [showDropdown, setShowDropdown] = useState(false);
 
+    const toggleDropdown = () => {
+        setShowDropdown(prev => !prev);
+    };
 
     const diasSemana = ["Domingo", "Segunda Feira", "Terça Feira", "Quarta Feira", "Quinta Feira", "Sexta Feira", "Sábado"]
 
@@ -68,6 +72,13 @@ const PaginaBarbearia = () => {
     }, [slug]);
 
     useEffect(() => {
+        if (barbearia) {
+          console.log("Descrição da barbearia:", barbearia);
+        }
+      }, [barbearia]);
+
+
+    useEffect(() => {
         const fetchBarbearia = async () => {
             try {
                 const response = await fetch(`http://localhost:8000/api/barbearias/buscar-por-slug/${slug}/`)
@@ -104,6 +115,11 @@ const PaginaBarbearia = () => {
         }
     }
 
+    const handleLogout = () => {
+        sessionStorage.removeItem("access_token")
+        sessionStorage.removeItem("refresh_token")
+    }
+
     return (
         <div>
             {barbearia ? (
@@ -113,10 +129,15 @@ const PaginaBarbearia = () => {
                         <S.ButtonGroup>
                             {!loading && (
                                 cliente ? (
-                                    <S.UserResume>
+                                    <S.UserResume onClick={toggleDropdown}>
                                         <img src={user} alt="" />
                                         <p><span>Olá,</span> {cliente?.user?.nome?.split(' ')[0]}</p>
                                         <i className="ri-arrow-down-s-line"></i>
+                                        <S.DropdownMenu className={showDropdown ? 'active' : ''}>
+                                            <li onClick={() => navigate(`/barbearia/${slug}/minha-conta`)}>Minha Conta</li>
+                                            <li onClick={() => navigate(`/barbearia/${slug}/meus-agendamentos`)}>Meus Agendamentos</li>
+                                            <li onClick={handleLogout}><i className="ri-logout-box-line"></i> Sair</li>
+                                        </S.DropdownMenu>
                                     </S.UserResume>
                                 ) : (
                                     <S.Button to={`/barbearia/${slug}/login`}>Login</S.Button>
@@ -131,7 +152,7 @@ const PaginaBarbearia = () => {
                                 <div>
                                     <h2>{barbearia.nome_barbearia}</h2>
                                     <p>{endereco || "Endereço não disponível"}</p>
-                                    <h5><i className="ri-store-2-line"></i> Aberto agora - <i className="ri-phone-line"></i> 82 996124145</h5>
+                                    <h5><i className="ri-store-2-line"></i> Aberto agora - <i className="ri-phone-line"></i> {barbearia.telefone}</h5>
                                 </div>
                             </S.ResumeGroup>
                             <S.AgendarHorario onClick={() => ToAgendamento()}>Agendar Horário</S.AgendarHorario>
@@ -139,7 +160,7 @@ const PaginaBarbearia = () => {
                         <S.BarbeariaInfos>
                             <S.AboutUs>
                                 <h3><i className="ri-information-line"></i> Sobre Nós</h3>
-                                <p>Texto sobre a barbearia. {barbearia.descricao}</p>
+                                <p>{barbearia.descricao}</p>
                             </S.AboutUs>
                             <S.Hours>
                                 <h3><i className="ri-time-line"></i> Horários</h3>

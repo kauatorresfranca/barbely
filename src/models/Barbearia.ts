@@ -10,4 +10,5 @@ export interface Barbearia {
     plano: string
     data_criacao: string
     slug: string
+    telefone: string
 }

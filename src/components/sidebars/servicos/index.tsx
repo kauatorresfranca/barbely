@@ -69,17 +69,23 @@ const Servicos = () => {
                     <button onClick={openModal}>+ Novo Serviço</button>
                 </S.ServiceHeader>
                 <S.Head>
-                    <p>Nome</p>
-                    <p>Valor</p>
-                    <p>Duração</p>
-                    <i className="ri-tools-line"></i>
+                {servicos.length <= 0 ? (
+                        <p className='empty'>Você ainda não tem serviços cadastrados</p>
+                    ): (
+                        <>
+                            <p>Nome</p>
+                            <p>Valor</p>
+                            <p>Duração</p>
+                            <i className="ri-tools-line"></i>
+                        </>
+                    )}
                 </S.Head>
                 <S.List>
                     {servicos.map((servico) => (
                         <S.ListItem key={servico.id}>
                             <p>{servico.nome}</p>
                             <p>R$ {Number(servico.preco).toFixed(2)}</p>
-                            <p>{servico.duracao_minutos}</p>
+                            <p>{servico.duracao_minutos} min</p>
                             <S.IconsGroup>
                                 <i className="ri-edit-2-line edit" onClick={openEditModal}></i>
                                 <i className="ri-delete-bin-line delete" onClick={() => handleDelete(servico.id)}></i>

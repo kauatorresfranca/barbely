@@ -70,22 +70,23 @@ export const TextArea = styled.textarea`
     padding: 12px;
     resize: none;
     border: 1px solid ${colors.cinzaTransparent};
+    color: ${colors.texto};
     border-radius: 3px;
     background-color: transparent;
     transition: border 0.4s ease-in-out;
 
     &:hover {
-      border: 1px solid ${colors.branco};
+        border: 1px solid ${colors.branco};
     }
 
     &:focus {
-      border: 1px solid ${colors.corPrimaria};
-      outline: none;
+        border: 1px solid ${colors.corPrimaria};
+        outline: none;
     }
 
     &::placeholder {
-      color: ${colors.texto};
-      font-weight: 500;
+        color: ${colors.texto};
+        font-weight: 500;
     }
 `
 
