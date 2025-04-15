@@ -19,3 +19,5 @@
     npm install react-day-picker
     npm install date-fns
     npm install date-fns-tz
+    npm install qrcode.react
+    npm install react-imask

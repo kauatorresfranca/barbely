@@ -41,6 +41,7 @@ const Clientes = () => {
     return (
         <S.Container>
             <h2>Meus Clientes</h2>
+            <p className='subtitle'>Acesse a lista de clientes cadastrados na sua barbearia e veja o histórico de agendamentos.</p>
             <S.Head>
             {(clientes.length <= 0 ? (
                     <p className='empty'>Você ainda não tem clientes cadastrados</p>

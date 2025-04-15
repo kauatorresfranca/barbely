@@ -65,6 +65,7 @@ const Profissionais = () => {
         <>
             <S.Container>
                 <h2>Profissionais</h2>
+                <p className='subtitle'>Adicione, edite ou remova os profissionais que fazem parte da sua equipe.</p>
                 <S.ServiceHeader>
                     <button onClick={openModal}>+ Novo Profissional</button>
                 </S.ServiceHeader>

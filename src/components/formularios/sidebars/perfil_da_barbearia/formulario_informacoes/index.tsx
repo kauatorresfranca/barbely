@@ -1,27 +1,20 @@
 import { useEffect, useRef, useState } from "react";
 import * as S from "./styles";
 import { useBarbeariaAtual } from "../../../../../hooks/useBarbeariaAtual";
+import { IMaskInput } from 'react-imask';
 
-const HorarioFuncionamentoForm = () => {
-  const barbaria = useBarbeariaAtual()
-  const slug = barbaria?.slug
+const BarbeariaPerfilForm = () => {
+  const barbaria = useBarbeariaAtual();
+  const slug = barbaria?.slug;
   const [preview, setPreview] = useState<string | null>(null);
-  const [formData, setFormData] = useState<{
-    nome_proprietario: string;
-    nome_barbearia: string;
-    telefone: string;
-    cpf: string;
-    cnpj: string;
-    descricao: string;
-    imagem: File | null;
-  }>({
-    nome_proprietario: '',
-    nome_barbearia: '',
-    telefone: '',
-    cpf: '',
-    cnpj: '',
-    descricao: '',
-    imagem: null,
+  const [formData, setFormData] = useState({
+    nome_proprietario: "",
+    nome_barbearia: "",
+    telefone: "",
+    cpf: "",
+    cnpj: "",
+    descricao: "",
+    imagem: null as File | null,
   });
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -34,33 +27,31 @@ const HorarioFuncionamentoForm = () => {
 
         setFormData(prev => ({
           ...prev,
-          nome_proprietario: data.nome_proprietario || '',
-          nome_barbearia: data.nome_barbearia || '',
-          telefone: data.telefone || '',
-          cpf: data.cpf || '',
-          cnpj: data.cnpj || '',
-          descricao: data.descricao || '',
-          imagem: null,
+          nome_proprietario: data.nome_proprietario || "",
+          nome_barbearia: data.nome_barbearia || "",
+          telefone: data.telefone || "",
+          cpf: data.cpf || "",
+          cnpj: data.cnpj || "",
+          descricao: data.descricao || "",
         }));
 
         if (data.imagem) {
-          setPreview(data.imagem); // Mostra imagem da barbearia
+          const isFullUrl = data.imagem.startsWith("http");
+          setPreview(isFullUrl ? data.imagem : `http://localhost:8000${data.imagem}`);
         }
       } catch (error) {
         console.error("Erro ao buscar barbearia:", error);
       }
     };
 
-    if (slug) {
-      fetchBarbearia();
-    }
+    if (slug) fetchBarbearia();
   }, [slug]);
 
   const handleImagemChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       setPreview(URL.createObjectURL(file));
-      setFormData((prevData) => ({ ...prevData, imagem: file }));
+      setFormData(prev => ({ ...prev, imagem: file }));
     }
   };
 
@@ -70,7 +61,7 @@ const HorarioFuncionamentoForm = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -92,10 +83,10 @@ const HorarioFuncionamentoForm = () => {
     try {
       const response = await fetch("http://localhost:8000/api/barbearias/update/", {
         method: "PUT",
-        body: form,
         headers: {
           Authorization: `Bearer ${token}`,
         },
+        body: form,
       });
 
       if (!response.ok) {
@@ -106,13 +97,14 @@ const HorarioFuncionamentoForm = () => {
 
       console.log("Alterações salvas com sucesso!");
     } catch (error) {
-      console.error("Erro: ", error);
+      console.error("Erro:", error);
     }
   };
 
   return (
     <S.Container>
       <h2>Informações da Barbearia</h2>
+      <p className="subtitle">Gerencie os dados principais da sua barbearia, como nome, contato, descrição.</p>
       <S.Form onSubmit={handleSubmit}>
         <S.ImagemWrapper>
           <S.ImagemContainer>
@@ -158,36 +150,51 @@ const HorarioFuncionamentoForm = () => {
         <S.inputGroup>
           <label htmlFor="telefone">Número Da Barbearia</label>
           <S.Input
+            as={IMaskInput}
+            mask="(00) 0 0000-0000"
             type="text"
             id="telefone"
             name="telefone"
+            placeholder="telefone"
             value={formData.telefone}
-            onChange={handleChange}
             required
+            onAccept={(value: string | undefined) =>
+              setFormData(prev => ({ ...prev, telefone: value || '' }))
+            }
           />
         </S.inputGroup>
 
         <S.inputGroup>
           <label htmlFor="cpf">CPF</label>
           <S.Input
+            as={IMaskInput}
+            mask="000-000-000-00"
             type="text"
             id="cpf"
             name="cpf"
+            placeholder="cpf"
             value={formData.cpf}
-            onChange={handleChange}
             required
+            onAccept={(value: string | undefined) =>
+              setFormData(prev => ({ ...prev, cpf: value || '' }))
+            }
           />
         </S.inputGroup>
 
         <S.inputGroup>
           <label htmlFor="cnpj">CNPJ</label>
           <S.Input
+            as={IMaskInput}
+            mask="00.000.000/0000-00"
             type="text"
             id="cnpj"
             name="cnpj"
+            placeholder="cnpj"
             value={formData.cnpj}
-            onChange={handleChange}
             required
+            onAccept={(value: string | undefined) =>
+              setFormData(prev => ({ ...prev, cnpj: value || '' }))
+            }
           />
         </S.inputGroup>
 
@@ -208,4 +215,4 @@ const HorarioFuncionamentoForm = () => {
   );
 };
 
-export default HorarioFuncionamentoForm;
+export default BarbeariaPerfilForm;

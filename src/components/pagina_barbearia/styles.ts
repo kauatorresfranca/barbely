@@ -129,6 +129,11 @@ export const BarbeariaProfile = styled.div`
 
     @media (max-width: ${breakpoints.desktop}) {
         padding: 20px;
+
+        img {
+            height: 110px;
+            width: 110px;
+        }
     }
 `
 
@@ -140,7 +145,7 @@ export const BarbeariaResume = styled.div`
     gap: 16px;
     margin: 0 0 32px 0;
 
-    @media(max-width: ${breakpoints.tablet}) {
+    @media (max-width: ${breakpoints.tablet}) {
         flex-direction: column;
     }
 `
@@ -160,6 +165,13 @@ export const ResumeGroup = styled.div`
 
     p {
         margin-top: 8px;
+    }
+
+    @media(max-width: ${breakpoints.tablet}) {
+        p {
+            margin-top: 4px;
+            font-size: 12px;
+        }
     }
 `
 

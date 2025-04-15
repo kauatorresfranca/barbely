@@ -1,8 +1,7 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useBarbeariaAtual } from '../../hooks/useBarbeariaAtual'
 import { useNavigate } from "react-router-dom"
 
-import logobarbearia from '../../assets/images/logo_barbearia_exemplo.webp'
 import logo from '.././../assets/images/logo.png'
 
 import * as S from './styles'
@@ -18,9 +17,30 @@ import PerfilBarbearia from '../sidebars/perfil_barbearia/index'
 import Configuracoes from '../sidebars/configuracoes/index'
 
 const Dash = () => {
-    const barbearia = useBarbeariaAtual();
+    const barbearia = useBarbeariaAtual()
+    const slug = barbearia?.slug
     const [activeTab, setActiveTab] = useState('overview')
+    const [preview, setPreview] = useState<string | null>(null)
     const navigate = useNavigate()
+
+    useEffect(() => {
+            const fetchBarbearia = async () => {
+                try {
+                    const response = await fetch(`http://localhost:8000/api/barbearias/buscar-por-slug/${slug}/`)
+                    const data = await response.json()
+
+                    if (data.imagem) {
+                        const isFullUrl = data.imagem.startsWith("http");
+                        setPreview(isFullUrl ? data.imagem : `http://localhost:8000${data.imagem}`);
+                        }
+
+                } catch (error) {
+                    console.error("Erro ao buscar barbearia:", error)
+                }
+            };
+
+            if (slug) fetchBarbearia();
+        }, [slug]);
 
     // Mapeamento de abas e seus componentes correspondentes
     const tabs = [
@@ -48,7 +68,7 @@ const Dash = () => {
                     <img id='logo_barberly' src={logo} alt="Barberly" />
                 </S.BarberProfile>
                 <S.Profile>
-                        <img src={logobarbearia} alt="logo da barbearia" />
+                        <img src={preview || "https://via.placeholder.com/150x150"} alt="logo da barbearia" />
                         <div>
                             <h3>{barbearia?.nome_barbearia}</h3>
                             <S.Activity >

@@ -12,6 +12,7 @@ const Overview = () => {
         <S.Container>
             <S.Header>
                 <h2>Visão Geral</h2>
+                <p className="subtitle">Veja um resumo das principais informações e atividades recentes da sua barbearia.</p>
             </S.Header>
             <S.Filtro>
                 <S.InputsContainer>

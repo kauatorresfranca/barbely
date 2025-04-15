@@ -3,7 +3,6 @@ import { useNavigate, useParams } from "react-router-dom"
 import { Barbearia } from "../../models/Barbearia"
 
 import logo from '../../assets/images/logo.png'
-import logoBarbearia from '../../assets/images/logo_barbearia_exemplo.webp'
 import user from '../../assets/images/user.png'
 
 import * as S from './styles'
@@ -22,6 +21,7 @@ const PaginaBarbearia = () => {
     const [servicos, setServicos] = useState<Servico[]>([]);
     const [endereco, setEndereco] = useState<string | null>(null);
     const [showDropdown, setShowDropdown] = useState(false);
+    const [preview, setPreview] = useState<string | null>(null);
 
     const toggleDropdown = () => {
         setShowDropdown(prev => !prev);
@@ -84,6 +84,12 @@ const PaginaBarbearia = () => {
                 const response = await fetch(`http://localhost:8000/api/barbearias/buscar-por-slug/${slug}/`)
                 const data = await response.json()
                 setBarbearia(data)
+
+                if (data.imagem) {
+                    const isFullUrl = data.imagem.startsWith("http");
+                    setPreview(isFullUrl ? data.imagem : `http://localhost:8000${data.imagem}`);
+                  }
+
             } catch (error) {
                 console.error("Erro ao buscar barbearia:", error)
             }
@@ -148,7 +154,7 @@ const PaginaBarbearia = () => {
                     <S.BarbeariaProfile>
                         <S.BarbeariaResume>
                             <S.ResumeGroup>
-                                <img src={logoBarbearia} alt="logo barbearia" />
+                                <img src={preview || "https://via.placeholder.com/150x150"} alt="logo barbearia" />
                                 <div>
                                     <h2>{barbearia.nome_barbearia}</h2>
                                     <p>{endereco || "Endereço não disponível"}</p>

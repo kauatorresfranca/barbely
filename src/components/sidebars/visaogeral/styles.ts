@@ -4,6 +4,12 @@ import { colors } from "../../../../styles"
 export const Container = styled.div`
     width: 100%;
     color: #fff;
+
+    .subtitle {
+        margin-top: 6px;
+        color: ${colors.texto};
+        font-size: 14px;
+    }
 `
 
 export const Header = styled.div`
@@ -12,7 +18,6 @@ export const Header = styled.div`
     h2 {
         font-size: 24px;
         font-weight: bold;
-        margin-bottom: 20px;
     }
 `
 
@@ -42,7 +47,7 @@ export const Filtro = styled.div`
             border: 1px solid ${colors.corPrimaria};
             outline: none;
             }
-            
+
         &::-webkit-calendar-picker-indicator {
             filter: invert(1); /* Inverte a cor do ícone */
             cursor: pointer;
@@ -63,11 +68,11 @@ export const Filtro = styled.div`
 
 export const InputsContainer = styled.div`
     display: flex;
-    width: 30%; 
+    width: 30%;
 `
 
 export const InputGroup = styled.div`
-    width: 100%; 
+    width: 100%;
     margin-right: 8px;
     margin-bottom: 25px;
 

@@ -65,6 +65,7 @@ const Servicos = () => {
         <>
             <S.Container>
                 <h2>Serviços</h2>
+                <p className='subtitle'>Cadastre e edite os serviços oferecidos, incluindo valores, duração e descrições.</p>
                 <S.ServiceHeader>
                     <button onClick={openModal}>+ Novo Serviço</button>
                 </S.ServiceHeader>

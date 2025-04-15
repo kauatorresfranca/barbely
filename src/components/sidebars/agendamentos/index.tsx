@@ -47,9 +47,9 @@ const AgendaGrafico = () => {
   }, [dataSelecionada])
 
   return (
-    <>
-      <h2>Meus Agendamentos</h2>
-
+    <S.Container>
+        <h2>Meus Agendamentos</h2>
+        <p className="subtitle">Visualize e acompanhe os horários marcados pelos seus clientes, com todos os detalhes.</p>
       <S.Filtro>
         <S.InputsContainer>
           <S.InputGroup>
@@ -69,7 +69,7 @@ const AgendaGrafico = () => {
       {carregando ? (
         <p>Carregando agendamentos...</p>
       ) : (
-        <S.Container>
+        <S.HorariosContainer>
           <S.Timeline style={{ height: `${alturaTimeline}px` }}>
             <S.Horarios>
               {horas.map((hora) => {
@@ -115,9 +115,9 @@ const AgendaGrafico = () => {
               })}
             </S.AgendamentosArea>
           </S.Timeline>
-        </S.Container>
+        </S.HorariosContainer>
       )}
-    </>
+    </S.Container>
   )
 }
 

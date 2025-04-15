@@ -19,6 +19,7 @@ const PerfilBarbearia = () => {
     return (
         <S.Container>
             <h2>Perfil da Barbearia</h2>
+            <p className="subtitle">Atualize as informações principais da sua barbearia, como nome, logo, descrição e identidade visual.</p>
             <S.PerfilBarbearia>
                 <S.SiderBarPerfil>
                         {tabs.map((tab) => (

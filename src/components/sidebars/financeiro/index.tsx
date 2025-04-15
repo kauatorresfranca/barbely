@@ -8,11 +8,12 @@ const Financeiro = () => {
     const tabs = [
         { id: 'planos', title: 'Planos', icon_left: 'ri-shake-hands-fill', icon_right: 'ri-arrow-right-s-line', component: <Planos /> },
         { id: 'faturamento', title: 'Faturamento', icon_left: 'ri-bank-line', icon_right: 'ri-arrow-right-s-line', component: 'faturamento' },
-    
+
     ]
     return (
         <S.Container>
             <h2>Financeiro</h2>
+            <p className="subtitle">Acompanhe seus ganhos, pagamentos recebidos e tenha controle total sobre a parte financeira da sua barbearia.</p>
             <S.Financeiro>
                 <S.SiderBarPerfil>
                         {tabs.map((tab) => (
@@ -26,7 +27,7 @@ const Financeiro = () => {
                 {tabs.find(tab => tab.id === activeTab)?.component}
             </S.Financeiro>
         </S.Container>
-        
+
     )
 }
 

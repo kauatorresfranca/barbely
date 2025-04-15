@@ -13,6 +13,7 @@ const Configuracoes = () => {
     return (
         <S.Container>
             <h2>Configurações</h2>
+            <p className="subtitle">Personalize preferências da sua conta, notificações, planos e outras opções da barbearia.</p>
             <S.Financeiro>
                 <S.SiderBarPerfil>
                         {tabs.map((tab) => (
@@ -26,7 +27,7 @@ const Configuracoes = () => {
                 {tabs.find(tab => tab.id === activeTab)?.component}
             </S.Financeiro>
         </S.Container>
-        
+
     )
 }
 

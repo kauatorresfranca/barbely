@@ -7,7 +7,17 @@ export const Container = styled.div`
   padding: 20px;
   border-radius: 8px;
   color: #fff;
-`;
+
+  h2 {
+        text-align: center;
+    }
+
+    .subtitle {
+        color: ${colors.texto};
+        font-size: 14px;
+        text-align: center;
+    }
+`
 
 export const Form = styled.form`
   display: flex;
@@ -114,8 +124,8 @@ export const ImagemWrapper = styled.div`
     right: 10px;
     padding: 4px;
     border-radius: 50%;
-    background-color: ${colors.corPrimaria};
-    color: ${colors.cinzaEscuro};
+    background-color: ${colors.cinzaTransparent};
+    color: ${colors.branco};
   }
 `;
 

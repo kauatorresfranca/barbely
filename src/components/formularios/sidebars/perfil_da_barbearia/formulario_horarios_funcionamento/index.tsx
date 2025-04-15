@@ -3,13 +3,13 @@ import * as S from "./styles"
 import { authFetch } from "../../../../../utils/authFetch";
 
 const diasDaSemana = [
-  "Segunda-feira",
-  "Terça-feira",
-  "Quarta-feira",
-  "Quinta-feira",
-  "Sexta-feira",
-  "Sábado",
-  "Domingo",
+    "Segunda-feira",
+    "Terça-feira",
+    "Quarta-feira",
+    "Quinta-feira",
+    "Sexta-feira",
+    "Sábado",
+    "Domingo",
 ];
 
 const HorarioFuncionamentoForm = () => {
@@ -47,13 +47,13 @@ const HorarioFuncionamentoForm = () => {
     const token = sessionStorage.getItem("access_token");
 
     const mapaDias = {
-      "Domingo": 0,
-      "Segunda-feira": 1,
-      "Terça-feira": 2,
-      "Quarta-feira": 3,
-      "Quinta-feira": 4,
-      "Sexta-feira": 5,
-      "Sábado": 6,
+        "Domingo": 0,
+        "Segunda-feira": 1,
+        "Terça-feira": 2,
+        "Quarta-feira": 3,
+        "Quinta-feira": 4,
+        "Sexta-feira": 5,
+        "Sábado": 6,
     };
 
     const dadosParaEnviar = horarios.map((h) => ({
@@ -94,60 +94,61 @@ const HorarioFuncionamentoForm = () => {
   };
 
 
-  return (
-    <S.Container>
-      <h2>Horário de Funcionamento</h2>
-      <S.Form onSubmit={handleSubmit}>
-        <S.Table>
-          <thead>
-            <tr>
-              <th>Dia da Semana</th>
-              <th>Abre às</th>
-              <th>Fecha às</th>
-            </tr>
-          </thead>
-          <tbody>
-            {horarios.map((horario, index) => (
-              <tr key={horario.dia}>
-                <td>
-                  <S.CheckboxWrapper>
-                    <input
-                      type="checkbox"
-                      checked={horario.aberto}
-                      onChange={() => handleCheckboxChange(index)}
+    return (
+        <S.Container>
+        <h2>Horário de Funcionamento</h2>
+        <p className="subtitle">Defina os dias e horários em que sua barbearia estará aberta para atendimento.</p>
+        <S.Form onSubmit={handleSubmit}>
+            <S.Table>
+            <thead>
+                <tr>
+                <th>Dia da Semana</th>
+                <th>Abre às</th>
+                <th>Fecha às</th>
+                </tr>
+            </thead>
+            <tbody>
+                {horarios.map((horario, index) => (
+                <tr key={horario.dia}>
+                    <td>
+                    <S.CheckboxWrapper>
+                        <input
+                        type="checkbox"
+                        checked={horario.aberto}
+                        onChange={() => handleCheckboxChange(index)}
+                        />
+                        <span className="checkmark"></span>
+                        {horario.dia}
+                    </S.CheckboxWrapper>
+                    </td>
+                    <td>
+                    <S.Input
+                        type="time"
+                        value={horario.abre_as}
+                        onChange={(e) =>
+                        handleTimeChange(index, "abre_as", e.target.value)
+                        }
+                        disabled={!horario.aberto}
                     />
-                    <span className="checkmark"></span>
-                    {horario.dia}
-                  </S.CheckboxWrapper>
-                </td>
-                <td>
-                  <S.Input
-                    type="time"
-                    value={horario.abre_as}
-                    onChange={(e) =>
-                      handleTimeChange(index, "abre_as", e.target.value)
-                    }
-                    disabled={!horario.aberto}
-                  />
-                </td>
-                <td>
-                  <S.Input
-                    type="time"
-                    value={horario.fecha_as}
-                    onChange={(e) =>
-                      handleTimeChange(index, "fecha_as", e.target.value)
-                    }
-                    disabled={!horario.aberto}
-                  />
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </S.Table>
-        <S.Button type="submit">Salvar alterações</S.Button>
-      </S.Form>
-    </S.Container>
-  );
+                    </td>
+                    <td>
+                    <S.Input
+                        type="time"
+                        value={horario.fecha_as}
+                        onChange={(e) =>
+                        handleTimeChange(index, "fecha_as", e.target.value)
+                        }
+                        disabled={!horario.aberto}
+                    />
+                    </td>
+                </tr>
+                ))}
+            </tbody>
+            </S.Table>
+            <S.Button type="submit">Salvar alterações</S.Button>
+        </S.Form>
+        </S.Container>
+    );
 };
 
 export default HorarioFuncionamentoForm;

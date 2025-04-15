@@ -1,6 +1,8 @@
-import { useState, useEffect } from "react";
-import * as S from "./styles";
-import { useBarbeariaAtual } from "../../../../../hooks/useBarbeariaAtual";
+import { useState, useEffect } from "react"
+import * as S from "./styles"
+import { useBarbeariaAtual } from "../../../../../hooks/useBarbeariaAtual"
+import { IMaskInput } from 'react-imask'
+
 
 const Localizacao = () => {
   const [form, setForm] = useState({
@@ -111,97 +113,102 @@ const Localizacao = () => {
     }
   };
 
-  return (
+    return (
     <S.Container>
-      <h2>Localização da Barbearia</h2>
-      <S.Form onSubmit={handleSubmit}>
+        <h2>Localização da Barbearia</h2>
+        <p className="subtitle">Adicione ou atualize o endereço da sua barbearia para que seus clientes possam te encontrar com facilidade.</p>
+        <S.Form onSubmit={handleSubmit}>
         <S.inputGroup>
-          <label htmlFor="cep">CEP</label>
-          <S.Input
-            type="text"
-            id="cep"
-            name="cep"
-            placeholder="CEP"
-            value={form.cep}
-            onChange={handleChange}
-            required
-          />
+            <label htmlFor="cep">CEP</label>
+            <S.Input
+                as={IMaskInput}
+                mask="00000-000"
+                type="text"
+                id="cep"
+                name="cep"
+                placeholder="CEP"
+                value={form.cep}
+                required
+                onAccept={(value: string | undefined) =>
+                setForm((prev) => ({ ...prev, cep: value || ''}))
+                }
+            />
         </S.inputGroup>
         <S.inputGroup>
-          <label htmlFor="estado">Estado</label>
-          <S.Input
-            type="text"
-            id="estado"
-            name="estado"
-            placeholder="Estado"
-            value={form.estado}
-            onChange={handleChange}
-            required
-          />
+            <label htmlFor="estado">Estado</label>
+            <S.Input
+                type="text"
+                id="estado"
+                name="estado"
+                placeholder="Estado"
+                value={form.estado}
+                onChange={handleChange}
+                required
+            />
         </S.inputGroup>
         <S.inputGroup>
-          <label htmlFor="cidade">Cidade</label>
-          <S.Input
-            type="text"
-            id="cidade"
-            name="cidade"
-            placeholder="Cidade"
-            value={form.cidade}
-            onChange={handleChange}
-            required
-          />
+            <label htmlFor="cidade">Cidade</label>
+            <S.Input
+                type="text"
+                id="cidade"
+                name="cidade"
+                placeholder="Cidade"
+                value={form.cidade}
+                onChange={handleChange}
+                required
+            />
         </S.inputGroup>
         <S.inputGroup>
-          <label htmlFor="endereco">Endereço</label>
-          <S.Input
-            type="text"
-            id="endereco"
-            name="endereco"
-            placeholder="Endereço"
-            value={form.endereco}
-            onChange={handleChange}
-            required
-          />
+            <label htmlFor="endereco">Endereço</label>
+            <S.Input
+                type="text"
+                id="endereco"
+                name="endereco"
+                placeholder="Endereço"
+                value={form.endereco}
+                onChange={handleChange}
+                required
+            />
         </S.inputGroup>
         <S.inputGroup>
-          <label htmlFor="numero">Número</label>
-          <S.Input
-            type="text"
-            id="numero"
-            name="numero"
-            placeholder="Número"
-            value={form.numero}
-            onChange={handleChange}
-            required
-          />
+            <label htmlFor="numero">Número</label>
+            <S.Input
+                type="text"
+                id="numero"
+                name="numero"
+                placeholder="Número"
+                value={form.numero}
+                onChange={handleChange}
+                required
+            />
         </S.inputGroup>
         <S.inputGroup>
-          <label htmlFor="complemento">Complemento</label>
-          <S.Input
-            type="text"
-            id="complemento"
-            name="complemento"
-            placeholder="Complemento"
-            value={form.complemento}
-            onChange={handleChange}
-          />
+            <label htmlFor="complemento">Complemento</label>
+            <S.Input
+                type="text"
+                id="complemento"
+                name="complemento"
+                placeholder="Complemento"
+                value={form.complemento}
+                onChange={handleChange}
+            />
         </S.inputGroup>
         <S.inputGroup>
-          <label htmlFor="bairro">Bairro</label>
-          <S.Input
-            type="text"
-            id="bairro"
-            name="bairro"
-            placeholder="Bairro"
-            value={form.bairro}
-            onChange={handleChange}
-            required
-          />
+            <label htmlFor="bairro">Bairro</label>
+            <S.Input
+                type="text"
+                id="bairro"
+                name="bairro"
+                placeholder="Bairro"
+                value={form.bairro}
+                onChange={handleChange}
+                required
+            />
         </S.inputGroup>
         <S.Button type="submit">Salvar alterações</S.Button>
-      </S.Form>
+    </S.Form>
     </S.Container>
-  );
+    );
 };
 
 export default Localizacao;

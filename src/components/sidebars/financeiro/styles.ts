@@ -3,8 +3,11 @@ import { colors } from '../../../../styles'
 
 export const Container = styled.div`
 
-    h2 {
-        padding-bottom: 20px;
+    .subtitle {
+        margin-top: 6px;
+        margin-bottom: 16px;
+        color: ${colors.texto};
+        font-size: 14px;
     }
 `
 

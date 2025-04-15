@@ -1,6 +1,16 @@
 import styled from 'styled-components'
 import { colors } from '../../../../styles'
 
+export const Container = styled.div`
+
+    .subtitle {
+        margin-top: 6px;
+        margin-bottom: 16px;
+        color: ${colors.texto};
+        font-size: 14px;
+    }
+`
+
 export const Filtro = styled.div`
     display: flex;
     align-items: center;
@@ -66,7 +76,7 @@ export const InputGroup = styled.div`
     }
 `
 
-export const Container = styled.div`
+export const HorariosContainer = styled.div`
     padding: 20px;
 `
 
