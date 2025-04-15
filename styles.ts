@@ -11,9 +11,7 @@ export const colors = {
     cinzaClaro: '#2e333a',
     cinzaTransparent: 'rgba(134, 126, 126, 0.53)',
     branco: '#ffffff',
-    titulo: '',
     texto: '#aeb0b2',
-    destaque: '',
 }
 
 export const GlobalStyle = createGlobalStyle`

@@ -4,7 +4,7 @@ import LoginBarbearia from './pages/formularios/loginBarbearia'
 import CadastroBarbearia from './pages/formularios/cadastroBarbearia'
 import ProtectedRoute from './pages/protectedRoute'
 import Dashboard from './pages/dashboard'
-import PaginaBarbearia from './components/pagina_barbearia'
+import PaginaBarbearia from './components/cliente/pagina_barbearia'
 import LoginCliente from './pages/formularios/loginCliente'
 import CadastroCliente from './pages/formularios/cadastroCliente'
 
