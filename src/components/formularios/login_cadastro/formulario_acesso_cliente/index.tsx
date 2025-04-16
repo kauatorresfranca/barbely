@@ -28,8 +28,8 @@ const FormularioLoginCliente = () => {
             const data = await response.json();
 
             if (response.ok) {
-                sessionStorage.setItem("access_token", data.access);
-                sessionStorage.setItem("refresh_token", data.refresh);
+                sessionStorage.setItem("access_token_cliente", data.access);
+                sessionStorage.setItem("refresh_token_cliente", data.refresh);
 
                 const clienteResponse = await fetch(`http://localhost:8000/api/clientes/${data.cliente_id}/`, {
                     method: "GET",

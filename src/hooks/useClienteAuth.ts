@@ -6,7 +6,7 @@ export const useCliente = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const token = sessionStorage.getItem("access_token");
+        const token = sessionStorage.getItem("access_token_cliente");
         if (!token) {
             setLoading(false);
             return;
@@ -27,8 +27,8 @@ export const useCliente = () => {
             })
             .catch((err) => {
                 console.error(err);
-                sessionStorage.removeItem("access_token");
-                sessionStorage.removeItem("refresh_token");
+                sessionStorage.removeItem("access_token_cliente");
+                sessionStorage.removeItem("refresh_token_cliente");
             })
             .finally(() => {
                 setLoading(false);

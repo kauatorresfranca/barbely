@@ -17,7 +17,7 @@ const ConfirmacaoStep = ({ setActiveTab, agendamentoData }: Props) => {
     : '';
 
   const handleNext = async () => {
-    const token = sessionStorage.getItem('access_token');
+    const token = sessionStorage.getItem('access_token_cliente');
 
     if (!token) {
       alert('Você precisa estar logado para agendar.');
