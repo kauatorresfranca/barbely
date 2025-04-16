@@ -122,9 +122,11 @@ const PaginaBarbearia = () => {
     }
 
     const handleLogout = () => {
-        sessionStorage.removeItem("access_token")
-        sessionStorage.removeItem("refresh_token")
-    }
+        sessionStorage.removeItem("access_token");
+        sessionStorage.removeItem("refresh_token");
+        window.location.reload();
+    };
+
 
     return (
         <div>

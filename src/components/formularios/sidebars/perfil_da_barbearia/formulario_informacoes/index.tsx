@@ -89,6 +89,10 @@ const BarbeariaPerfilForm = () => {
         body: form,
       });
 
+        if (response.ok) {
+            alert('dados enviados com sucesso!')
+        }
+
       if (!response.ok) {
         const errorData = await response.json();
         console.error("Erro ao salvar alterações:", errorData);

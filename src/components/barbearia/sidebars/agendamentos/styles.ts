@@ -28,13 +28,17 @@ export const Filtro = styled.div`
     transition: transform 0.3s ease;
 
     &:hover {
-      transform: translateY(-2px);
+      transform: scale(1.03);
     }
   }
 
     .avançarDia, .voltarDia {
         height: 40px;
         width: 40px;
+
+        &:hover {
+            transform: scale(1.07);
+        }
     }
 `;
 
@@ -84,7 +88,7 @@ export const FuncionarioTitle = styled.div`
   font-weight: 600;
   color: ${colors.branco};
   padding: 14px;
-  background: linear-gradient(45deg, ${colors.corPrimaria}, ${colors.corPrimaria}AA);
+  background: linear-gradient(-45deg, ${colors.cinzaEscuro}, ${colors.cinzaEscuro}AA);
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
 `;
@@ -97,9 +101,9 @@ export const TimelinesContainer = styled.div`
 `;
 
 export const Timelines = styled.div`
-  display: flex;
+    display: flex;
     gap: 10px;
-  flex: 1;
+    flex: 1;
 `;
 
 export const Timeline = styled.div`
@@ -143,27 +147,28 @@ export const AgendamentosArea = styled.div`
 `;
 
 export const AgendamentoBlock = styled.div<{ hora: string; cancelado: boolean }>`
-  position: absolute;
-  left: 10px;
-  right: 10px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: ${({ cancelado }) =>
-    cancelado
-      ? `linear-gradient(45deg, ${colors.cinzaTransparent}, ${colors.cinzaEscuro})`
-      : `linear-gradient(45deg, ${colors.corPrimaria}, ${colors.corPrimaria}CC)`};
-  border-radius: 10px;
-  padding: 10px;
-  font-size: 14px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  transition: all 0.3s ease;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 48px;
+    background: ${({ cancelado }) =>
+        cancelado
+        ? `linear-gradient(45deg, ${colors.cinzaTransparent}, ${colors.cinzaEscuro})`
+        : `linear-gradient(45deg, ${colors.corPrimaria}, ${colors.corPrimaria}CC)`};
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 14px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
 
-  &:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-  }
+    &:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    }
 `;
 
 export const AgendamentoInfo = styled.div`
@@ -209,21 +214,21 @@ export const AgendamentoInfo = styled.div`
 `;
 
 export const Button = styled.div`
-  padding: 8px 14px;
-  background: ${colors.cinzaEscuro};
-  color: ${colors.branco};
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 13px;
-  font-weight: 500;
-  transition: all 0.3s ease;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 8px 14px;
+    background: ${colors.cinzaEscuro};
+    color: ${colors.branco};
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.2);
 
-  &:hover {
-    background: ${colors.corPrimaria};
-    border-color: ${colors.corPrimaria};
-    transform: translateY(-1px);
-  }
+    &:hover {
+        background-color: ${colors.cinzaClaro};
+        border-color: ${colors.corPrimaria};
+        transform: translateY(-1px);
+    }
 `;
 
 export const Overlay = styled.div`

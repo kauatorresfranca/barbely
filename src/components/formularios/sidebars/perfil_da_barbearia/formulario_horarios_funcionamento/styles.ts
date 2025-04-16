@@ -93,7 +93,7 @@ export const Input = styled.input`
     padding: 8px;
     color: #fff;
     border-radius: 4px;
-    width: 100px;
+    width: 120px;
     text-align: center;
     border: none;
     color-scheme: dark;

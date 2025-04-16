@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { formatInTimeZone, toZonedTime} from 'date-fns-tz';
 import {addDays, subDays} from 'date-fns'
+
+import { Agendamento } from '../../../../models/Agendamento';
 import * as S from './styles'
 
 const fusoHorario = 'America/Sao_Paulo';
@@ -23,20 +25,6 @@ const gerarHoras = (intervalo: number) => {
 type Funcionario = {
   id: number;
   nome: string;
-};
-
-type Agendamento = {
-  id: number;
-  cliente: number;
-  cliente_nome: string;
-  funcionario: number;
-  servico: number;
-  servico_nome: string;
-  servico_duracao: number;
-  data: string;
-  hora_inicio: string;
-  cancelado: boolean;
-  criado_em: string;
 };
 
 const AgendaGrafico = () => {
@@ -197,13 +185,12 @@ const AgendaGrafico = () => {
                         const [h, m] = agendamento.hora_inicio.split(':').map(Number);
                         const minutosDesde8h = (h - 8) * 60 + m;
                         const top = minutosDesde8h * alturaPorMinuto;
-                        const altura = agendamento.servico_duracao * alturaPorMinuto;
 
                         return (
                           <S.AgendamentoBlock
                             key={agendamento.id}
                             hora={agendamento.hora_inicio}
-                            style={{ top: `${top}px`, height: `${altura}px` }}
+                            style={{ top: `${top}px` }}
                             cancelado={agendamento.cancelado}
                           >
                             <S.AgendamentoInfo>
