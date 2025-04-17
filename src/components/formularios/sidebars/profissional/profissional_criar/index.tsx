@@ -21,7 +21,7 @@ const CriarProfissionalModal = ({ closeModal, onSuccess }: Props) => {
         setIsLoading(true)
 
         try {
-            const token = sessionStorage.getItem('access_token')
+            const token = sessionStorage.getItem('access_token_barbearia')
             console.log("Token enviado:", token)
             const response = await fetch('http://localhost:8000/api/funcionarios/', {
                 method: 'POST',

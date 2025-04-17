@@ -17,7 +17,7 @@ const Servicos = () => {
 
     const fetchServicos = async () => {
         try {
-            const token = sessionStorage.getItem('access_token')
+            const token = sessionStorage.getItem('access_token_barbearia')
             const response = await fetch('http://localhost:8000/api/servicos/', {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -39,7 +39,7 @@ const Servicos = () => {
         if (!confirm) return
 
         try {
-            const token = sessionStorage.getItem('access_token')
+            const token = sessionStorage.getItem('access_token_barbearia')
             const response = await fetch(`http://localhost:8000/api/servicos/${id}/`, {
                 method: 'DELETE',
                 headers: {

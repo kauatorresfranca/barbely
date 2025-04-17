@@ -17,7 +17,7 @@ const Profissionais = () => {
 
     const fetchFuncionarios = async () => {
         try {
-            const token = sessionStorage.getItem('access_token')
+            const token = sessionStorage.getItem('access_token_barbearia')
             const response = await fetch('http://localhost:8000/api/funcionarios/', {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -39,7 +39,7 @@ const Profissionais = () => {
         if (!confirm) return
 
         try {
-            const token = sessionStorage.getItem('access_token')
+            const token = sessionStorage.getItem('access_token_barbearia')
             const response = await fetch(`http://localhost:8000/api/funcionarios/${id}/`, {
                 method: 'DELETE',
                 headers: {

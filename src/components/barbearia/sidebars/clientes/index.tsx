@@ -11,7 +11,7 @@ const Clientes = () => {
     const [modalIsOpen, setModalIsOpen] = useState<boolean>(false)
 
     useEffect(() => {
-        const token = sessionStorage.getItem("access_token");
+        const token = sessionStorage.getItem("access_token_barbearia");
         const barbeariaData = sessionStorage.getItem("barbearia"); // supondo que você salvou com esse nome
         const barbeariaId = barbeariaData ? JSON.parse(barbeariaData).id : null;
 

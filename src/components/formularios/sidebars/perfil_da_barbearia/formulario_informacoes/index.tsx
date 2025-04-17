@@ -66,7 +66,7 @@ const BarbeariaPerfilForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const token = sessionStorage.getItem("access_token");
+    const token = sessionStorage.getItem("access_token_barbearia");
     const form = new FormData();
 
     form.append("nome_proprietario", formData.nome_proprietario);

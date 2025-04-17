@@ -82,7 +82,7 @@ const Localizacao = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const token = sessionStorage.getItem("access_token");
+    const token = sessionStorage.getItem("access_token_barbearia");
 
     if (!token) {
       alert("Você precisa estar logado para salvar o endereço.");

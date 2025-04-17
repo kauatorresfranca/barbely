@@ -63,7 +63,7 @@ const AgendaGrafico = () => {
 
   const buscarFuncionarios = async () => {
     try {
-      const token = sessionStorage.getItem('access_token');
+      const token = sessionStorage.getItem('access_token_barbearia');
       const res = await fetch('http://localhost:8000/api/funcionarios/', {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -82,7 +82,7 @@ const AgendaGrafico = () => {
   const buscarAgendamentos = async (data: string) => {
     try {
       setCarregando(true);
-      const token = sessionStorage.getItem('access_token');
+      const token = sessionStorage.getItem('access_token_barbearia');
       const res = await fetch(
         `http://localhost:8000/api/barbearia/agendamentos/?data=${data}`,
         {

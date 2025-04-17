@@ -1,7 +1,7 @@
 // utils/authFetch.ts
 export async function authFetch(url: string, options: RequestInit = {}) {
-    const accessToken = sessionStorage.getItem("access_token");
-    const refreshToken = sessionStorage.getItem("refresh_token");
+    const accessToken = sessionStorage.getItem("access_token_barbearia");
+    const refreshToken = sessionStorage.getItem("access_token_barbearia");
 
     // Adiciona o token atual no header
     const authHeaders = {

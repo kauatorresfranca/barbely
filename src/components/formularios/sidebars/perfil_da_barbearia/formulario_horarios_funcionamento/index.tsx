@@ -44,7 +44,7 @@ const HorarioFuncionamentoForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const token = sessionStorage.getItem("access_token");
+    const token = sessionStorage.getItem("access_token_barbearia");
 
     const mapaDias = {
         "Domingo": 0,

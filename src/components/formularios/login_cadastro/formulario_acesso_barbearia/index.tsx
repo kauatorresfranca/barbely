@@ -27,8 +27,8 @@ const FormularioLogin = () => {
             const data = await response.json();
 
             if (response.ok && data.barbearia_id) {
-                sessionStorage.setItem("access_token", data.access_token);
-                sessionStorage.setItem("refresh_token", data.refresh_token);
+                sessionStorage.setItem("access_token_barbearia", data.access_token);
+                sessionStorage.setItem("refresh_token_barbearia", data.refresh_token);
                 sessionStorage.setItem("barbearia_token", data.barbearia_id);  // Armazena o ID da barbearia
 
                 // Buscar os detalhes completos da barbearia

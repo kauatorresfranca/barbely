@@ -20,7 +20,7 @@ const CriarServicoModal = ({ closeModal, onSuccess }: Props) => {
         const preco = parseFloat(formData.get('preco_servico') as string)
         const duracao = parseInt(formData.get('duracao_servico') as string)
 
-        const token = sessionStorage.getItem('access_token')
+        const token = sessionStorage.getItem('access_token_barbearia')
 
         try {
             const response = await fetch('http://localhost:8000/api/servicos/', {
