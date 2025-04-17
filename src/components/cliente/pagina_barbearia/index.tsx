@@ -33,6 +33,19 @@ const PaginaBarbearia = () => {
 
     const diasSemana = ["Domingo", "Segunda Feira", "Terça Feira", "Quarta Feira", "Quinta Feira", "Sexta Feira", "Sábado"];
 
+    const isBarbeariaAberta = () => {
+        const agora = new Date();
+        const diaAtual = agora.getDay(); // 0 = Domingo, 1 = Segunda, ..., 6 = Sábado
+        const horaAtual = agora.getHours().toString().padStart(2, '0') + ':' + agora.getMinutes().toString().padStart(2, '0');
+
+        const horarioHoje = horarios.find(h => h.dia_semana === diaAtual);
+        if (!horarioHoje || !horarioHoje.horario_abertura || !horarioHoje.horario_fechamento) {
+            return false; // Fechado se não houver horário ou estiver marcado como fechado
+        }
+
+        return horaAtual >= horarioHoje.horario_abertura.slice(0, 5) && horaAtual <= horarioHoje.horario_fechamento.slice(0, 5);
+    };
+
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -159,7 +172,7 @@ const PaginaBarbearia = () => {
                                 <div>
                                     <h2>{barbearia.nome_barbearia}</h2>
                                     <p>{endereco || "Endereço não disponível"}</p>
-                                    <h5><i className="ri-store-2-line"></i> Aberto agora - <i className="ri-phone-line"></i> {barbearia.telefone}</h5>
+                                    <h5><i className="ri-store-2-line"></i> {isBarbeariaAberta() ? <span className="aberto">Aberto</span> : <span className="fechado">Fechado</span>} - <i className="ri-phone-line"></i> {barbearia.telefone}</h5>
                                 </div>
                             </S.ResumeGroup>
                             <S.AgendarHorario onClick={() => ToAgendamento()}>Agendar Horário</S.AgendarHorario>

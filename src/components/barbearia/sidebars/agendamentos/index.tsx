@@ -209,14 +209,13 @@ const AgendaGrafico = () => {
                             status={agendamento.status}
                           >
                             <S.AgendamentoInfo>
-                              <p className="hora">{agendamento.hora_inicio.slice(0, 5)}</p>
-                              <div>
+                            <p className="status">{formatarStatus(agendamento.status)}</p>
+                            <div>
                                 <p className="cliente">{agendamento.cliente_nome}</p>
                                 <p className="servico">
                                   {agendamento.servico_nome} - {agendamento.servico_duracao} min
                                 </p>
-                              </div>
-                              <p className="status">{formatarStatus(agendamento.status)}</p>
+                            </div>
                             </S.AgendamentoInfo>
                             <S.Button onClick={() => openModal(agendamento)}>Detalhes</S.Button>
                           </S.AgendamentoBlock>

@@ -7,11 +7,13 @@ export const breakpoints = {
 
 export const colors = {
     corPrimaria: '#00c1fe',
+    texto: '#aeb0b2',
     cinzaEscuro: '#181b20',
     cinzaClaro: '#2e333a',
     cinzaTransparent: 'rgba(134, 126, 126, 0.53)',
     branco: '#ffffff',
-    texto: '#aeb0b2',
+    verde: 'green',
+    vermelho: 'red'
 }
 
 export const GlobalStyle = createGlobalStyle`

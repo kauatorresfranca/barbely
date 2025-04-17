@@ -189,17 +189,6 @@ export const AgendamentoInfo = styled.div`
   display: flex;
   align-items: center;
 
-  .hora {
-    margin-right: 12px;
-    font-size: 13px;
-    color: ${colors.branco};
-    font-weight: 600;
-    background: rgba(0, 0, 0, 0.2);
-    padding: 2px 8px;
-    border-radius: 10px;
-    display: inline-block;
-  }
-
   .cliente {
     color: ${colors.branco};
     font-weight: bold;
@@ -218,12 +207,14 @@ export const AgendamentoInfo = styled.div`
   }
 
   .status {
+    margin-right: 12px;
+    font-size: 11px;
     color: ${colors.branco};
-    font-size: 12px;
-    font-weight: bold;
-    background: rgba(0, 0, 0, 0.3);
+    font-weight: 600;
+    background: rgba(0, 0, 0, 0.2);
     padding: 2px 8px;
     border-radius: 10px;
+    display: inline-block;
   }
 `;
 

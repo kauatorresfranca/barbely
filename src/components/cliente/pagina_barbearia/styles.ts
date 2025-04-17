@@ -6,92 +6,92 @@ export const Container = styled.div`
 `;
 
 export const Header = styled.header`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 120px;
-  height: 70px;
-  width: 100%;
-  background-color: ${colors.cinzaClaro};
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 120px;
+    height: 70px;
+    width: 100%;
+    background-color: ${colors.cinzaClaro};
 
-  img {
-    left: 16px;
-    width: 160px;
-  }
+    img {
+        left: 16px;
+        width: 160px;
+    }
 
-  @media (max-width: ${breakpoints.desktop}) {
-    padding: 20px;
-  }
+    @media (max-width: ${breakpoints.desktop}) {
+        padding: 20px;
+    }
 `;
 
 export const ButtonGroup = styled.div`
 `;
 
 export const UserResume = styled.div`
-  display: flex;
-  align-items: center;
-  right: 16px;
-  cursor: pointer;
+    display: flex;
+    align-items: center;
+    right: 16px;
+    cursor: pointer;
 
-  span {
-    font-weight: 300;
-  }
+    span {
+        font-weight: 300;
+    }
 
-  p {
-    font-weight: 700;
-  }
+    p {
+        font-weight: 700;
+    }
 
-  img {
-    width: 40px;
-  }
+    img {
+        width: 40px;
+    }
 `;
 
 export const DropdownMenu = styled.ul`
-  position: absolute;
-  display: flex;
-  flex-direction: column;
-  top: 60px;
-  right: 80px;
-  display: none;
-  background-color: ${colors.cinzaClaro};
-  border: 1px solid ${colors.cinzaTransparent};
-  border-radius: 8px;
-  width: 200px;
-  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
-  z-index: 10;
-
-  li {
-    list-style: none;
-    padding: 12px 20px;
-    cursor: pointer;
-    transition: background 0.3s;
-    color: ${colors.branco};
-    border-radius: 8px;
-
-    &:hover {
-      background-color: ${colors.cinzaEscuro};
-    }
-  }
-
-  &.active {
+    position: absolute;
     display: flex;
-  }
+    flex-direction: column;
+    top: 60px;
+    right: 80px;
+    display: none;
+    background-color: ${colors.cinzaClaro};
+    border: 1px solid ${colors.cinzaTransparent};
+    border-radius: 8px;
+    width: 200px;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+
+    li {
+        list-style: none;
+        padding: 12px 20px;
+        cursor: pointer;
+        transition: background 0.3s;
+        color: ${colors.branco};
+        border-radius: 8px;
+
+        &:hover {
+        background-color: ${colors.cinzaEscuro};
+        }
+    }
+
+    &.active {
+        display: flex;
+    }
 `;
 
 export const Button = styled(Link)`
-  background: ${colors.corPrimaria};
-  color: ${colors.cinzaEscuro};
-  border: 2px solid ${colors.corPrimaria};
-  margin-right: 8px;
-  padding: 0.5rem 1rem;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: 0.3s;
-
-  &:hover {
     background: ${colors.corPrimaria};
-    color: ${colors.branco};
-  }
+    color: ${colors.cinzaEscuro};
+    border: 2px solid ${colors.corPrimaria};
+    margin-right: 8px;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+
+    &:hover {
+        background: ${colors.corPrimaria};
+        color: ${colors.branco};
+    }
 `;
 
 export const BarbeariaProfile = styled.div`
@@ -157,9 +157,19 @@ export const ResumeGroup = styled.div`
     margin-top: 6px;
 
     i {
-      font-size: 16px;
+        font-size: 16px;
     }
-  }
+
+    .aberto {
+        color: ${colors.verde};
+        font-weight: 400;
+    }
+
+    .fechado{
+        color: ${colors.vermelho};
+        font-weight: 400;
+    }
+}
 
   p {
     margin-top: 8px;
