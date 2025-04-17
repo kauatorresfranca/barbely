@@ -27,10 +27,10 @@ const ConfirmacaoStep = ({ setActiveTab, agendamentoData }: Props) => {
     try {
       // Normaliza a data para America/Sao_Paulo
       const dataNormalizada = toZonedTime(agendamentoData.data, fusoHorario);
-      const data = format(dataNormalizada, 'yyyy-MM-dd'); // ex: "2025-04-15"
-      const horario = agendamentoData.horario; // ex: "10:00"
+      const data = format(dataNormalizada, 'yyyy-MM-dd');
+      const horario = agendamentoData.horario;
 
-      // Cria um Date completo: "2025-04-15T10:00:00"
+      // Cria um Date completo
       const dataHoraCompleta = new Date(`${data}T${horario}:00`);
 
       if (isNaN(dataHoraCompleta.getTime())) {
@@ -41,11 +41,13 @@ const ConfirmacaoStep = ({ setActiveTab, agendamentoData }: Props) => {
       const horaFormatada = format(dataHoraCompleta, 'HH:mm');
 
       const payload = {
-        data: data, // Usa a data normalizada
+        data: data,
         funcionario: agendamentoData.funcionario?.id,
         hora_inicio: horaFormatada,
         servico: agendamentoData.servico.id,
       };
+
+      console.log('Enviando payload:', payload); // Depuração
 
       const res = await fetch('http://localhost:8000/api/agendamentos/criar/', {
         method: 'POST',
@@ -59,10 +61,12 @@ const ConfirmacaoStep = ({ setActiveTab, agendamentoData }: Props) => {
       if (!res.ok) {
         const errorData = await res.json();
         console.error('Erro ao agendar:', errorData);
-        alert('Erro ao tentar confirmar o agendamento.');
+        alert(`Erro: ${errorData.detail || errorData.erro || 'Falha ao confirmar agendamento.'}`);
         return;
       }
 
+      const result = await res.json();
+      console.log('Agendamento criado:', result); // Depuração
       alert('Agendamento confirmado com sucesso!');
       setActiveTab('sucesso');
     } catch (error) {

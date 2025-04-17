@@ -3,5 +3,6 @@ export interface Cliente {
     user: {
         nome: string
         telefone: string
+        email: string
     }
 }

@@ -8,6 +8,6 @@ export type Agendamento = {
     servico_duracao: number;
     data: string;
     hora_inicio: string;
-    cancelado: boolean;
+    status: 'CONFIRMADO' | 'CANCELADO' | 'EXPIRADO' | 'CONCLUIDO'; // Atualizado
     criado_em: string;
-    };
+};

@@ -16,11 +16,12 @@ type Props = {
 
 const HorariosStep = ({ setActiveTab, servico, funcionario }: Props) => {
   const fusoHorario = 'America/Sao_Paulo';
-  const hoje = toZonedTime(new Date(), fusoHorario); // Normaliza a data de hoje para America/Sao_Paulo
+  const hoje = toZonedTime(new Date(), fusoHorario);
   const [horariosDisponiveis, setHorariosDisponiveis] = useState<string[]>([]);
   const [dataSelecionada, setDataSelecionada] = useState<Date | undefined>(hoje);
   const [turnoSelecionado, setTurnoSelecionado] = useState<'manha' | 'tarde' | 'noite'>('manha');
   const [horarioSelecionado, setHorarioSelecionado] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const horariosManha = horariosDisponiveis.filter(h => parseInt(h.split(':')[0]) < 12);
   const horariosTarde = horariosDisponiveis.filter(h => {
@@ -40,28 +41,35 @@ const HorariosStep = ({ setActiveTab, servico, funcionario }: Props) => {
       if (!dataSelecionada) return;
 
       try {
-        // Normaliza a dataSelecionada para America/Sao_Paulo
+        const token = sessionStorage.getItem("access_token_cliente");
         const dataNormalizada = toZonedTime(dataSelecionada, fusoHorario);
         const dataFormatada = formatInTimeZone(dataNormalizada, fusoHorario, 'yyyy-MM-dd');
 
         const url = new URL('http://localhost:8000/api/agendamentos/horarios-disponiveis/');
         url.searchParams.append('servico', String(servico.id));
         url.searchParams.append('data', dataFormatada);
-
         if (funcionario?.id != null) {
           url.searchParams.append('funcionario', String(funcionario.id));
         }
 
         const response = await fetch(url.toString(), {
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
         });
 
-        if (!response.ok) throw new Error(`Erro ${response.status} - ${response.statusText}`);
+        if (!response.ok) {
+          throw new Error(`Erro ${response.status} - ${response.statusText}`);
+        }
 
         const dataJson = await response.json();
+        console.log("Resposta da API /api/agendamentos/horarios-disponiveis/:", dataJson); // Depuração
         setHorariosDisponiveis(dataJson.horarios_disponiveis || []);
+        setError(null);
       } catch (error) {
         console.error('Erro ao buscar horários disponíveis:', error);
+        setError(error instanceof Error ? error.message : 'Erro ao buscar horários.');
       }
     };
 
@@ -74,7 +82,6 @@ const HorariosStep = ({ setActiveTab, servico, funcionario }: Props) => {
       return;
     }
 
-    // Normaliza a dataSelecionada para America/Sao_Paulo
     const dataNormalizada = toZonedTime(dataSelecionada, fusoHorario);
     const dataFormatada = formatInTimeZone(dataNormalizada, fusoHorario, 'yyyy-MM-dd');
 
@@ -95,7 +102,7 @@ const HorariosStep = ({ setActiveTab, servico, funcionario }: Props) => {
             mode="single"
             selected={dataSelecionada}
             onSelect={setDataSelecionada}
-            disabled={[{ before: hoje }]} // Usa a data normalizada
+            disabled={[{ before: hoje }]}
             locale={ptBR}
           />
         </S.DataPickWrapper>
@@ -103,6 +110,7 @@ const HorariosStep = ({ setActiveTab, servico, funcionario }: Props) => {
 
       <S.Horario>
         <h3>Escolha o melhor horário</h3>
+        {error && <p style={{ color: 'red' }}>{error}</p>}
         {horariosDisponiveis.length > 0 ? (
           <>
             <S.TurnosList>

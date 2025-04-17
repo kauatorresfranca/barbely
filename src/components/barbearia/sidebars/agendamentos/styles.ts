@@ -32,14 +32,14 @@ export const Filtro = styled.div`
     }
   }
 
-    .avançarDia, .voltarDia {
-        height: 40px;
-        width: 40px;
+  .avançarDia, .voltarDia {
+    height: 40px;
+    width: 40px;
 
-        &:hover {
-            transform: scale(1.07);
-        }
+    &:hover {
+      transform: scale(1.07);
     }
+  }
 `;
 
 export const DateNavigator = styled.div`
@@ -51,34 +51,34 @@ export const DateNavigator = styled.div`
 `;
 
 export const ArrowButton = styled.button`
-    background: transparent;
-    border: none;
-    color: ${colors.branco};
-    font-size: 18px;
-    cursor: pointer;
-    transition: background-color 0.3s;
+  background: transparent;
+  border: none;
+  color: ${colors.branco};
+  font-size: 18px;
+  cursor: pointer;
+  transition: background-color 0.3s;
 `;
 
 export const DateDisplay = styled.div`
-    padding: 8px 16px;
-    color: ${colors.branco};
-    font-weight: bold;
-    font-size: 16px;
-    min-width: 120px;
-    text-align: center;
+  padding: 8px 16px;
+  color: ${colors.branco};
+  font-weight: bold;
+  font-size: 16px;
+  min-width: 120px;
+  text-align: center;
 `;
 
 export const HorariosContainer = styled.div`
-    padding: 20px;
-    background-color: ${colors.cinzaClaro};
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+  background-color: ${colors.cinzaClaro};
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 `;
 
 export const FuncionariosHeader = styled.div`
-    display: flex;
-    gap: 10px;
-    margin-left: 70px; /* Alinhar com a tabela, compensando o espaço dos horários */
+  display: flex;
+  gap: 10px;
+  margin-left: 70px; /* Alinhar com a tabela, compensando o espaço dos horários */
 `;
 
 export const FuncionarioTitle = styled.div`
@@ -101,9 +101,9 @@ export const TimelinesContainer = styled.div`
 `;
 
 export const Timelines = styled.div`
-    display: flex;
-    gap: 10px;
-    flex: 1;
+  display: flex;
+  gap: 10px;
+  flex: 1;
 `;
 
 export const Timeline = styled.div`
@@ -146,89 +146,103 @@ export const AgendamentosArea = styled.div`
   flex: 1;
 `;
 
-export const AgendamentoBlock = styled.div<{ hora: string; cancelado: boolean }>`
-    position: absolute;
-    left: 10px;
-    right: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    height: 48px;
-    background: ${({ cancelado }) =>
-        cancelado
-        ? `linear-gradient(45deg, ${colors.cinzaTransparent}, ${colors.cinzaEscuro})`
-        : `linear-gradient(45deg, ${colors.corPrimaria}, ${colors.corPrimaria}CC)`};
-    border-radius: 10px;
-    padding: 10px;
-    font-size: 14px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    transition: all 0.3s ease;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+export const AgendamentoBlock = styled.div<{
+  hora: string;
+  status: 'CONFIRMADO' | 'CANCELADO' | 'EXPIRADO' | 'CONCLUIDO';
+}>`
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 48px;
+  background: ${({ status }) =>
+    status === 'CANCELADO'
+      ? `linear-gradient(45deg, ${colors.cinzaTransparent}, ${colors.cinzaEscuro})`
+      : status === 'EXPIRADO'
+      ? `linear-gradient(45deg, #d3d3d3, #e0e0e0)`
+      : status === 'CONCLUIDO'
+      ? `linear-gradient(45deg, #d4edda, #c3e6cb)`
+      : `linear-gradient(45deg, ${colors.corPrimaria}, ${colors.corPrimaria}CC)`};
+  border-radius: 10px;
+  padding: 10px;
+  font-size: 14px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+  border: 1px solid ${({ status }) =>
+    status === 'CANCELADO'
+      ? '#ff6666'
+      : status === 'EXPIRADO'
+      ? '#cccccc'
+      : status === 'CONCLUIDO'
+      ? '#28a745'
+      : '#3399ff'};
 
-    &:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-    }
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  }
 `;
 
 export const AgendamentoInfo = styled.div`
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 
-    .hora {
-        margin-right: 12px;
-        font-size: 13px;
-        color: ${colors.branco};
-        font-weight: 600;
-        background: rgba(0, 0, 0, 0.2);
-        padding: 2px 8px;
-        border-radius: 10px;
-        display: inline-block;
-    }
+  .hora {
+    margin-right: 12px;
+    font-size: 13px;
+    color: ${colors.branco};
+    font-weight: 600;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 2px 8px;
+    border-radius: 10px;
+    display: inline-block;
+  }
 
-    .cliente {
-        color: ${colors.branco};
-        font-weight: bold;
-        margin-bottom: 2px;
-        font-size: 15px;
-    }
+  .cliente {
+    color: ${colors.branco};
+    font-weight: bold;
+    margin-bottom: 2px;
+    font-size: 15px;
+  }
 
-    .servico {
-        color: ${colors.branco}CC;
-        font-size: 13px;
-    }
+  .servico {
+    color: ${colors.branco}CC;
+    font-size: 13px;
+  }
 
-    .duracao {
-        color: ${colors.branco}AA;
-        font-size: 12px;
-    }
+  .duracao {
+    color: ${colors.branco}AA;
+    font-size: 12px;
+  }
 
-    .cancelado {
-        color: #ff4444;
-        font-size: 12px;
-        font-weight: bold;
-        background: rgba(255, 255, 255, 0.1);
-        padding: 2px 8px;
-        border-radius: 10px;
-    }
+  .status {
+    color: ${colors.branco};
+    font-size: 12px;
+    font-weight: bold;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 2px 8px;
+    border-radius: 10px;
+  }
 `;
 
 export const Button = styled.div`
-    padding: 8px 14px;
-    background: ${colors.cinzaEscuro};
-    color: ${colors.branco};
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 13px;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 8px 14px;
+  background: ${colors.cinzaEscuro};
+  color: ${colors.branco};
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.2);
 
-    &:hover {
-        background-color: ${colors.cinzaClaro};
-        border-color: ${colors.corPrimaria};
-        transform: translateY(-1px);
-    }
+  &:hover {
+    background-color: ${colors.cinzaClaro};
+    border-color: ${colors.corPrimaria};
+    transform: translateY(-1px);
+  }
 `;
 
 export const Overlay = styled.div`
@@ -323,9 +337,18 @@ export const InfoLabel = styled.span`
   letter-spacing: 0.5px;
 `;
 
-export const InfoValue = styled.span<{ cancelado?: boolean }>`
+export const InfoValue = styled.span<{
+  status?: 'CONFIRMADO' | 'CANCELADO' | 'EXPIRADO' | 'CONCLUIDO';
+}>`
   font-size: 1.1rem;
   font-weight: 600;
-  color: ${({ cancelado }) => (cancelado ? '#ff4444' : colors.branco)};
+  color: ${({ status }) =>
+    status === 'CANCELADO'
+      ? '#ff4444'
+      : status === 'EXPIRADO'
+      ? '#888888'
+      : status === 'CONCLUIDO'
+      ? '#28a745'
+      : colors.branco};
   text-align: right;
 `;

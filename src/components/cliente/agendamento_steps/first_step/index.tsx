@@ -54,7 +54,6 @@ const FirstStep = ({ setActiveTab }: Props) => {
         }
     };
 
-
     return (
         <S.Container>
             <S.Employee>

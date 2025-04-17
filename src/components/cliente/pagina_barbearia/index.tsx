@@ -1,23 +1,27 @@
-import { useEffect, useState } from "react"
-import { useNavigate, useParams } from "react-router-dom"
-import { Barbearia } from "../../../models/Barbearia"
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { Barbearia } from "../../../models/Barbearia";
+import { Servico } from "../../../models/servico";
 
-import logo from '../../../assets/images/logo.png'
-import user from '../../../assets/images/user.png'
+import logo from '../../../assets/images/logo.png';
+import user from '../../../assets/images/user.png';
 
-import * as S from './styles'
-import { useCliente } from "../../../hooks/useClienteAuth"
-import Agendamento from "../agendamento"
-import { Servico } from "../../../models/servico"
+import * as S from './styles';
+import { useCliente } from "../../../hooks/useClienteAuth";
+import Agendamento from "../agendamento";
+import MeusAgendamentosModal from "../modals/meus_agendamentos";
+import MinhaContaModal from "../modals/minha_conta";
 
 const PaginaBarbearia = () => {
-    const navigate = useNavigate()
-    const { cliente, loading } = useCliente()
-    const { slug } = useParams()
+    const navigate = useNavigate();
+    const { cliente, loading } = useCliente();
+    const { slug } = useParams();
 
-    const [barbearia, setBarbearia] = useState<Barbearia | null>(null)
-    const [horarios, setHorarios] = useState<{ dia_semana: number; horario_abertura: string; horario_fechamento: string }[]>([])
-    const [modalIsOpen, setModalIsOpen] = useState(false)
+    const [barbearia, setBarbearia] = useState<Barbearia | null>(null);
+    const [horarios, setHorarios] = useState<{ dia_semana: number; horario_abertura: string; horario_fechamento: string }[]>([]);
+    const [modalIsOpen, setModalIsOpen] = useState(false);
+    const [minhaContaModalIsOpen, setMinhaContaModalIsOpen] = useState(false);
+    const [meusAgendamentosModalIsOpen, setMeusAgendamentosModalIsOpen] = useState(false);
     const [servicos, setServicos] = useState<Servico[]>([]);
     const [endereco, setEndereco] = useState<string | null>(null);
     const [showDropdown, setShowDropdown] = useState(false);
@@ -27,7 +31,7 @@ const PaginaBarbearia = () => {
         setShowDropdown(prev => !prev);
     };
 
-    const diasSemana = ["Domingo", "Segunda Feira", "Terça Feira", "Quarta Feira", "Quinta Feira", "Sexta Feira", "Sábado"]
+    const diasSemana = ["Domingo", "Segunda Feira", "Terça Feira", "Quarta Feira", "Quinta Feira", "Sexta Feira", "Sábado"];
 
     useEffect(() => {
         const fetchData = async () => {
@@ -53,7 +57,6 @@ const PaginaBarbearia = () => {
         const fetchEndereco = async () => {
             try {
                 const response = await fetch(`http://localhost:8000/api/endereco-barbearia-publico/${slug}/`);
-
                 if (response.ok) {
                     const data = await response.json();
                     const enderecoFormatado = `${data.endereco}, ${data.numero} - ${data.bairro}, ${data.cidade} - ${data.estado}, ${data.cep}`;
@@ -73,25 +76,23 @@ const PaginaBarbearia = () => {
 
     useEffect(() => {
         if (barbearia) {
-          console.log("Descrição da barbearia:", barbearia);
+            console.log("Descrição da barbearia:", barbearia);
         }
-      }, [barbearia]);
-
+    }, [barbearia]);
 
     useEffect(() => {
         const fetchBarbearia = async () => {
             try {
-                const response = await fetch(`http://localhost:8000/api/barbearias/buscar-por-slug/${slug}/`)
-                const data = await response.json()
-                setBarbearia(data)
+                const response = await fetch(`http://localhost:8000/api/barbearias/buscar-por-slug/${slug}/`);
+                const data = await response.json();
+                setBarbearia(data);
 
                 if (data.imagem) {
                     const isFullUrl = data.imagem.startsWith("http");
                     setPreview(isFullUrl ? data.imagem : `http://localhost:8000${data.imagem}`);
-                  }
-
+                }
             } catch (error) {
-                console.error("Erro ao buscar barbearia:", error)
+                console.error("Erro ao buscar barbearia:", error);
             }
         };
 
@@ -114,10 +115,9 @@ const PaginaBarbearia = () => {
 
     function ToAgendamento() {
         if (cliente) {
-            setModalIsOpen(true)
-        }
-        else {
-            navigate(`/barbearia/${slug}/login`)
+            setModalIsOpen(true);
+        } else {
+            navigate(`/barbearia/${slug}/login`);
         }
     }
 
@@ -126,7 +126,6 @@ const PaginaBarbearia = () => {
         sessionStorage.removeItem("refresh_token_cliente");
         window.location.reload();
     };
-
 
     return (
         <div>
@@ -142,8 +141,8 @@ const PaginaBarbearia = () => {
                                         <p><span>Olá,</span> {cliente?.user?.nome?.split(' ')[0]}</p>
                                         <i className="ri-arrow-down-s-line"></i>
                                         <S.DropdownMenu className={showDropdown ? 'active' : ''}>
-                                            <li onClick={() => navigate(`/barbearia/${slug}/minha-conta`)}>Minha Conta</li>
-                                            <li onClick={() => navigate(`/barbearia/${slug}/meus-agendamentos`)}>Meus Agendamentos</li>
+                                            <li onClick={() => setMinhaContaModalIsOpen(true)}>Minha Conta</li>
+                                            <li onClick={() => setMeusAgendamentosModalIsOpen(true)}>Meus Agendamentos</li>
                                             <li onClick={handleLogout}><i className="ri-logout-box-line"></i> Sair</li>
                                         </S.DropdownMenu>
                                     </S.UserResume>
@@ -192,9 +191,7 @@ const PaginaBarbearia = () => {
                                 <h3><i className="ri-scissors-2-fill"></i> Serviços</h3>
                                 <S.ServicesList>
                                     {servicos.map(servico => (
-                                        <S.Service
-                                            key={servico.id}
-                                        >
+                                        <S.Service key={servico.id}>
                                             <div>
                                                 <h4>{servico.nome}</h4>
                                                 <p>{servico.duracao_minutos} min</p>
@@ -206,7 +203,14 @@ const PaginaBarbearia = () => {
                             </S.Services>
                         </S.BarbeariaInfos>
                     </S.BarbeariaProfile>
-                    < Agendamento modalIsOpen={modalIsOpen} onClose={() => setModalIsOpen(false)} />
+                    <Agendamento modalIsOpen={modalIsOpen} onClose={() => setModalIsOpen(false)} />
+                    {minhaContaModalIsOpen && <MinhaContaModal onClose={() => setMinhaContaModalIsOpen(false)} cliente={cliente} />}
+                    {meusAgendamentosModalIsOpen && (
+                        <MeusAgendamentosModal
+                            onClose={() => setMeusAgendamentosModalIsOpen(false)}
+                            cliente={cliente}
+                        />
+                    )}
                 </S.Container>
             ) : (
                 <p>Carregando barbearia...</p>

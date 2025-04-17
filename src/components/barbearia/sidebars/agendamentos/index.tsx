@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
-import { formatInTimeZone, toZonedTime} from 'date-fns-tz';
-import {addDays, subDays} from 'date-fns'
-
-import { Agendamento } from '../../../../models/Agendamento';
-import * as S from './styles'
+import { formatInTimeZone, toZonedTime } from 'date-fns-tz';
+import { addDays, subDays } from 'date-fns';
+import * as S from './styles';
+import { Agendamento } from '../../../cliente/modals/meus_agendamentos';
 
 const fusoHorario = 'America/Sao_Paulo';
 const hoje = formatInTimeZone(new Date(), fusoHorario, 'yyyy-MM-dd');
@@ -122,6 +121,22 @@ const AgendaGrafico = () => {
     buscarAgendamentos(dataSelecionada);
   }, [dataSelecionada]);
 
+  // Função para formatar o status para exibição
+  const formatarStatus = (status: Agendamento['status']) => {
+    switch (status) {
+      case 'CONFIRMADO':
+        return 'Confirmado';
+      case 'CANCELADO':
+        return 'Cancelado';
+      case 'EXPIRADO':
+        return 'Expirado';
+      case 'CONCLUIDO':
+        return 'Concluído';
+      default:
+        return status;
+    }
+  };
+
   return (
     <S.Container>
       <h2>Meus Agendamentos</h2>
@@ -191,7 +206,7 @@ const AgendaGrafico = () => {
                             key={agendamento.id}
                             hora={agendamento.hora_inicio}
                             style={{ top: `${top}px` }}
-                            cancelado={agendamento.cancelado}
+                            status={agendamento.status}
                           >
                             <S.AgendamentoInfo>
                               <p className="hora">{agendamento.hora_inicio.slice(0, 5)}</p>
@@ -201,7 +216,7 @@ const AgendaGrafico = () => {
                                   {agendamento.servico_nome} - {agendamento.servico_duracao} min
                                 </p>
                               </div>
-                              {agendamento.cancelado && <p className="cancelado">Cancelado</p>}
+                              <p className="status">{formatarStatus(agendamento.status)}</p>
                             </S.AgendamentoInfo>
                             <S.Button onClick={() => openModal(agendamento)}>Detalhes</S.Button>
                           </S.AgendamentoBlock>
@@ -239,8 +254,8 @@ const AgendaGrafico = () => {
               </S.InfoItem>
               <S.InfoItem>
                 <S.InfoLabel>Status</S.InfoLabel>
-                <S.InfoValue cancelado={selectedAgendamento.cancelado}>
-                  {selectedAgendamento.cancelado ? 'Cancelado' : 'Ativo'}
+                <S.InfoValue status={selectedAgendamento.status}>
+                  {formatarStatus(selectedAgendamento.status)}
                 </S.InfoValue>
               </S.InfoItem>
             </S.ModalContent>
