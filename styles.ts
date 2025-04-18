@@ -13,7 +13,7 @@ export const colors = {
     cinzaClaro: '#2e333a',
     cinzaTransparent: 'rgba(134, 126, 126, 0.53)',
     branco: '#ffffff',
-    verde: 'green',
+    verde: '#32d800',
     vermelho: 'red',
 }
 

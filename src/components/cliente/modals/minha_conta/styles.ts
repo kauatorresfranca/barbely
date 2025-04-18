@@ -1,7 +1,6 @@
 import styled from 'styled-components'
 import { breakpoints, colors } from '../../../../../styles'
 
-// Estilizações para as modais
 export const ModalOverlay = styled.div`
     position: fixed;
     top: 0;
@@ -71,13 +70,62 @@ export const CloseButton = styled.button`
     }
 `
 
+export const ProfileHeader = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 24px;
+`
+
+export const ImageWrapper = styled.div`
+    position: relative;
+    cursor: pointer;
+    transition: opacity 0.2s;
+
+    &:hover {
+        opacity: 0.8;
+    }
+`
+
+export const ProfileImage = styled.img`
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 12px;
+    border: 2px solid ${colors.corPrimaria};
+`
+
+export const UserName = styled.h2`
+    font-size: 24px;
+    font-weight: bold;
+    color: ${colors.branco};
+    margin: 0;
+    text-align: center;
+`
+
 export const ModalBody = styled.div`
     margin-top: 24px;
     color: ${colors.branco};
+`
 
-    p {
-        font-size: 16px;
-        margin-bottom: 12px;
+export const InfoList = styled.ul`
+    list-style: none;
+    padding: 0;
+    margin: 0 0 24px 0;
+`
+
+export const InfoItem = styled.li`
+    font-size: 16px;
+    margin-bottom: 12px;
+    color: ${colors.branco};
+    display: flex;
+    align-items: center;
+
+    strong {
+        color: ${colors.corPrimaria};
+        margin-right: 8px;
+        min-width: 80px;
     }
 `
 
@@ -91,6 +139,8 @@ export const ModalButton = styled.button`
     cursor: pointer;
     margin-top: 16px;
     transition: transform 0.2s, box-shadow 0.2s;
+    width: 100%;
+    text-align: center;
 
     &:hover {
         transform: translateY(-2px);
@@ -98,14 +148,63 @@ export const ModalButton = styled.button`
     }
 `
 
-export const AgendamentoItem = styled.div`
-    background: ${colors.cinzaClaro};
-    padding: 16px;
-    border-radius: 8px;
-    margin-bottom: 12px;
+export const Form = styled.form`
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+`
 
-    p {
+export const InputGroup = styled.div`
+    display: flex;
+    flex-direction: column;
+
+    label {
         font-size: 14px;
-        margin-bottom: 8px;
+        color: ${colors.branco};
+        margin-bottom: 4px;
+    }
+`
+
+export const Input = styled.input`
+    padding: 10px;
+    border: 1px solid ${colors.cinzaTransparent};
+    border-radius: 4px;
+    background: ${colors.cinzaEscuro};
+    color: ${colors.branco};
+    font-size: 14px;
+
+    &:focus {
+        outline: none;
+        border-color: ${colors.corPrimaria};
+    }
+`
+
+export const ErrorMessage = styled.p`
+    color: ${colors.vermelho};
+    font-size: 14px;
+    margin: 0;
+`
+
+export const ButtonGroup = styled.div`
+    display: flex;
+    gap: 12px;
+`
+
+export const CancelButton = styled.button`
+    background: ${colors.cinzaEscuro};
+    color: ${colors.branco};
+    border: 1px solid ${colors.cinzaTransparent};
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 16px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    width: 100%;
+    text-align: center;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     }
 `

@@ -21,3 +21,4 @@
     npm install date-fns-tz
     npm install qrcode.react
     npm install react-imask
+    npm i react-icons

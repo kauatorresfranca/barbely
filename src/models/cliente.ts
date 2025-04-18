@@ -5,4 +5,6 @@ export interface Cliente {
         telefone: string
         email: string
     }
+    barbearia: number
+    fotoPerfil: string | null
 }

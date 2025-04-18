@@ -22,11 +22,14 @@ export async function authFetch(url: string, options: RequestInit = {}): Promise
         throw new Error('Token de acesso não encontrado.')
     }
 
-    const headers = {
-        ...options.headers,
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${accessToken}`,
-    }
+    const headers =
+        options.body instanceof FormData
+            ? { Authorization: `Bearer ${accessToken}`, ...options.headers } // Não define Content-Type para FormData
+            : {
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${accessToken}`,
+                  ...options.headers,
+              }
 
     let response = await fetch(url, { ...options, headers })
 
@@ -45,11 +48,14 @@ export async function authFetch(url: string, options: RequestInit = {}): Promise
             sessionStorage.setItem(tokenKey, refreshData.access)
             sessionStorage.setItem(refreshKey, refreshData.refresh || refreshToken)
 
-            const retryHeaders = {
-                ...options.headers,
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${refreshData.access}`,
-            }
+            const retryHeaders =
+                options.body instanceof FormData
+                    ? { Authorization: `Bearer ${refreshData.access}`, ...options.headers }
+                    : {
+                          'Content-Type': 'application/json',
+                          Authorization: `Bearer ${refreshData.access}`,
+                          ...options.headers,
+                      }
 
             response = await fetch(url, { ...options, headers: retryHeaders })
         } else {

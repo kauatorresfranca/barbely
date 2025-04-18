@@ -159,6 +159,7 @@ export const Profile = styled.div`
         width: 60px;
         height: 60px;
         border-radius: 8px;
+        object-fit: cover;
         background-color: ${colors.cinzaEscuro};
         margin-right: 12px;
     }
@@ -191,7 +192,7 @@ export const Activity = styled.div`
         height: 12px;
         width: 12px;
         margin: 0 6px 0 8px;
-        background-color: green;
+        background-color: ${colors.verde};
         border-radius: 50%;
     }
 

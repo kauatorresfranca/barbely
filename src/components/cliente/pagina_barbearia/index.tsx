@@ -1,22 +1,19 @@
 import { useEffect, useState, useRef } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-
 import { Barbearia } from '../../../models/Barbearia'
 import { Servico } from '../../../models/servico'
+import { Cliente } from '../../../models/cliente'
 import { useCliente } from '../../../hooks/useClienteAuth'
-import { authFetch } from '../../../utils/authFetch'
 import Agendamento from '../agendamento'
 import MeusAgendamentosModal from '../modals/meus_agendamentos'
 import MinhaContaModal from '../modals/minha_conta'
-
 import * as S from './styles'
-
 import logo from '../../../assets/images/logo.png'
 import user from '../../../assets/images/user.png'
 
 const PaginaBarbearia = () => {
     const navigate = useNavigate()
-    const { cliente, loading } = useCliente()
+    const { cliente, loading, updateCliente } = useCliente()
     const { slug } = useParams()
 
     const [barbearia, setBarbearia] = useState<Barbearia | null>(null)
@@ -86,7 +83,7 @@ const PaginaBarbearia = () => {
         const fetchData = async () => {
             try {
                 const [servicosRes] = await Promise.all([
-                    authFetch(`http://localhost:8000/api/servicos/?barbearia_slug=${slug}`),
+                    fetch(`http://localhost:8000/api/servicos/?barbearia_slug=${slug}`),
                 ])
 
                 if (servicosRes.ok) {
@@ -105,7 +102,7 @@ const PaginaBarbearia = () => {
     useEffect(() => {
         const fetchEndereco = async () => {
             try {
-                const response = await authFetch(
+                const response = await fetch(
                     `http://localhost:8000/api/endereco-barbearia-publico/${slug}/`,
                 )
                 if (response.ok) {
@@ -134,7 +131,7 @@ const PaginaBarbearia = () => {
     useEffect(() => {
         const fetchBarbearia = async () => {
             try {
-                const response = await authFetch(
+                const response = await fetch(
                     `http://localhost:8000/api/barbearias/buscar-por-slug/${slug}/`,
                 )
                 const data = await response.json()
@@ -155,7 +152,7 @@ const PaginaBarbearia = () => {
     useEffect(() => {
         const fetchHorarios = async () => {
             try {
-                const response = await authFetch(`http://localhost:8000/api/horarios/?slug=${slug}`)
+                const response = await fetch(`http://localhost:8000/api/horarios/?slug=${slug}`)
                 const data = await response.json()
                 setHorarios(data)
             } catch (error) {
@@ -180,6 +177,18 @@ const PaginaBarbearia = () => {
         window.location.reload()
     }
 
+    const handleUpdateCliente = (updatedCliente: Cliente) => {
+        console.log('Atualizando cliente no pai:', updatedCliente)
+        updateCliente(updatedCliente)
+        setMinhaContaModalIsOpen(false)
+    }
+
+    const userImageSrc = cliente?.fotoPerfil
+        ? cliente.fotoPerfil.startsWith('http')
+            ? cliente.fotoPerfil
+            : `http://localhost:8000${cliente.fotoPerfil}`
+        : user
+
     return (
         <div>
             {barbearia ? (
@@ -190,7 +199,16 @@ const PaginaBarbearia = () => {
                             {!loading &&
                                 (cliente ? (
                                     <S.UserResume ref={dropdownRef} onClick={toggleDropdown}>
-                                        <img src={user} alt="" />
+                                        <img
+                                            src={userImageSrc}
+                                            alt="Foto do usuário"
+                                            onError={() =>
+                                                console.error(
+                                                    'Erro ao carregar imagem do usuário:',
+                                                    userImageSrc,
+                                                )
+                                            }
+                                        />
                                         <p>
                                             <span>Olá,</span> {cliente?.user?.nome?.split(' ')[0]}
                                         </p>
@@ -296,6 +314,7 @@ const PaginaBarbearia = () => {
                         <MinhaContaModal
                             onClose={() => setMinhaContaModalIsOpen(false)}
                             cliente={cliente}
+                            updateCliente={handleUpdateCliente}
                         />
                     )}
                     {meusAgendamentosModalIsOpen && (

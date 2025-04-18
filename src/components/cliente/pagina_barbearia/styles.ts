@@ -45,6 +45,10 @@ export const UserResume = styled.div`
 
     img {
         width: 40px;
+        height: 40px;
+        margin-right: 4px;
+        border-radius: 50%;
+        object-fit: cover;
     }
 `
 
@@ -109,6 +113,7 @@ export const BarbeariaProfile = styled.div`
         width: 120px;
         border-radius: 25px;
         margin-right: 16px;
+        object-fit: cover;
     }
 
     h3 {

@@ -1,39 +1,51 @@
-import { useEffect, useState } from "react";
-import { Cliente } from "../models/cliente";
+import { useEffect, useState } from 'react'
+import { Cliente } from '../models/cliente'
+import { authFetch } from '../utils/authFetch'
 
 export const useCliente = () => {
-    const [cliente, setCliente] = useState<Cliente | null>(null);
-    const [loading, setLoading] = useState(true);
+    const [cliente, setCliente] = useState<Cliente | null>(null)
+    const [loading, setLoading] = useState(true)
+
+    const fetchCliente = async () => {
+        try {
+            const token = sessionStorage.getItem('access_token_cliente')
+            if (!token) {
+                setCliente(null)
+                setLoading(false)
+                return
+            }
+
+            const response = await authFetch('http://localhost:8000/api/clientes/user-info/', {
+                method: 'GET',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            })
+
+            if (!response.ok) {
+                throw new Error('Erro ao buscar dados do cliente.')
+            }
+
+            const data = await response.json()
+            setCliente(data)
+        } catch (err) {
+            console.error(err)
+            sessionStorage.removeItem('access_token_cliente')
+            sessionStorage.removeItem('refresh_token_cliente')
+            setCliente(null)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const updateCliente = (updatedCliente: Cliente) => {
+        console.log('Atualizando cliente:', updatedCliente)
+        setCliente(updatedCliente)
+    }
 
     useEffect(() => {
-        const token = sessionStorage.getItem("access_token_cliente");
-        if (!token) {
-            setLoading(false);
-            return;
-        }
+        fetchCliente()
+    }, [])
 
-        fetch("http://localhost:8000/api/clientes/user-info/", {
-            method: "GET",
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        })
-            .then((res) => {
-                if (!res.ok) throw new Error("Erro ao buscar dados do cliente.");
-                return res.json();
-            })
-            .then((data) => {
-                setCliente(data);
-            })
-            .catch((err) => {
-                console.error(err);
-                sessionStorage.removeItem("access_token_cliente");
-                sessionStorage.removeItem("refresh_token_cliente");
-            })
-            .finally(() => {
-                setLoading(false);
-            });
-    }, []);
-
-    return { cliente, loading };
-};
+    return { cliente, loading, updateCliente }
+}

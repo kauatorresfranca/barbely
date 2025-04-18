@@ -24,7 +24,7 @@ const Localizacao = () => {
     useEffect(() => {
         const fetchEndereco = async () => {
             try {
-                const response = await authFetch(
+                const response = await fetch(
                     `http://localhost:8000/api/endereco-barbearia-publico/${slug}/`,
                 )
 
@@ -61,7 +61,7 @@ const Localizacao = () => {
     // Busca dados do CEP ao completar 8 dígitos
     useEffect(() => {
         const fetchCEP = async () => {
-            if (form.cep.length === 8) {
+            if (form.cep.length === 9) {
                 try {
                     const res = await fetch(`https://viacep.com.br/ws/${form.cep}/json/`)
                     const data = await res.json()
