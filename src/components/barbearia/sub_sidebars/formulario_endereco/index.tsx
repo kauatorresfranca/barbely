@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { IMaskInput } from 'react-imask'
 
+import { authFetch } from '../../../../utils/authFetch'
 import { useBarbeariaAtual } from '../../../../hooks/useBarbeariaAtual'
 
 import * as S from './styles'
@@ -23,7 +24,7 @@ const Localizacao = () => {
     useEffect(() => {
         const fetchEndereco = async () => {
             try {
-                const response = await fetch(
+                const response = await authFetch(
                     `http://localhost:8000/api/endereco-barbearia-publico/${slug}/`,
                 )
 
@@ -93,7 +94,7 @@ const Localizacao = () => {
         }
 
         try {
-            const res = await fetch('http://localhost:8000/api/endereco-barbearia/', {
+            const res = await authFetch('http://localhost:8000/api/endereco-barbearia/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

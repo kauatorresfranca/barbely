@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 
+import { authFetch } from '../../../../utils/authFetch'
 import { Funcionario } from '../../../../models/funcionario'
 import CriarProfissionalModal from '../../modals/profissional/profissional_criar'
 import EditarProfissionalModal from '../../modals/profissional/profissional_editar'
@@ -20,7 +21,7 @@ const Profissionais = () => {
     const fetchFuncionarios = async () => {
         try {
             const token = sessionStorage.getItem('access_token_barbearia')
-            const response = await fetch('http://localhost:8000/api/funcionarios/', {
+            const response = await authFetch('http://localhost:8000/api/funcionarios/', {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -42,7 +43,7 @@ const Profissionais = () => {
 
         try {
             const token = sessionStorage.getItem('access_token_barbearia')
-            const response = await fetch(`http://localhost:8000/api/funcionarios/${id}/`, {
+            const response = await authFetch(`http://localhost:8000/api/funcionarios/${id}/`, {
                 method: 'DELETE',
                 headers: {
                     Authorization: `Bearer ${token}`,

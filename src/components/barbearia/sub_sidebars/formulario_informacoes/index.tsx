@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { IMaskInput } from 'react-imask'
 
+import { authFetch } from '../../../../utils/authFetch'
 import { useBarbeariaAtual } from '../../../../hooks/useBarbeariaAtual'
 
 import * as S from './styles'
@@ -24,7 +25,7 @@ const BarbeariaPerfilForm = () => {
     useEffect(() => {
         const fetchBarbearia = async () => {
             try {
-                const response = await fetch(
+                const response = await authFetch(
                     `http://localhost:8000/api/barbearias/buscar-por-slug/${slug}/`,
                 )
                 const data = await response.json()

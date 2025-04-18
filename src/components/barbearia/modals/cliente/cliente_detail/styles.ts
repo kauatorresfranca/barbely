@@ -23,7 +23,6 @@ export const Modal = styled.div`
     position: relative;
     animation: fadeIn 0.3s ease-in-out;
 
-
     h2 {
         margin-bottom: 12px;
         text-align: center;
@@ -31,12 +30,12 @@ export const Modal = styled.div`
 
     @keyframes fadeIn {
         from {
-        opacity: 0;
-        transform: translateY(-20px);
+            opacity: 0;
+            transform: translateY(-20px);
         }
         to {
-        opacity: 1;
-        transform: translateY(0);
+            opacity: 1;
+            transform: translateY(0);
         }
     }
 `
@@ -50,4 +49,18 @@ export const CloseButton = styled.button`
     border: none;
     cursor: pointer;
     color: #fff;
+`
+
+export const Button = styled.button`
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    background-color: ${colors.corPrimaria};
+    color: white;
+    cursor: pointer;
+    margin-top: 16px;
+
+    &:hover {
+        background-color: #0056b3;
+    }
 `

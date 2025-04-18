@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 
+import { authFetch } from '../../../../utils/authFetch'
 import { Servico } from '../../../../models/servico'
 import CriarServicoModal from '../../modals/servicos/servico_criar'
 import EditarServicoModal from '../../modals/servicos/servico_editar'
@@ -20,7 +21,7 @@ const Servicos = () => {
     const fetchServicos = async () => {
         try {
             const token = sessionStorage.getItem('access_token_barbearia')
-            const response = await fetch('http://localhost:8000/api/servicos/', {
+            const response = await authFetch('http://localhost:8000/api/servicos/', {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -42,7 +43,7 @@ const Servicos = () => {
 
         try {
             const token = sessionStorage.getItem('access_token_barbearia')
-            const response = await fetch(`http://localhost:8000/api/servicos/${id}/`, {
+            const response = await authFetch(`http://localhost:8000/api/servicos/${id}/`, {
                 method: 'DELETE',
                 headers: {
                     Authorization: `Bearer ${token}`,

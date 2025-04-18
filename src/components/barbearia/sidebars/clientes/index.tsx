@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import { Cliente } from '../../../../models/cliente'
 import { authFetch } from '../../../../utils/authFetch'
@@ -11,15 +12,36 @@ const Clientes = () => {
     const [loading, setLoading] = useState(true)
     const [erro, setErro] = useState<string | null>(null)
     const [modalIsOpen, setModalIsOpen] = useState<boolean>(false)
+    const [selectedCliente, setSelectedCliente] = useState<Cliente | null>(null)
+    const navigate = useNavigate()
 
     useEffect(() => {
         const token = sessionStorage.getItem('access_token_barbearia')
-        const barbeariaData = sessionStorage.getItem('barbearia') // supondo que você salvou com esse nome
-        const barbeariaId = barbeariaData ? JSON.parse(barbeariaData).id : null
+        const barbeariaData = sessionStorage.getItem('barbearia')
+        const barbeariaToken = sessionStorage.getItem('barbearia_token')
+
+        console.log('Token:', token)
+        console.log('Barbearia Data:', barbeariaData)
+        console.log('Barbearia Token:', barbeariaToken)
+
+        let barbeariaId: number | null = null
+        try {
+            if (barbeariaData) {
+                const parsedData = JSON.parse(barbeariaData)
+                barbeariaId = parsedData.id
+            } else if (barbeariaToken) {
+                barbeariaId = parseInt(barbeariaToken, 10)
+            }
+        } catch (e) {
+            console.error('Erro ao parsear barbeariaData:', e)
+        }
+
+        console.log('Barbearia ID:', barbeariaId)
 
         if (!token || !barbeariaId) {
-            setErro('Token ou ID da barbearia ausente.')
+            setErro('Token ou ID da barbearia ausente. Por favor, faça login novamente.')
             setLoading(false)
+            navigate('/login')
             return
         }
 
@@ -29,13 +51,32 @@ const Clientes = () => {
             },
         })
             .then((res) => {
-                if (!res.ok) throw new Error('Erro ao buscar clientes.')
+                console.log('Resposta da API /api/clientes/barbearia:', res.status, res.statusText)
+                if (!res.ok) {
+                    throw new Error(`Erro ao buscar clientes: ${res.status} ${res.statusText}`)
+                }
                 return res.json()
             })
-            .then((data) => setClientes(data))
-            .catch((err) => setErro(err.message))
+            .then((data) => {
+                console.log('Clientes recebidos:', data)
+                setClientes(data)
+            })
+            .catch((err) => {
+                console.error('Erro na requisição:', err)
+                setErro(err.message)
+            })
             .finally(() => setLoading(false))
-    }, [])
+    }, [navigate])
+
+    const handleOpenModal = (cliente: Cliente) => {
+        setSelectedCliente(cliente)
+        setModalIsOpen(true)
+    }
+
+    const handleCloseModal = () => {
+        setSelectedCliente(null)
+        setModalIsOpen(false)
+    }
 
     if (loading) return <S.Container>Carregando...</S.Container>
     if (erro) return <S.Container>Erro: {erro}</S.Container>
@@ -63,11 +104,13 @@ const Clientes = () => {
                     <S.ListItem key={cliente.id}>
                         <p>{cliente.user.nome}</p>
                         <p>{cliente.user.telefone}</p>
-                        <S.Button onClick={() => setModalIsOpen(true)}>Detalhes</S.Button>
+                        <S.Button onClick={() => handleOpenModal(cliente)}>Detalhes</S.Button>
                     </S.ListItem>
                 ))}
             </S.List>
-            {modalIsOpen && <ClienteDetail closeModal={() => setModalIsOpen(false)} />}
+            {modalIsOpen && (
+                <ClienteDetail cliente={selectedCliente} closeModal={handleCloseModal} />
+            )}
         </S.Container>
     )
 }
