@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { Barbearia } from '../../../models/Barbearia'
 import { Servico } from '../../../models/servico'
 import { useCliente } from '../../../hooks/useClienteAuth'
+import { authFetch } from '../../../utils/authFetch'
 import Agendamento from '../agendamento'
 import MeusAgendamentosModal from '../modals/meus_agendamentos'
 import MinhaContaModal from '../modals/minha_conta'
@@ -67,7 +68,7 @@ const PaginaBarbearia = () => {
         const fetchData = async () => {
             try {
                 const [servicosRes] = await Promise.all([
-                    fetch(`http://localhost:8000/api/servicos/?barbearia_slug=${slug}`),
+                    authFetch(`http://localhost:8000/api/servicos/?barbearia_slug=${slug}`),
                 ])
 
                 if (servicosRes.ok) {
@@ -86,7 +87,7 @@ const PaginaBarbearia = () => {
     useEffect(() => {
         const fetchEndereco = async () => {
             try {
-                const response = await fetch(
+                const response = await authFetch(
                     `http://localhost:8000/api/endereco-barbearia-publico/${slug}/`,
                 )
                 if (response.ok) {
@@ -115,7 +116,7 @@ const PaginaBarbearia = () => {
     useEffect(() => {
         const fetchBarbearia = async () => {
             try {
-                const response = await fetch(
+                const response = await authFetch(
                     `http://localhost:8000/api/barbearias/buscar-por-slug/${slug}/`,
                 )
                 const data = await response.json()
@@ -136,7 +137,7 @@ const PaginaBarbearia = () => {
     useEffect(() => {
         const fetchHorarios = async () => {
             try {
-                const response = await fetch(`http://localhost:8000/api/horarios/?slug=${slug}`)
+                const response = await authFetch(`http://localhost:8000/api/horarios/?slug=${slug}`)
                 const data = await response.json()
                 setHorarios(data)
             } catch (error) {

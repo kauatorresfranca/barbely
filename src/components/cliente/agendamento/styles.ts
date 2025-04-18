@@ -23,7 +23,6 @@ export const Modal = styled.div`
     position: relative;
     animation: fadeIn 0.3s ease-in-out;
 
-
     h2 {
         margin-bottom: 12px;
         text-align: center;
@@ -31,12 +30,12 @@ export const Modal = styled.div`
 
     @keyframes fadeIn {
         from {
-        opacity: 0;
-        transform: translateY(-20px);
+            opacity: 0;
+            transform: translateY(-20px);
         }
         to {
-        opacity: 1;
-        transform: translateY(0);
+            opacity: 1;
+            transform: translateY(0);
         }
     }
 `
@@ -51,11 +50,17 @@ export const Etapas = styled.div`
         width: 30%;
         background-color: ${colors.branco};
         border-radius: 10px;
-        transition: .7s;
+        transition: 0.7s;
         cursor: pointer;
 
         &.active {
             background-color: ${colors.corPrimaria};
+        }
+
+        &.disabled {
+            background-color: ${colors.branco};
+            opacity: 0.5;
+            cursor: not-allowed;
         }
     }
 `
@@ -74,4 +79,31 @@ export const CloseButton = styled.button`
 export const Step = styled.div`
     display: flex;
     flex-direction: column;
+`
+
+export const Success = styled.div`
+    text-align: center;
+
+    p {
+        color: ${colors.texto};
+        font-size: 14px;
+    }
+`
+
+export const Button = styled.button`
+    width: 100%;
+    padding: 12px;
+    margin-top: 12px;
+    background-color: ${colors.corPrimaria};
+    color: ${colors.cinzaEscuro};
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+
+    &:hover {
+        background-color: ${colors.corPrimariaEscura};
+    }
 `

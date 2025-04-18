@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom'
 
 import { Funcionario } from '../../../../models/funcionario'
 import { Servico } from '../../../../models/servico'
+import { authFetch } from '../../../../utils/authFetch'
 
 import * as S from './styles'
 
@@ -26,18 +27,22 @@ const FirstStep = ({ setActiveTab }: Props) => {
         const fetchData = async () => {
             try {
                 const [servicosRes, funcionariosRes] = await Promise.all([
-                    fetch(`http://localhost:8000/api/servicos/?barbearia_slug=${slug}`),
-                    fetch(`http://localhost:8000/api/funcionarios/?barbearia_slug=${slug}`),
+                    authFetch(`http://localhost:8000/api/servicos/?barbearia_slug=${slug}`),
+                    authFetch(`http://localhost:8000/api/funcionarios/?barbearia_slug=${slug}`),
                 ])
 
                 if (servicosRes.ok) {
-                    setServicos(await servicosRes.json())
+                    const servicosData = await servicosRes.json()
+                    console.log('Serviços carregados:', servicosData)
+                    setServicos(servicosData)
                 } else {
                     console.error('Erro ao buscar serviços')
                 }
 
                 if (funcionariosRes.ok) {
-                    setFuncionarios(await funcionariosRes.json())
+                    const funcionariosData = await funcionariosRes.json()
+                    console.log('Funcionários carregados:', funcionariosData)
+                    setFuncionarios(funcionariosData)
                 } else {
                     console.error('Erro ao buscar profissionais')
                 }
@@ -51,8 +56,24 @@ const FirstStep = ({ setActiveTab }: Props) => {
 
     const handleNext = () => {
         if (selectedServiceId !== null) {
-            const servico = servicos.find((s) => s.id === selectedServiceId)!
-            const funcionario = funcionarios.find((f) => f.id === selectedFuncionarioId!) ?? null
+            const servico = servicos.find((s) => s.id === selectedServiceId)
+            const funcionario =
+                selectedFuncionarioId !== null
+                    ? funcionarios.find((f) => f.id === selectedFuncionarioId) || null
+                    : null
+
+            console.log('handleNext - selectedServiceId:', selectedServiceId, 'servico:', servico)
+            console.log(
+                'handleNext - selectedFuncionarioId:',
+                selectedFuncionarioId,
+                'funcionario:',
+                funcionario,
+            )
+
+            if (!servico) {
+                alert('Erro: Serviço selecionado não encontrado.')
+                return
+            }
 
             setActiveTab('horarios', { servico, funcionario })
         } else {

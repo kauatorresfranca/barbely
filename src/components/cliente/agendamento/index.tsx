@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 import { Funcionario } from '../../../models/funcionario'
 import { Servico } from '../../../models/servico'
@@ -24,7 +24,37 @@ const Agendamento = ({ modalIsOpen, onClose }: Props) => {
     const [activeTab, setActiveTab] = useState('servico')
     const [agendamentoData, setAgendamentoData] = useState<AgendamentoData | null>(null)
 
+    // Depuração: Logar agendamentoData sempre que mudar
+    useEffect(() => {
+        console.log('agendamentoData atualizado:', agendamentoData)
+    }, [agendamentoData])
+
+    // Validar se a aba pode ser acessada
+    const canAccessTab = (tab: string, incomingData?: Partial<AgendamentoData>): boolean => {
+        if (tab === 'servico') return true
+
+        // Usar incomingData se disponível, senão agendamentoData
+        const dataToCheck = incomingData ? { ...agendamentoData, ...incomingData } : agendamentoData
+
+        if (tab === 'horarios') {
+            return !!dataToCheck?.servico
+        }
+        if (tab === 'dia') {
+            return !!dataToCheck?.data && !!dataToCheck?.horario
+        }
+        if (tab === 'sucesso') {
+            return !!dataToCheck?.data && !!dataToCheck?.horario && !!dataToCheck?.servico
+        }
+        return false
+    }
+
     const handleSetActiveTab = (tab: string, data?: Partial<AgendamentoData>) => {
+        if (!canAccessTab(tab, data)) {
+            console.log('Bloqueado: canAccessTab retornou false para', tab, 'com data:', data)
+            alert(`Por favor, complete a etapa atual antes de prosseguir para "${tab}".`)
+            return
+        }
+
         if (data) {
             setAgendamentoData((prev) => ({ ...prev, ...data } as AgendamentoData))
         }
@@ -43,16 +73,22 @@ const Agendamento = ({ modalIsOpen, onClose }: Props) => {
         <S.Overlay onClick={handleOverlayClick}>
             <S.Modal>
                 <S.CloseButton onClick={onClose}>×</S.CloseButton>
-                <h2>Agende sua sessão</h2>
-                <S.Etapas>
-                    {['servico', 'horarios', 'dia'].map((id, index) => (
-                        <span
-                            onClick={() => setActiveTab(id)}
-                            key={index}
-                            className={id === activeTab ? 'active' : ''}
-                        ></span>
-                    ))}
-                </S.Etapas>
+                {activeTab !== 'sucesso' && (
+                    <>
+                        <h2>Agende sua sessão</h2>
+                        <S.Etapas>
+                            {['servico', 'horarios', 'dia'].map((id, index) => (
+                                <span
+                                    key={index}
+                                    onClick={() => canAccessTab(id) && setActiveTab(id)}
+                                    className={`${id === activeTab ? 'active' : ''} ${
+                                        !canAccessTab(id) ? 'disabled' : ''
+                                    }`}
+                                />
+                            ))}
+                        </S.Etapas>
+                    </>
+                )}
                 <S.Step className="active" id={activeTab}>
                     {activeTab === 'servico' && <FirstStep setActiveTab={handleSetActiveTab} />}
                     {activeTab === 'horarios' && agendamentoData && (
@@ -67,6 +103,14 @@ const Agendamento = ({ modalIsOpen, onClose }: Props) => {
                             setActiveTab={handleSetActiveTab}
                             agendamentoData={agendamentoData}
                         />
+                    )}
+                    {activeTab === 'sucesso' && (
+                        <S.Success>
+                            <h2>Sucesso!</h2>
+                            <p>Seu agendamento foi realizado com sucesso.</p>
+                            <p>Para mais detalhes, acesse a seção "Meus Agendamentos".</p>
+                            <S.Button onClick={onClose}>Fechar</S.Button>
+                        </S.Success>
                     )}
                 </S.Step>
             </S.Modal>

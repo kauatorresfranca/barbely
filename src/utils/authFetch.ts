@@ -1,43 +1,58 @@
-// utils/authFetch.ts
-export async function authFetch(url: string, options: RequestInit = {}) {
-    const accessToken = sessionStorage.getItem("access_token_barbearia");
-    const refreshToken = sessionStorage.getItem("refresh_token_barbearia");
+export async function authFetch(url: string, options: RequestInit = {}): Promise<Response> {
+    const isClienteRequest = url.includes('/api/clientes/') || url.includes('/api/agendamentos/')
+    const tokenKey = isClienteRequest ? 'access_token_cliente' : 'access_token_barbearia'
+    const refreshKey = isClienteRequest ? 'refresh_token_cliente' : 'refresh_token_barbearia'
 
-    // Adiciona o token atual no header
-    const authHeaders = {
+    const accessToken = sessionStorage.getItem(tokenKey)
+    const refreshToken = sessionStorage.getItem(refreshKey)
+
+    if (!accessToken) {
+        console.error(`Token de acesso (${tokenKey}) não encontrado.`)
+        const redirectPath = isClienteRequest ? '/barbearia/login' : '/barbearia/admin/login'
+        window.location.href = redirectPath
+        throw new Error('Token de acesso não encontrado.')
+    }
+
+    const headers = {
         ...options.headers,
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "application/json",
-    };
+    }
 
-    const response = await fetch(url, { ...options, headers: authHeaders });
+    let response = await fetch(url, { ...options, headers })
 
-    // Se o token estiver expirado, tenta renovar
     if (response.status === 401 && refreshToken) {
-        const refreshResponse = await fetch("http://localhost:8000/api/token/refresh/", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
+        console.warn(`Token expirado (${tokenKey}), tentando renovar...`)
+        const refreshResponse = await fetch('http://localhost:8000/api/token/refresh/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
             body: JSON.stringify({ refresh: refreshToken }),
-        });
+        })
 
         if (refreshResponse.ok) {
-            const refreshData = await refreshResponse.json();
-            sessionStorage.setItem("access_token_barbearia", refreshData.access);
+            const refreshData = await refreshResponse.json()
+            sessionStorage.setItem(tokenKey, refreshData.access)
+            sessionStorage.setItem(refreshKey, refreshData.refresh || refreshToken) // Atualiza refresh se fornecido
 
-            // Refaz a requisição original com o novo token
+            // Refaz a requisição com o novo token
             const retryHeaders = {
                 ...options.headers,
+                'Content-Type': 'application/json',
                 Authorization: `Bearer ${refreshData.access}`,
-                "Content-Type": "application/json",
-            };
+            }
 
-            return await fetch(url, { ...options, headers: retryHeaders });
+            response = await fetch(url, { ...options, headers: retryHeaders })
         } else {
-            // Refresh inválido, força logout
-            sessionStorage.clear();
-            window.location.href = "/login";
+            console.error('Erro ao renovar token:', await refreshResponse.text())
+            sessionStorage.removeItem(tokenKey)
+            sessionStorage.removeItem(refreshKey)
+            const redirectPath = isClienteRequest ? '/barbearia/login' : '/barbearia/admin/login'
+            window.location.href = redirectPath
+            throw new Error('Erro ao renovar token.')
         }
     }
 
-    return response;
+    return response
 }

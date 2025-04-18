@@ -1,9 +1,7 @@
 import styled from 'styled-components'
 import { colors } from '../../../../../styles'
 
-export const Container = styled.div`
-
-`
+export const Container = styled.div``
 
 export const Confirmacao = styled.div`
     background-color: ${colors.cinzaEscuro};
@@ -25,7 +23,7 @@ export const Button = styled.button`
     transition: background-color 0.3s;
 
     &:hover {
-        background-color: #0056b3;
+        background-color: ${colors.corPrimariaEscura};
     }
 
     &.back {
@@ -36,4 +34,4 @@ export const Button = styled.button`
         background-color: #ccc;
         cursor: not-allowed;
     }
-`;
+`

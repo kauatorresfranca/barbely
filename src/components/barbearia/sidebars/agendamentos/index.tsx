@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { formatInTimeZone, toZonedTime } from 'date-fns-tz'
 import { addDays, subDays } from 'date-fns'
 
+import { authFetch } from '../../../../utils/authFetch'
 import { Agendamento } from '../../../cliente/modals/meus_agendamentos'
 
 import * as S from './styles'
@@ -68,7 +69,7 @@ const AgendaGrafico = () => {
     const buscarFuncionarios = async () => {
         try {
             const token = sessionStorage.getItem('access_token_barbearia')
-            const res = await fetch('http://localhost:8000/api/funcionarios/', {
+            const res = await authFetch('http://localhost:8000/api/funcionarios/', {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     'Content-Type': 'application/json',
@@ -87,7 +88,7 @@ const AgendaGrafico = () => {
         try {
             setCarregando(true)
             const token = sessionStorage.getItem('access_token_barbearia')
-            const res = await fetch(
+            const res = await authFetch(
                 `http://localhost:8000/api/barbearia/agendamentos/?data=${data}`,
                 {
                     headers: {

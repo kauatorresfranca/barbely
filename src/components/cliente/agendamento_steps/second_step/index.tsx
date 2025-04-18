@@ -7,6 +7,7 @@ import { Funcionario } from '../../../../models/funcionario'
 import { Servico } from '../../../../models/servico'
 
 import * as S from './styles'
+import { authFetch } from '../../../../utils/authFetch'
 
 type Props = {
     setActiveTab: (
@@ -52,6 +53,9 @@ const HorariosStep = ({ setActiveTab, servico, funcionario }: Props) => {
                 const token = sessionStorage.getItem('access_token_cliente')
                 const dataNormalizada = toZonedTime(dataSelecionada, fusoHorario)
                 const dataFormatada = formatInTimeZone(dataNormalizada, fusoHorario, 'yyyy-MM-dd')
+                const diaSemana = dataSelecionada.getDay() // 0 = Domingo, 1 = Segunda, ..., 6 = Sábado
+
+                console.log('Data selecionada:', dataFormatada, 'Dia da semana:', diaSemana)
 
                 const url = new URL('http://localhost:8000/api/agendamentos/horarios-disponiveis/')
                 url.searchParams.append('servico', String(servico.id))
@@ -60,7 +64,7 @@ const HorariosStep = ({ setActiveTab, servico, funcionario }: Props) => {
                     url.searchParams.append('funcionario', String(funcionario.id))
                 }
 
-                const response = await fetch(url.toString(), {
+                const response = await authFetch(url.toString(), {
                     headers: {
                         'Content-Type': 'application/json',
                         ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -72,7 +76,7 @@ const HorariosStep = ({ setActiveTab, servico, funcionario }: Props) => {
                 }
 
                 const dataJson = await response.json()
-                console.log('Resposta da API /api/agendamentos/horarios-disponiveis/:', dataJson) // Depuração
+                console.log('Resposta da API /api/agendamentos/horarios-disponiveis/:', dataJson)
                 setHorariosDisponiveis(dataJson.horarios_disponiveis || [])
                 setError(null)
             } catch (error) {

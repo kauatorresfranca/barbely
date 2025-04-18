@@ -1,19 +1,20 @@
-import { createGlobalStyle } from "styled-components"
+import { createGlobalStyle } from 'styled-components'
 
 export const breakpoints = {
     desktop: '1024px',
-    tablet: '768px'
+    tablet: '768px',
 }
 
 export const colors = {
     corPrimaria: '#00c1fe',
+    corPrimariaEscura: '#0056b3',
     texto: '#aeb0b2',
     cinzaEscuro: '#181b20',
     cinzaClaro: '#2e333a',
     cinzaTransparent: 'rgba(134, 126, 126, 0.53)',
     branco: '#ffffff',
     verde: 'green',
-    vermelho: 'red'
+    vermelho: 'red',
 }
 
 export const GlobalStyle = createGlobalStyle`
@@ -40,4 +41,3 @@ export const GlobalStyle = createGlobalStyle`
     margin: 0 auto;
 }
 `
-

@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { breakpoints, colors } from '../../../../../styles';
+import { breakpoints, colors } from '../../../../../styles'
 
 // Estilizações para as modais
 export const ModalOverlay = styled.div`
@@ -17,13 +17,13 @@ export const ModalOverlay = styled.div`
 
     @keyframes fadeIn {
         from {
-        opacity: 0;
+            opacity: 0;
         }
         to {
-        opacity: 1;
+            opacity: 1;
         }
     }
-`;
+`
 
 export const ModalContent = styled.div`
     background: linear-gradient(135deg, ${colors.cinzaClaro}, ${colors.cinzaEscuro});
@@ -37,6 +37,24 @@ export const ModalContent = styled.div`
     position: relative;
     animation: slideUp 0.3s ease-out;
 
+    /* Personalizar o scroll */
+    &::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: ${colors.cinzaTransparent};
+        border-radius: 4px;
+    }
+
+    /* Firefox */
+    scrollbar-width: thin;
+    scrollbar-color: ${colors.cinzaTransparent} transparent;
+
     @media (max-width: ${breakpoints.tablet}) {
         max-width: 100%;
         height: 100%;
@@ -45,15 +63,15 @@ export const ModalContent = styled.div`
 
     @keyframes slideUp {
         from {
-        transform: translateY(50px);
-        opacity: 0;
+            transform: translateY(50px);
+            opacity: 0;
         }
         to {
-        transform: translateY(0);
-        opacity: 1;
+            transform: translateY(0);
+            opacity: 1;
         }
     }
-`;
+`
 
 export const CloseButton = styled.button`
     position: absolute;
@@ -69,7 +87,7 @@ export const CloseButton = styled.button`
     &:hover {
         transform: scale(1.2);
     }
-`;
+`
 
 export const ModalBody = styled.div`
     margin-top: 24px;
@@ -79,7 +97,7 @@ export const ModalBody = styled.div`
         font-size: 16px;
         margin-bottom: 12px;
     }
-`;
+`
 
 export const ModalButton = styled.button`
     background: ${colors.corPrimaria};
@@ -96,7 +114,7 @@ export const ModalButton = styled.button`
         transform: translateY(-2px);
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     }
-`;
+`
 
 export const AgendamentoItem = styled.div`
     background: ${colors.cinzaClaro};
@@ -108,7 +126,7 @@ export const AgendamentoItem = styled.div`
         font-size: 14px;
         margin-bottom: 8px;
     }
-`;
+`
 
 export const CancelButton = styled.button`
     background: transparent;
@@ -129,4 +147,4 @@ export const CancelButton = styled.button`
         opacity: 0.5;
         cursor: not-allowed;
     }
-`;
+`

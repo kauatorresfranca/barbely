@@ -1,5 +1,5 @@
-import styled from "styled-components"
-import { colors } from "../../../../styles"
+import styled from 'styled-components'
+import { colors } from '../../../../styles'
 
 export const Container = styled.div`
     display: flex;
@@ -41,7 +41,6 @@ export const SideBar = styled.div`
     scrollbar-width: thin;
     scrollbar-color: ${colors.cinzaTransparent} transparent;
 `
-
 
 export const BarberProfile = styled.div`
     display: flex;

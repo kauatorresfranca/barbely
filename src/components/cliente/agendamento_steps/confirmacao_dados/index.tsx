@@ -1,6 +1,7 @@
 import { toZonedTime, format } from 'date-fns-tz'
 
 import { AgendamentoData } from '../../../cliente/agendamento'
+import { authFetch } from '../../../../utils/authFetch'
 
 import * as S from './styles'
 
@@ -51,7 +52,7 @@ const ConfirmacaoStep = ({ setActiveTab, agendamentoData }: Props) => {
 
             console.log('Enviando payload:', payload) // Depuração
 
-            const res = await fetch('http://localhost:8000/api/agendamentos/criar/', {
+            const res = await authFetch('http://localhost:8000/api/agendamentos/criar/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -73,7 +74,6 @@ const ConfirmacaoStep = ({ setActiveTab, agendamentoData }: Props) => {
 
             const result = await res.json()
             console.log('Agendamento criado:', result) // Depuração
-            alert('Agendamento confirmado com sucesso!')
             setActiveTab('sucesso')
         } catch (error) {
             console.error('Erro ao enviar agendamento:', error)
@@ -82,7 +82,7 @@ const ConfirmacaoStep = ({ setActiveTab, agendamentoData }: Props) => {
     }
 
     const handleBack = () => {
-        setActiveTab('servico')
+        setActiveTab('horarios')
     }
 
     return (

@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Cliente } from '../../../../models/cliente'
 
 import * as S from './styles'
+import { authFetch } from '../../../../utils/authFetch'
 
 // Tipo ajustado para o modelo do backend
 export type Agendamento = {
@@ -57,7 +58,7 @@ const MeusAgendamentosModal = ({ onClose, cliente }: MeusAgendamentosModalProps)
                 }
 
                 console.log('Cliente ID:', cliente.id) // Depuração
-                const response = await fetch(
+                const response = await authFetch(
                     `http://localhost:8000/api/barbearia/agendamentos/?cliente_id=${cliente.id}`,
                     {
                         headers: {
@@ -97,13 +98,16 @@ const MeusAgendamentosModal = ({ onClose, cliente }: MeusAgendamentosModalProps)
                 throw new Error('Token de autenticação não encontrado.')
             }
 
-            const response = await fetch(`http://localhost:8000/api/agendamentos/${id}/cancelar/`, {
-                method: 'PATCH',
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json',
+            const response = await authFetch(
+                `http://localhost:8000/api/agendamentos/${id}/cancelar/`,
+                {
+                    method: 'PATCH',
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
                 },
-            })
+            )
 
             if (!response.ok) {
                 throw new Error('Erro ao cancelar agendamento.')
