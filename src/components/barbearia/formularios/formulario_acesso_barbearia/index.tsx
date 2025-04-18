@@ -1,59 +1,63 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import * as S from "./styles";
-import logo from "../../../../assets/images/logo.png";
+import { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+
+import * as S from './styles'
+
+import logo from '../../../../assets/images/logo.png'
 
 const FormularioLogin = () => {
-    const [formData, setFormData] = useState({ email: "", senha: "" })
+    const [formData, setFormData] = useState({ email: '', senha: '' })
     const [showPassword, setShowPassword] = useState(false)
-    const [error, setError] = useState("")
+    const [error, setError] = useState('')
     const navigate = useNavigate()
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-    };
+        setFormData({ ...formData, [e.target.name]: e.target.value })
+    }
 
     const handleLogin = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setError("");
+        e.preventDefault()
+        setError('')
 
         try {
-            const response = await fetch("http://localhost:8000/api/barbearias/login/", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
+            const response = await fetch('http://localhost:8000/api/barbearias/login/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email: formData.email, password: formData.senha }),
-            });
+            })
 
-            const data = await response.json();
+            const data = await response.json()
 
             if (response.ok && data.barbearia_id) {
-                sessionStorage.setItem("access_token_barbearia", data.access_token);
-                sessionStorage.setItem("refresh_token_barbearia", data.refresh_token);
-                sessionStorage.setItem("barbearia_token", data.barbearia_id);  // Armazena o ID da barbearia
+                sessionStorage.setItem('access_token_barbearia', data.access_token)
+                sessionStorage.setItem('refresh_token_barbearia', data.refresh_token)
+                sessionStorage.setItem('barbearia_token', data.barbearia_id) // Armazena o ID da barbearia
 
                 // Buscar os detalhes completos da barbearia
-                const barbeariaResponse = await fetch(`http://localhost:8000/api/barbearias/${data.barbearia_id}/`, {
-                    method: "GET",
-                    headers: { "Authorization": `Bearer ${data.access_token}` },
-                });
+                const barbeariaResponse = await fetch(
+                    `http://localhost:8000/api/barbearias/${data.barbearia_id}/`,
+                    {
+                        method: 'GET',
+                        headers: { Authorization: `Bearer ${data.access_token}` },
+                    },
+                )
 
-                const barbeariaData = await barbeariaResponse.json();
+                const barbeariaData = await barbeariaResponse.json()
 
                 if (barbeariaResponse.ok) {
-                    sessionStorage.setItem("barbearia", JSON.stringify(barbeariaData))
+                    sessionStorage.setItem('barbearia', JSON.stringify(barbeariaData))
                 }
 
                 // Atualizar a aplicação
-                window.dispatchEvent(new Event("storage"))
-                navigate("/dashboard")
+                window.dispatchEvent(new Event('storage'))
+                navigate('/dashboard')
             } else {
-                setError(data.error || "Erro ao fazer login.")
+                setError(data.error || 'Erro ao fazer login.')
             }
         } catch {
-            setError("Erro ao conectar com o servidor.")
+            setError('Erro ao conectar com o servidor.')
         }
-    };
-
+    }
 
     return (
         <S.FormularioContainer>
@@ -80,7 +84,7 @@ const FormularioLogin = () => {
                     <label htmlFor="senha">Senha</label>
                     <div className="input-wrapper">
                         <input
-                            type={showPassword ? "text" : "password"}
+                            type={showPassword ? 'text' : 'password'}
                             id="senha"
                             name="senha"
                             value={formData.senha}
@@ -89,7 +93,7 @@ const FormularioLogin = () => {
                             required
                         />
                         <i
-                            className={showPassword ? "ri-eye-fill" : "ri-eye-off-fill"}
+                            className={showPassword ? 'ri-eye-fill' : 'ri-eye-off-fill'}
                             onClick={() => setShowPassword(!showPassword)}
                             role="button"
                             tabIndex={0}
@@ -104,7 +108,7 @@ const FormularioLogin = () => {
                 </Link>
             </S.Form>
         </S.FormularioContainer>
-    );
-};
+    )
+}
 
-export default FormularioLogin;
+export default FormularioLogin

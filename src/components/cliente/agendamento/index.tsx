@@ -1,10 +1,12 @@
 import { useState } from 'react'
-import * as S from './styles'
+
+import { Funcionario } from '../../../models/funcionario'
+import { Servico } from '../../../models/servico'
 import HorariosStep from '../agendamento_steps/second_step'
 import FirstStep from '../agendamento_steps/first_step'
 import ConfirmacaoStep from '../agendamento_steps/confirmacao_dados'
-import { Funcionario } from '../../../models/funcionario'
-import { Servico } from '../../../models/servico'
+
+import * as S from './styles'
 
 type Props = {
     modalIsOpen: boolean
@@ -12,13 +14,11 @@ type Props = {
 }
 
 export type AgendamentoData = {
-    data: string;
-    horario: string;
-    servico: Servico;
-    funcionario: Funcionario | null;
-};
-
-
+    data: string
+    horario: string
+    servico: Servico
+    funcionario: Funcionario | null
+}
 
 const Agendamento = ({ modalIsOpen, onClose }: Props) => {
     const [activeTab, setActiveTab] = useState('servico')
@@ -26,7 +26,7 @@ const Agendamento = ({ modalIsOpen, onClose }: Props) => {
 
     const handleSetActiveTab = (tab: string, data?: Partial<AgendamentoData>) => {
         if (data) {
-            setAgendamentoData(prev => ({ ...prev, ...data } as AgendamentoData))
+            setAgendamentoData((prev) => ({ ...prev, ...data } as AgendamentoData))
         }
         setActiveTab(tab)
     }
@@ -46,13 +46,15 @@ const Agendamento = ({ modalIsOpen, onClose }: Props) => {
                 <h2>Agende sua sessão</h2>
                 <S.Etapas>
                     {['servico', 'horarios', 'dia'].map((id, index) => (
-                        <span onClick={() => setActiveTab(id)} key={index} className={id === activeTab ? 'active' : ''}></span>
+                        <span
+                            onClick={() => setActiveTab(id)}
+                            key={index}
+                            className={id === activeTab ? 'active' : ''}
+                        ></span>
                     ))}
                 </S.Etapas>
                 <S.Step className="active" id={activeTab}>
-                    {activeTab === 'servico' && (
-                        <FirstStep setActiveTab={handleSetActiveTab} />
-                    )}
+                    {activeTab === 'servico' && <FirstStep setActiveTab={handleSetActiveTab} />}
                     {activeTab === 'horarios' && agendamentoData && (
                         <HorariosStep
                             setActiveTab={handleSetActiveTab}
@@ -61,7 +63,10 @@ const Agendamento = ({ modalIsOpen, onClose }: Props) => {
                         />
                     )}
                     {activeTab === 'dia' && agendamentoData && (
-                        <ConfirmacaoStep setActiveTab={handleSetActiveTab} agendamentoData={agendamentoData} />
+                        <ConfirmacaoStep
+                            setActiveTab={handleSetActiveTab}
+                            agendamentoData={agendamentoData}
+                        />
                     )}
                 </S.Step>
             </S.Modal>

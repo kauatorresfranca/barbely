@@ -1,7 +1,7 @@
 // utils/authFetch.ts
 export async function authFetch(url: string, options: RequestInit = {}) {
     const accessToken = sessionStorage.getItem("access_token_barbearia");
-    const refreshToken = sessionStorage.getItem("access_token_barbearia");
+    const refreshToken = sessionStorage.getItem("refresh_token_barbearia");
 
     // Adiciona o token atual no header
     const authHeaders = {
@@ -22,7 +22,7 @@ export async function authFetch(url: string, options: RequestInit = {}) {
 
         if (refreshResponse.ok) {
             const refreshData = await refreshResponse.json();
-            sessionStorage.setItem("access_token", refreshData.access);
+            sessionStorage.setItem("access_token_barbearia", refreshData.access);
 
             // Refaz a requisição original com o novo token
             const retryHeaders = {

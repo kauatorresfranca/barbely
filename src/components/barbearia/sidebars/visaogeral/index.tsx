@@ -1,28 +1,32 @@
-import GraficoVendas from "../../gradico_vendas";
-import * as S from "./styles";
+import GraficoVendas from '../../gradico_vendas'
+
+import * as S from './styles'
 
 const Overview = () => {
-    const hoje = new Date().toISOString().split("T")[0]
-    const novaData = new Date();
-    novaData.setDate(novaData.getDate() - 7);
+    const hoje = new Date().toISOString().split('T')[0]
+    const novaData = new Date()
+    novaData.setDate(novaData.getDate() - 7)
 
-    const UmaSemanaAtrás = novaData.toISOString().split("T")[0];
+    const UmaSemanaAtrás = novaData.toISOString().split('T')[0]
 
     return (
         <S.Container>
             <S.Header>
                 <h2>Visão Geral</h2>
-                <p className="subtitle">Veja um resumo das principais informações e atividades recentes da sua barbearia.</p>
+                <p className="subtitle">
+                    Veja um resumo das principais informações e atividades recentes da sua
+                    barbearia.
+                </p>
             </S.Header>
             <S.Filtro>
                 <S.InputsContainer>
                     <S.InputGroup>
                         <p>Inicio</p>
-                        <input type="date" defaultValue={UmaSemanaAtrás}/>
+                        <input type="date" defaultValue={UmaSemanaAtrás} />
                     </S.InputGroup>
                     <S.InputGroup>
                         <p>Fim</p>
-                        <input type="date" defaultValue={hoje}/>
+                        <input type="date" defaultValue={hoje} />
                     </S.InputGroup>
                 </S.InputsContainer>
                 <button>Filtrar</button>
@@ -70,11 +74,11 @@ const Overview = () => {
                 </S.GraficoContainer>
                 <S.Services>
                     <S.Card id="secondline">
-                            <i className="ri-calendar-schedule-line"></i>
-                            <div className="valor">
-                                <h3>Agendametos</h3>
-                                <p>24</p>
-                            </div>
+                        <i className="ri-calendar-schedule-line"></i>
+                        <div className="valor">
+                            <h3>Agendametos</h3>
+                            <p>24</p>
+                        </div>
                     </S.Card>
                     <S.Card id="secondline">
                         <i className="ri-user-add-line"></i>
@@ -86,7 +90,7 @@ const Overview = () => {
                 </S.Services>
             </S.SecondLine>
         </S.Container>
-    );
-};
+    )
+}
 
-export default Overview;
+export default Overview

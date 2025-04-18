@@ -22,7 +22,26 @@ export const SideBar = styled.div`
         width: 120px;
         margin: 12px auto;
     }
+
+    /* Personalizar o scroll */
+    &::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: ${colors.cinzaTransparent};
+        border-radius: 4px;
+    }
+
+    /* Firefox */
+    scrollbar-width: thin;
+    scrollbar-color: ${colors.cinzaTransparent} transparent;
 `
+
 
 export const BarberProfile = styled.div`
     display: flex;
@@ -34,9 +53,7 @@ export const SidebarList = styled.ul`
 
     li {
         &.logout {
-            position: absolute;
-            bottom: 24px;
-            margin: 0 auto;
+            margin-top: 120px;
         }
     }
 
@@ -84,6 +101,24 @@ export const Content = styled.div`
     flex: 1;
     overflow-y: auto;
     height: 100vh;
+
+    /* Personalizar o scroll */
+    &::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: ${colors.cinzaTransparent};
+        border-radius: 4px;
+    }
+
+    /* Firefox */
+    scrollbar-width: thin;
+    scrollbar-color: ${colors.cinzaTransparent} transparent;
 `
 
 export const Filtro = styled.div`

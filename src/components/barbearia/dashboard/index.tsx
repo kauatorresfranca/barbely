@@ -1,10 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useBarbeariaAtual } from '../../../hooks/useBarbeariaAtual'
-import { useNavigate } from "react-router-dom"
-
-import logo from '../../../assets/images/logo.png'
-
-import * as S from './styles'
+import { useNavigate } from 'react-router-dom'
 
 // Importação dos componentes do dashboard
 import Overview from '../sidebars/visaogeral/index'
@@ -15,6 +11,11 @@ import Financeiro from '../sidebars/financeiro/index'
 import Servicos from '../sidebars/servicos/index'
 import PerfilBarbearia from '../sidebars/perfil_barbearia/index'
 import Configuracoes from '../sidebars/configuracoes/index'
+import { authFetch } from '../../../utils/authFetch'
+
+import * as S from './styles'
+
+import logo from '../../../assets/images/logo.png'
 
 const Dash = () => {
     const barbearia = useBarbeariaAtual()
@@ -24,65 +25,99 @@ const Dash = () => {
     const navigate = useNavigate()
 
     useEffect(() => {
-            const fetchBarbearia = async () => {
-                try {
-                    const response = await fetch(`http://localhost:8000/api/barbearias/buscar-por-slug/${slug}/`)
-                    const data = await response.json()
+        const fetchBarbearia = async () => {
+            try {
+                const response = await authFetch(
+                    `http://localhost:8000/api/barbearias/buscar-por-slug/${slug}/`,
+                )
+                const data = await response.json()
 
-                    if (data.imagem) {
-                        const isFullUrl = data.imagem.startsWith("http");
-                        setPreview(isFullUrl ? data.imagem : `http://localhost:8000${data.imagem}`);
-                        }
-
-                } catch (error) {
-                    console.error("Erro ao buscar barbearia:", error)
+                if (data.imagem) {
+                    const isFullUrl = data.imagem.startsWith('http')
+                    setPreview(isFullUrl ? data.imagem : `http://localhost:8000${data.imagem}`)
                 }
-            };
+            } catch (error) {
+                console.error('Erro ao buscar barbearia:', error)
+            }
+        }
 
-            if (slug) fetchBarbearia();
-        }, [slug]);
+        if (slug) fetchBarbearia()
+    }, [slug])
 
     // Mapeamento de abas e seus componentes correspondentes
     const tabs = [
-        { id: 'overview', label: 'Visão geral', icon: 'ri-dashboard-fill', component: <Overview /> },
-        { id: 'agendamentos', label: 'Agendamentos', icon: 'ri-calendar-2-fill', component: <Agendamentos /> },
+        {
+            id: 'overview',
+            label: 'Visão geral',
+            icon: 'ri-dashboard-fill',
+            component: <Overview />,
+        },
+        {
+            id: 'agendamentos',
+            label: 'Agendamentos',
+            icon: 'ri-calendar-2-fill',
+            component: <Agendamentos />,
+        },
         { id: 'clientes', label: 'Clientes', icon: 'ri-team-fill', component: <Clientes /> },
-        { id: 'profissionais', label: 'Profissionais', icon: 'ri-nurse-fill', component: <Profissionais /> },
-        { id: 'financeiro', label: 'Financeiro', icon: 'ri-bank-card-fill', component: <Financeiro /> },
+        {
+            id: 'profissionais',
+            label: 'Profissionais',
+            icon: 'ri-nurse-fill',
+            component: <Profissionais />,
+        },
+        {
+            id: 'financeiro',
+            label: 'Financeiro',
+            icon: 'ri-bank-card-fill',
+            component: <Financeiro />,
+        },
         { id: 'servicos', label: 'Serviços', icon: 'ri-scissors-fill', component: <Servicos /> },
-        { id: 'perfil_da_barbearia', label: 'Perfil da Barbearia', icon: 'ri-store-2-line', component: <PerfilBarbearia /> },
-        { id: 'configuracoes', label: 'Configurações', icon: 'ri-settings-3-fill', component: <Configuracoes /> },
+        {
+            id: 'perfil_da_barbearia',
+            label: 'Perfil da Barbearia',
+            icon: 'ri-store-2-line',
+            component: <PerfilBarbearia />,
+        },
+        {
+            id: 'configuracoes',
+            label: 'Configurações',
+            icon: 'ri-settings-3-fill',
+            component: <Configuracoes />,
+        },
     ]
 
-        // função para fazer logout
-        const handleLogout = () => {
-            sessionStorage.removeItem("access_token");
-            sessionStorage.removeItem("refresh_token");
-            navigate("/login"); // Redirecionando para login
-        }
+    // função para fazer logout
+    const handleLogout = () => {
+        sessionStorage.removeItem('access_token_barbearia')
+        sessionStorage.removeItem('refresh_token_barbearia')
+        navigate('/login') // Redirecionando para login
+    }
 
     return (
         <S.Container>
             <S.SideBar>
                 <S.BarberProfile>
-                    <img id='logo_barberly' src={logo} alt="Barberly" />
+                    <img id="logo_barberly" src={logo} alt="Barberly" />
                 </S.BarberProfile>
                 <S.Profile>
-                        <img src={preview || "https://via.placeholder.com/150x150"} alt="logo da barbearia" />
-                        <div>
-                            <h3>{barbearia?.nome_barbearia}</h3>
-                            <S.Activity >
-                                <div>
-                                    <span></span>
-                                    <p>Aberto agora</p>
-                                </div>
-                                <i className="ri-arrow-down-s-line"></i>
-                            </S.Activity>
-                        </div>
+                    <img
+                        src={preview || 'https://via.placeholder.com/150x150'}
+                        alt="logo da barbearia"
+                    />
+                    <div>
+                        <h3>{barbearia?.nome_barbearia}</h3>
+                        <S.Activity>
+                            <div>
+                                <span></span>
+                                <p>Aberto agora</p>
+                            </div>
+                            <i className="ri-arrow-down-s-line"></i>
+                        </S.Activity>
+                    </div>
                 </S.Profile>
                 <nav>
                     <S.SidebarList>
-                        {tabs.map(tab => (
+                        {tabs.map((tab) => (
                             <li key={tab.id}>
                                 <button
                                     className={activeTab === tab.id ? 'active' : ''}
@@ -92,7 +127,7 @@ const Dash = () => {
                                 </button>
                             </li>
                         ))}
-                        <li className='logout'>
+                        <li className="logout">
                             <button onClick={handleLogout}>
                                 <i className="ri-logout-box-line"></i>
                                 Sair
@@ -101,11 +136,9 @@ const Dash = () => {
                     </S.SidebarList>
                 </nav>
             </S.SideBar>
-            <S.Content>
-                {tabs.find(tab => tab.id === activeTab)?.component}
-            </S.Content>
+            <S.Content>{tabs.find((tab) => tab.id === activeTab)?.component}</S.Content>
         </S.Container>
-    );
-};
+    )
+}
 
 export default Dash

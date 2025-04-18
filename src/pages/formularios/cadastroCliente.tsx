@@ -1,7 +1,7 @@
-import FormularioCadastro from "../../components/formularios/login_cadastro/formulario_cadastro_cliente"
+import FormularioCadastro from "../../components/cliente/formularios/formulario_cadastro_cliente"
 
 const CadastroCliente = () => {
-    
+
     return (
         <FormularioCadastro/>
     )

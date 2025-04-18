@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react'
-import * as S from './styles'
-import CriarServicoModal from '../../../formularios/sidebars/servicos/servico_criar'
-import EditarServicoModal from '../../../formularios/sidebars/servicos/servico_editar'
+
 import { Servico } from '../../../../models/servico'
+import CriarServicoModal from '../../modals/servicos/servico_criar'
+import EditarServicoModal from '../../modals/servicos/servico_editar'
+
+import * as S from './styles'
 
 const Servicos = () => {
     const [modalIsOpen, setModalIsOpen] = useState(false)
@@ -22,7 +24,7 @@ const Servicos = () => {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
-            });
+            })
             if (response.ok) {
                 const data = await response.json()
                 setServicos(data)
@@ -35,7 +37,7 @@ const Servicos = () => {
     }
 
     const handleDelete = async (id: number) => {
-        const confirm = window.confirm("Deseja realmente deletar este serviço?")
+        const confirm = window.confirm('Deseja realmente deletar este serviço?')
         if (!confirm) return
 
         try {
@@ -48,7 +50,7 @@ const Servicos = () => {
             })
 
             if (response.ok) {
-                setServicos(prev => prev.filter(s => s.id !== id))
+                setServicos((prev) => prev.filter((s) => s.id !== id))
             } else {
                 console.error('Erro ao deletar serviço')
             }
@@ -65,14 +67,17 @@ const Servicos = () => {
         <>
             <S.Container>
                 <h2>Serviços</h2>
-                <p className='subtitle'>Cadastre e edite os serviços oferecidos, incluindo valores, duração e descrições.</p>
+                <p className="subtitle">
+                    Cadastre e edite os serviços oferecidos, incluindo valores, duração e
+                    descrições.
+                </p>
                 <S.ServiceHeader>
                     <button onClick={openModal}>+ Novo Serviço</button>
                 </S.ServiceHeader>
                 <S.Head>
-                {servicos.length <= 0 ? (
-                        <p className='empty'>Você ainda não tem serviços cadastrados</p>
-                    ): (
+                    {servicos.length <= 0 ? (
+                        <p className="empty">Você ainda não tem serviços cadastrados</p>
+                    ) : (
                         <>
                             <p>Nome</p>
                             <p>Valor</p>
@@ -89,20 +94,19 @@ const Servicos = () => {
                             <p>{servico.duracao_minutos} min</p>
                             <S.IconsGroup>
                                 <i className="ri-edit-2-line edit" onClick={openEditModal}></i>
-                                <i className="ri-delete-bin-line delete" onClick={() => handleDelete(servico.id)}></i>
+                                <i
+                                    className="ri-delete-bin-line delete"
+                                    onClick={() => handleDelete(servico.id)}
+                                ></i>
                             </S.IconsGroup>
                         </S.ListItem>
                     ))}
                 </S.List>
             </S.Container>
 
-            {modalIsOpen &&
-                <CriarServicoModal closeModal={closeModal} onSuccess={fetchServicos} />
-            }
+            {modalIsOpen && <CriarServicoModal closeModal={closeModal} onSuccess={fetchServicos} />}
 
-            {editModalIsOpen &&
-                <EditarServicoModal closeModal={closeEditModal} />
-            }
+            {editModalIsOpen && <EditarServicoModal closeModal={closeEditModal} />}
         </>
     )
 }
