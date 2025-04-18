@@ -1,14 +1,23 @@
 export async function authFetch(url: string, options: RequestInit = {}): Promise<Response> {
-    const isClienteRequest = url.includes('/api/clientes/') || url.includes('/api/agendamentos/')
+    // Excluir /api/clientes/barbearia/ de isClienteRequest
+    const isClienteRequest =
+        url.includes('/api/agendamentos/') ||
+        (url.includes('/api/clientes/') && !url.includes('/api/clientes/barbearia/'))
     const tokenKey = isClienteRequest ? 'access_token_cliente' : 'access_token_barbearia'
     const refreshKey = isClienteRequest ? 'refresh_token_cliente' : 'refresh_token_barbearia'
 
     const accessToken = sessionStorage.getItem(tokenKey)
     const refreshToken = sessionStorage.getItem(refreshKey)
 
+    console.log(
+        `authFetch: URL=${url}, tokenKey=${tokenKey}, accessToken=${
+            accessToken ? '[presente]' : 'null'
+        }`,
+    )
+
     if (!accessToken) {
         console.error(`Token de acesso (${tokenKey}) não encontrado.`)
-        const redirectPath = isClienteRequest ? '/barbearia/login' : '/barbearia/admin/login'
+        const redirectPath = isClienteRequest ? '/barbearia/login' : '/login'
         window.location.href = redirectPath
         throw new Error('Token de acesso não encontrado.')
     }
@@ -34,9 +43,8 @@ export async function authFetch(url: string, options: RequestInit = {}): Promise
         if (refreshResponse.ok) {
             const refreshData = await refreshResponse.json()
             sessionStorage.setItem(tokenKey, refreshData.access)
-            sessionStorage.setItem(refreshKey, refreshData.refresh || refreshToken) // Atualiza refresh se fornecido
+            sessionStorage.setItem(refreshKey, refreshData.refresh || refreshToken)
 
-            // Refaz a requisição com o novo token
             const retryHeaders = {
                 ...options.headers,
                 'Content-Type': 'application/json',
@@ -48,7 +56,7 @@ export async function authFetch(url: string, options: RequestInit = {}): Promise
             console.error('Erro ao renovar token:', await refreshResponse.text())
             sessionStorage.removeItem(tokenKey)
             sessionStorage.removeItem(refreshKey)
-            const redirectPath = isClienteRequest ? '/barbearia/login' : '/barbearia/admin/login'
+            const redirectPath = isClienteRequest ? '/barbearia/login' : '/login'
             window.location.href = redirectPath
             throw new Error('Erro ao renovar token.')
         }

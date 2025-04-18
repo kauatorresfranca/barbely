@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
 import { Barbearia } from '../../../models/Barbearia'
@@ -30,6 +30,7 @@ const PaginaBarbearia = () => {
     const [endereco, setEndereco] = useState<string | null>(null)
     const [showDropdown, setShowDropdown] = useState(false)
     const [preview, setPreview] = useState<string | null>(null)
+    const dropdownRef = useRef<HTMLDivElement>(null)
 
     const toggleDropdown = () => {
         setShowDropdown((prev) => !prev)
@@ -47,7 +48,7 @@ const PaginaBarbearia = () => {
 
     const isBarbeariaAberta = () => {
         const agora = new Date()
-        const diaAtual = agora.getDay() // 0 = Domingo, 1 = Segunda, ..., 6 = Sábado
+        const diaAtual = agora.getDay()
         const horaAtual =
             agora.getHours().toString().padStart(2, '0') +
             ':' +
@@ -55,7 +56,7 @@ const PaginaBarbearia = () => {
 
         const horarioHoje = horarios.find((h) => h.dia_semana === diaAtual)
         if (!horarioHoje || !horarioHoje.horario_abertura || !horarioHoje.horario_fechamento) {
-            return false // Fechado se não houver horário ou estiver marcado como fechado
+            return false
         }
 
         return (
@@ -63,6 +64,23 @@ const PaginaBarbearia = () => {
             horaAtual <= horarioHoje.horario_fechamento.slice(0, 5)
         )
     }
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (
+                dropdownRef.current &&
+                !dropdownRef.current.contains(event.target as Node) &&
+                showDropdown
+            ) {
+                setShowDropdown(false)
+            }
+        }
+
+        document.addEventListener('mousedown', handleClickOutside)
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside)
+        }
+    }, [showDropdown])
 
     useEffect(() => {
         const fetchData = async () => {
@@ -171,7 +189,7 @@ const PaginaBarbearia = () => {
                         <S.ButtonGroup>
                             {!loading &&
                                 (cliente ? (
-                                    <S.UserResume onClick={toggleDropdown}>
+                                    <S.UserResume ref={dropdownRef} onClick={toggleDropdown}>
                                         <img src={user} alt="" />
                                         <p>
                                             <span>Olá,</span> {cliente?.user?.nome?.split(' ')[0]}

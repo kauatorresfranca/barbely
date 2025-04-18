@@ -41,7 +41,6 @@ const Clientes = () => {
         if (!token || !barbeariaId) {
             setErro('Token ou ID da barbearia ausente. Por favor, faça login novamente.')
             setLoading(false)
-            navigate('/login')
             return
         }
 
