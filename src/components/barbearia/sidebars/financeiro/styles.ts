@@ -2,7 +2,6 @@ import styled from 'styled-components'
 import { colors } from '../../../../../styles'
 
 export const Container = styled.div`
-
     .subtitle {
         margin-top: 6px;
         margin-bottom: 16px;
@@ -33,7 +32,7 @@ export const Tab = styled.div`
     border-radius: 10px;
     background-color: ${colors.cinzaClaro};
     cursor: pointer;
-    transition: .3s;
+    transition: 0.3s;
 
     h3 {
         color: ${colors.texto};
@@ -61,9 +60,13 @@ export const Tab = styled.div`
         border: 2px solid ${colors.corPrimaria};
 
         .icon_right {
-        position: absolute;
-        right: 8px;
-        color: ${colors.corPrimaria};
+            position: absolute;
+            right: 8px;
+            color: ${colors.corPrimaria};
+        }
     }
-    }
+`
+
+export const Content = styled.div`
+    flex: 1;
 `

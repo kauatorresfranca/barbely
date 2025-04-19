@@ -2,7 +2,6 @@ import styled from 'styled-components'
 import { colors } from '../../../../../styles'
 
 export const Container = styled.div`
-
     .subtitle {
         margin-top: 6px;
         color: ${colors.texto};
@@ -47,7 +46,7 @@ export const ListItem = styled.li`
         width: 35%;
         color: ${colors.branco};
     }
-`;
+`
 
 export const Button = styled.button`
     padding: 6px 10px;

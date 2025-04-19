@@ -192,8 +192,15 @@ export const Activity = styled.div`
         height: 12px;
         width: 12px;
         margin: 0 6px 0 8px;
-        background-color: ${colors.verde};
         border-radius: 50%;
+
+        &.open {
+            background-color: ${colors.verde};
+        }
+
+        &.closed {
+            background-color: ${colors.vermelho};
+        }
     }
 
     p {

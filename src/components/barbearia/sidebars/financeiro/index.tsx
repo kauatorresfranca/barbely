@@ -1,7 +1,6 @@
 import { useState } from 'react'
-
 import Planos from '../../sub_sidebars/planos'
-
+import Faturamento from '../../sub_sidebars/faturamento'
 import * as S from './styles'
 
 const Financeiro = () => {
@@ -20,9 +19,10 @@ const Financeiro = () => {
             title: 'Faturamento',
             icon_left: 'ri-bank-line',
             icon_right: 'ri-arrow-right-s-line',
-            component: 'faturamento',
+            component: <Faturamento />,
         },
     ]
+
     return (
         <S.Container>
             <h2>Financeiro</h2>
@@ -34,8 +34,8 @@ const Financeiro = () => {
                 <S.SiderBarPerfil>
                     {tabs.map((tab) => (
                         <S.Tab
+                            key={tab.id}
                             className={activeTab === tab.id ? 'active' : ''}
-                            id={tab.id}
                             onClick={() => setActiveTab(tab.id)}
                         >
                             <i className={`${tab.icon_left} icon_left`}></i>
@@ -44,7 +44,7 @@ const Financeiro = () => {
                         </S.Tab>
                     ))}
                 </S.SiderBarPerfil>
-                {tabs.find((tab) => tab.id === activeTab)?.component}
+                <S.Content>{tabs.find((tab) => tab.id === activeTab)?.component}</S.Content>
             </S.Financeiro>
         </S.Container>
     )

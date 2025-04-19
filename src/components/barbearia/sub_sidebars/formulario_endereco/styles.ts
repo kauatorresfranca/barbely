@@ -1,5 +1,5 @@
-import styled from "styled-components";
-import { colors } from "../../../../../styles";
+import styled from 'styled-components'
+import { colors } from '../../../../../styles'
 
 export const Container = styled.div`
     width: 680px;
@@ -45,7 +45,7 @@ export const inputGroup = styled.div`
         color: ${colors.texto};
 
         &:hover {
-        cursor: pointer;
+            cursor: pointer;
         }
     }
 `
@@ -110,7 +110,7 @@ export const Button = styled.button`
     border-radius: 4px;
     cursor: pointer;
     width: 100%;
-`;
+`
 
 export const ImagemWrapper = styled.div`
     display: flex;
@@ -126,7 +126,7 @@ export const ImagemWrapper = styled.div`
         background-color: ${colors.corPrimaria};
         color: ${colors.cinzaEscuro};
     }
-`;
+`
 
 export const ImagemContainer = styled.div`
     width: 120px;
@@ -145,8 +145,8 @@ export const ImagemPerfil = styled.img`
     &:hover {
         opacity: 0.8;
     }
-`;
+`
 
 export const HiddenInput = styled.input`
     display: none;
-`;
+`

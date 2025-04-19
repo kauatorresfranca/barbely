@@ -1,5 +1,5 @@
-import styled from "styled-components"
-import { colors } from "../../../../../styles"
+import styled from 'styled-components'
+import { colors } from '../../../../../styles'
 
 export const Container = styled.div`
     width: 100%;
@@ -25,7 +25,6 @@ export const Filtro = styled.div`
     display: flex;
     align-items: center;
 
-
     input {
         height: 42px;
         width: 100%;
@@ -36,7 +35,7 @@ export const Filtro = styled.div`
         border: 1px solid rgba(134, 126, 126, 0.53);
         font-size: 16px;
         font-weight: bold;
-        transition: .3s;
+        transition: 0.3s;
         color-scheme: dark light; /* Tenta adaptar ao tema */
 
         &:hover {
@@ -46,7 +45,7 @@ export const Filtro = styled.div`
         &:focus {
             border: 1px solid ${colors.corPrimaria};
             outline: none;
-            }
+        }
 
         &::-webkit-calendar-picker-indicator {
             filter: invert(1); /* Inverte a cor do ícone */
@@ -130,7 +129,7 @@ export const Card = styled.div`
     p {
         font-size: 22px;
         font-weight: bold;
-        color: ${colors.branco}
+        color: ${colors.branco};
     }
 
     &#secondline {
@@ -139,9 +138,9 @@ export const Card = styled.div`
         border: none;
 
         .valor {
-        position: absolute;
-        right: 240px;
-    }
+            position: absolute;
+            right: 240px;
+        }
     }
 `
 

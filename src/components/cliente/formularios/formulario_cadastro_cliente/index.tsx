@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
+import { IMaskInput } from 'react-imask'
 
 import * as S from './styles'
 
@@ -135,7 +136,8 @@ const FormularioCadastroCliente = () => {
                 </S.inputGroup>
                 <S.inputGroup>
                     <label htmlFor="telefone">Telefone</label>
-                    <input
+                    <IMaskInput
+                        mask="(00) 00000-0000"
                         type="tel"
                         id="telefone"
                         name="telefone"

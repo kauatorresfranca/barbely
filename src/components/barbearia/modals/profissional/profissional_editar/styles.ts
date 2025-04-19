@@ -23,7 +23,6 @@ export const Modal = styled.div`
     position: relative;
     animation: fadeIn 0.3s ease-in-out;
 
-
     h2 {
         margin-bottom: 12px;
         text-align: center;
@@ -31,12 +30,12 @@ export const Modal = styled.div`
 
     @keyframes fadeIn {
         from {
-        opacity: 0;
-        transform: translateY(-20px);
+            opacity: 0;
+            transform: translateY(-20px);
         }
         to {
-        opacity: 1;
-        transform: translateY(0);
+            opacity: 1;
+            transform: translateY(0);
         }
     }
 
@@ -79,7 +78,7 @@ export const inputGroup = styled.div`
         border: 1px solid transparent;
         border-radius: 3px;
         background-color: #181b20;
-        transition: border .4s ease-in-out;
+        transition: border 0.4s ease-in-out;
 
         &:hover {
             border: 1px solid ${colors.branco};
@@ -88,7 +87,7 @@ export const inputGroup = styled.div`
         &:focus {
             border: 1px solid ${colors.corPrimaria};
             outline: none;
-            }
+        }
 
         &::placeholder {
             color: ${colors.cinzaClaro};
@@ -111,4 +110,3 @@ export const inputGroup = styled.div`
         color: ${colors.texto};
     }
 `
-

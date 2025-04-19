@@ -1,6 +1,6 @@
-import styled from "styled-components"
-import { Link } from "react-router-dom"
-import { colors } from "../../../styles"
+import styled from 'styled-components'
+import { Link } from 'react-router-dom'
+import { colors } from '../../../styles'
 
 export const Container = styled.div`
     background-color: ${colors.cinzaEscuro};
@@ -117,7 +117,7 @@ export const FeaturesSection = styled.section`
         margin: 0 auto;
 
         li::before {
-            content: "✔️ ";
+            content: '✔️ ';
         }
     }
 `

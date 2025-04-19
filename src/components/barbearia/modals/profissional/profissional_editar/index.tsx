@@ -26,7 +26,9 @@ const EditarProfissionalModal = ({ closeModal }: Props) => {
                         required
                     />
                 </S.inputGroup>
-                <button className='confimar' type="submit">Confirmar Alterações</button>
+                <button className="confimar" type="submit">
+                    Confirmar Alterações
+                </button>
             </S.Modal>
         </S.Overlay>
     )

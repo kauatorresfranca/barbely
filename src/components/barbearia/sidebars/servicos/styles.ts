@@ -1,8 +1,7 @@
-import styled from "styled-components"
+import styled from 'styled-components'
 import { colors } from '../../../../../styles'
 
 export const Container = styled.div`
-
     .subtitle {
         margin-top: 6px;
         color: ${colors.texto};

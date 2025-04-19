@@ -1,5 +1,5 @@
-import styled from "styled-components";
-import { colors } from "../../../../../styles";
+import styled from 'styled-components'
+import { colors } from '../../../../../styles'
 
 export const Container = styled.div`
     width: 680px;
@@ -17,19 +17,20 @@ export const Container = styled.div`
         font-size: 14px;
         text-align: center;
     }
-`;
+`
 
 export const Form = styled.form`
     display: flex;
     flex-direction: column;
-`;
+`
 
 export const Table = styled.table`
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 20px;
 
-    th, td {
+    th,
+    td {
         padding: 10px;
         text-align: left;
         color: #fff;
@@ -39,7 +40,7 @@ export const Table = styled.table`
         font-weight: 500;
         color: ${colors.texto};
     }
-`;
+`
 
 export const CheckboxWrapper = styled.label`
     display: inline-flex;
@@ -75,7 +76,7 @@ export const CheckboxWrapper = styled.label`
     }
 
     input:checked + .checkmark::after {
-        content: "✔";
+        content: '✔';
         font-size: 14px;
         color: ${colors.corPrimaria};
         position: absolute;
@@ -84,7 +85,6 @@ export const CheckboxWrapper = styled.label`
         transform: translate(-50%, -50%);
     }
 `
-
 
 export const Input = styled.input`
     background: ${colors.cinzaEscuro};
@@ -101,7 +101,7 @@ export const Input = styled.input`
     &:disabled {
         opacity: 0.5;
     }
-`;
+`
 
 export const Button = styled.button`
     background: ${colors.corPrimaria};
@@ -113,4 +113,4 @@ export const Button = styled.button`
     border-radius: 4px;
     cursor: pointer;
     width: 100%;
-`;
+`
