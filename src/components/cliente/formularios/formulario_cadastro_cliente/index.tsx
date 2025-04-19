@@ -6,7 +6,7 @@ import * as S from './styles'
 import logo from '../../../../assets/images/logo.png'
 
 const FormularioCadastroCliente = () => {
-    const { slug } = useParams() // slug da barbearia vindo da URL
+    const { slug } = useParams()
     const [barbeariaId, setBarbeariaId] = useState<number | null>(null)
 
     const [formData, setFormData] = useState({
@@ -23,11 +23,12 @@ const FormularioCadastroCliente = () => {
 
     useEffect(() => {
         if (slug) {
-            fetch(`http://localhost:8000/api/barbearias/?slug=${slug}`)
+            fetch(`http://localhost:8000/api/barbearias/buscar-por-slug/${slug}/`)
                 .then((res) => res.json())
                 .then((data) => {
-                    if (data.length > 0) {
-                        setBarbeariaId(data[0].id)
+                    console.log('Resposta de /api/barbearias/buscar-por-slug/:', data) // Adicionar log
+                    if (data.id) {
+                        setBarbeariaId(data.id)
                     } else {
                         alert('Barbearia não encontrada.')
                     }
@@ -56,23 +57,25 @@ const FormularioCadastroCliente = () => {
             return
         }
 
+        const payload = {
+            user: {
+                email: formData.email,
+                nome: `${formData.first_name} ${formData.last_name}`,
+                telefone: formData.telefone,
+                password: formData.password,
+            },
+            nome: `${formData.first_name} ${formData.last_name}`,
+            telefone: formData.telefone,
+            barbearia: barbeariaId,
+        }
+
+        console.log('Payload enviado para /api/clientes/:', payload)
+
         try {
             const response = await fetch('http://localhost:8000/api/clientes/', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    user: {
-                        email: formData.email,
-                        nome: `${formData.first_name} ${formData.last_name}`,
-                        telefone: formData.telefone,
-                        password: formData.password,
-                    },
-                    nome: `${formData.first_name} ${formData.last_name}`,
-                    telefone: formData.telefone,
-                    barbearia: barbeariaId,
-                }),
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
             })
 
             if (response.ok) {

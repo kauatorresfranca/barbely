@@ -3,7 +3,6 @@ import { useParams } from 'react-router-dom'
 
 import { Funcionario } from '../../../../models/funcionario'
 import { Servico } from '../../../../models/servico'
-import { authFetch } from '../../../../utils/authFetch'
 
 import * as S from './styles'
 
@@ -27,8 +26,8 @@ const FirstStep = ({ setActiveTab }: Props) => {
         const fetchData = async () => {
             try {
                 const [servicosRes, funcionariosRes] = await Promise.all([
-                    authFetch(`http://localhost:8000/api/servicos/?barbearia_slug=${slug}`),
-                    authFetch(`http://localhost:8000/api/funcionarios/?barbearia_slug=${slug}`),
+                    fetch(`http://localhost:8000/api/servicos/?barbearia_slug=${slug}`),
+                    fetch(`http://localhost:8000/api/funcionarios/?barbearia_slug=${slug}`),
                 ])
 
                 if (servicosRes.ok) {

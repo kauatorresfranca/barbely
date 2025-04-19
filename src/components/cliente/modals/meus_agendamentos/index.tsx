@@ -59,7 +59,7 @@ const MeusAgendamentosModal = ({ onClose, cliente }: MeusAgendamentosModalProps)
 
                 console.log('Cliente ID:', cliente.id) // Depuração
                 const response = await authFetch(
-                    `http://localhost:8000/api/barbearia/agendamentos/?cliente_id=${cliente.id}`,
+                    `http://localhost:8000/api/clientes/agendamentos/?cliente_id=${cliente.id}`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,
