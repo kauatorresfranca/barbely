@@ -22,17 +22,6 @@ const Home = () => {
                 </div>
                 <img src={bannerImg} alt="Banner" />
             </S.BannerSection>
-
-            <S.FeaturesSection>
-                <h2>Por que escolher nossa plataforma?</h2>
-                <ul>
-                    <li>✔️ Gerencie seus agendamentos em tempo real</li>
-                    <li>✔️ Interface intuitiva para você e seus clientes</li>
-                    <li>✔️ Notificações automáticas por e-mail</li>
-                    <li>✔️ Controle total da sua agenda e serviços</li>
-                </ul>
-            </S.FeaturesSection>
-
             <S.Footer>
                 <p>&copy; {new Date().getFullYear()} Barberly. Todos os direitos reservados.</p>
             </S.Footer>

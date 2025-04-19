@@ -1,11 +1,9 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-
-import * as S from './styles'
-
+import * as S from './styles' // Ajuste o caminho se necessário
 import logo from '../../../../assets/images/logo.png'
 
-const FormularioLogin = () => {
+const LoginBarbearia = () => {
     const [formData, setFormData] = useState({ email: '', senha: '' })
     const [showPassword, setShowPassword] = useState(false)
     const [error, setError] = useState('')
@@ -31,9 +29,8 @@ const FormularioLogin = () => {
             if (response.ok && data.barbearia_id) {
                 sessionStorage.setItem('access_token_barbearia', data.access_token)
                 sessionStorage.setItem('refresh_token_barbearia', data.refresh_token)
-                sessionStorage.setItem('barbearia_token', data.barbearia_id) // Armazena o ID da barbearia
+                sessionStorage.setItem('barbearia_token', data.barbearia_id)
 
-                // Buscar os detalhes completos da barbearia
                 const barbeariaResponse = await fetch(
                     `http://localhost:8000/api/barbearias/${data.barbearia_id}/`,
                     {
@@ -48,7 +45,6 @@ const FormularioLogin = () => {
                     sessionStorage.setItem('barbearia', JSON.stringify(barbeariaData))
                 }
 
-                // Atualizar a aplicação
                 window.dispatchEvent(new Event('storage'))
                 navigate('/dashboard')
             } else {
@@ -102,7 +98,7 @@ const FormularioLogin = () => {
                     </div>
                 </S.inputGroup>
                 <button type="submit">Entrar</button>
-                <a href="#">Esqueci minha senha</a>
+                <Link to="/esqueci-senha-barbearia">Esqueci minha senha</Link>
                 <Link to="/cadastro" className="criarConta">
                     <span>Não possui conta?</span> Criar conta
                 </Link>
@@ -111,4 +107,4 @@ const FormularioLogin = () => {
     )
 }
 
-export default FormularioLogin
+export default LoginBarbearia

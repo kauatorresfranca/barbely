@@ -100,7 +100,7 @@ const FormularioLoginCliente = () => {
                     </div>
                 </S.inputGroup>
                 <button type="submit">Entrar</button>
-                <a href="#">Esqueci minha senha</a>
+                <Link to={`/barbearia/${slug}/esqueci-senha`}>Esqueci minha senha</Link>
                 <Link to={`/barbearia/${slug}/cadastro`} className="criarConta">
                     <span>Não possui conta?</span> Faça seu cadastro
                 </Link>

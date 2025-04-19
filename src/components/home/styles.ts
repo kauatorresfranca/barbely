@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { colors } from '../../../styles'
 
 export const Container = styled.div`
+    position: relative;
     background-color: ${colors.cinzaEscuro};
     color: white;
     display: flex;
@@ -12,13 +13,16 @@ export const Container = styled.div`
 `
 
 export const Header = styled.header`
+    position: fixed;
+    max-width: 1024px;
     width: 100%;
+    margin: 0 auto;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 1rem;
     background-color: ${colors.cinzaClaro};
-    border-radius: 15px;
+    border-radius: 40px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 
     img {
@@ -32,7 +36,7 @@ export const Button = styled(Link)`
     border: 2px solid ${colors.corPrimaria};
     margin-right: 8px;
     padding: 0.5rem 1rem;
-    border-radius: 5px;
+    border-radius: 40px;
     cursor: pointer;
     transition: 0.3s;
 
@@ -53,7 +57,7 @@ export const Input = styled.input`
 
 export const BannerSection = styled.section`
     width: 100%;
-    margin-top: 2rem;
+    margin-top: 100px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -91,33 +95,6 @@ export const BannerSection = styled.section`
         img {
             margin-top: 1.5rem;
             width: 100%;
-        }
-    }
-`
-
-export const FeaturesSection = styled.section`
-    width: 100%;
-    margin-top: 3rem;
-    background-color: #2e2e2e;
-    padding: 2rem;
-    border-radius: 15px;
-
-    h2 {
-        font-size: 1.8rem;
-        margin-bottom: 1.5rem;
-        text-align: center;
-    }
-
-    ul {
-        list-style: none;
-        padding: 0;
-        font-size: 1.1rem;
-        line-height: 2rem;
-        max-width: 600px;
-        margin: 0 auto;
-
-        li::before {
-            content: '✔️ ';
         }
     }
 `

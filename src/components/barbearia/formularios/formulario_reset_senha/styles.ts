@@ -7,7 +7,7 @@ export const FormularioContainer = styled.div`
     justify-content: center;
     align-items: center;
     position: relative;
-    height: 790px;
+    height: 500px;
     width: 500px;
     padding: 48px;
     border-radius: 8px;
@@ -28,7 +28,6 @@ export const FormularioContainer = styled.div`
     }
 
     p {
-        width: 100%;
         font-size: 14px;
         color: ${colors.texto};
         margin-bottom: 16px;
@@ -45,20 +44,17 @@ export const Form = styled.form`
 
     a {
         color: ${colors.corPrimaria};
-        position: absolute;
-        bottom: 24px;
-        left: 0;
-        right: 0;
+        margin-top: 16px;
         font-weight: 500;
+
+        &.criarConta {
+            position: absolute;
+            bottom: 24px;
+        }
 
         &:hover {
             text-decoration: underline;
         }
-    }
-
-    span {
-        color: ${colors.branco};
-        font-weight: 500;
     }
 
     button {
@@ -79,22 +75,8 @@ export const inputGroup = styled.div`
     display: flex;
     flex-direction: column;
     align-items: start;
+    position: relative;
     width: 100%;
-
-    .input-wrapper {
-        position: relative;
-        width: 100%;
-        display: flex;
-        align-items: center;
-    }
-
-    label {
-        margin-top: 8px;
-        margin-bottom: 8px;
-        font-size: 14px;
-        font-weight: 500;
-        color: ${colors.texto};
-    }
 
     input {
         width: 100%;
@@ -120,6 +102,21 @@ export const inputGroup = styled.div`
         }
     }
 
+    .input-wrapper {
+        position: relative;
+        width: 100%;
+        display: flex;
+        align-items: center;
+    }
+
+    label {
+        margin-top: 8px;
+        margin-bottom: 8px;
+        font-size: 14px;
+        font-weight: 500;
+        color: ${colors.texto};
+    }
+
     i {
         position: absolute;
         right: 10px;
@@ -129,4 +126,16 @@ export const inputGroup = styled.div`
             cursor: pointer;
         }
     }
+`
+
+export const ErrorMessage = styled.p`
+    color: red;
+    font-size: 14px;
+    margin-top: 8px;
+`
+
+export const SuccessMessage = styled.p`
+    color: green;
+    font-size: 14px;
+    margin-top: 8px;
 `
