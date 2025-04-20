@@ -1,15 +1,42 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
+import { format } from 'date-fns'
 import GraficoVendas from '../../gradico_vendas'
 import * as S from './styles'
 
-const Overview = () => {
-    const hoje = new Date().toISOString().split('T')[0]
-    const novaData = new Date()
-    novaData.setDate(novaData.getDate() - 7)
-    const umaSemanaAtras = novaData.toISOString().split('T')[0]
+// Custom hook to animate counting up
+const useCountUp = (endValue: number, duration: number = 1000) => {
+    const [count, setCount] = useState(0)
 
-    const [inicio, setInicio] = useState(umaSemanaAtras)
-    const [fim, setFim] = useState(hoje)
+    useEffect(() => {
+        let start = 0
+        const increment = endValue / (duration / 16) // ~60fps (16ms per frame)
+        const step = () => {
+            start += increment
+            if (start >= endValue) {
+                setCount(endValue)
+                return
+            }
+            setCount(Math.ceil(start))
+            requestAnimationFrame(step)
+        }
+        setCount(0) // Reset to 0 when endValue changes
+        requestAnimationFrame(step)
+    }, [endValue, duration])
+
+    return count
+}
+
+const Overview = () => {
+    const hoje = new Date()
+    const hojeISO = hoje.toISOString().split('T')[0]
+
+    const [filter, setFilter] = useState('essa semana')
+    const [inicio, setInicio] = useState(() => {
+        const novaData = new Date()
+        novaData.setDate(novaData.getDate() - 7)
+        return novaData.toISOString().split('T')[0]
+    })
+    const [fim, setFim] = useState(hojeISO)
     const [metrics, setMetrics] = useState({
         faturamento: 0,
         total_custos: 0,
@@ -19,8 +46,58 @@ const Overview = () => {
         agendamentos: 0,
         clientes_novos: 0,
     })
+    const [isLoading, setIsLoading] = useState(false)
+    const [showDateInputs, setShowDateInputs] = useState(false)
+    const dateInputsRef = useRef<HTMLDivElement>(null)
 
-    const fetchMetrics = async () => {
+    // Animated values for each metric
+    const animatedFaturamento = useCountUp(isLoading ? 0 : metrics.faturamento)
+    const animatedTotalCustos = useCountUp(isLoading ? 0 : metrics.total_custos)
+    const animatedTotalLucro = useCountUp(isLoading ? 0 : metrics.total_lucro)
+    const animatedClientesAtendidos = useCountUp(isLoading ? 0 : metrics.clientes_atendidos)
+    const animatedTicketMedio = useCountUp(isLoading ? 0 : metrics.ticket_medio)
+    const animatedAgendamentos = useCountUp(isLoading ? 0 : metrics.agendamentos)
+    const animatedClientesNovos = useCountUp(isLoading ? 0 : metrics.clientes_novos)
+
+    // Function to set dates based on filter
+    const setDatesFromFilter = (filterValue: string) => {
+        const today = new Date()
+        const startDate = new Date()
+
+        switch (filterValue) {
+            case 'hoje':
+                setInicio(today.toISOString().split('T')[0])
+                setFim(today.toISOString().split('T')[0])
+                break
+            case 'ontem':
+                startDate.setDate(today.getDate() - 1)
+                setInicio(startDate.toISOString().split('T')[0])
+                setFim(startDate.toISOString().split('T')[0])
+                break
+            case 'essa semana':
+                startDate.setDate(today.getDate() - 7)
+                setInicio(startDate.toISOString().split('T')[0])
+                setFim(today.toISOString().split('T')[0])
+                break
+            case 'esse mes':
+                startDate.setDate(1)
+                setInicio(startDate.toISOString().split('T')[0])
+                setFim(today.toISOString().split('T')[0])
+                break
+            case 'esse ano':
+                startDate.setMonth(0, 1)
+                setInicio(startDate.toISOString().split('T')[0])
+                setFim(today.toISOString().split('T')[0])
+                break
+            default:
+                // For custom range, we don't reset dates
+                break
+        }
+    }
+
+    // Wrap fetchMetrics in useCallback to prevent recreation on every render
+    const fetchMetrics = useCallback(async () => {
+        setIsLoading(true)
         const token = sessionStorage.getItem('access_token_barbearia')
         try {
             const response = await fetch(
@@ -30,6 +107,7 @@ const Overview = () => {
                 },
             )
             const data = await response.json()
+            console.log('dados so s', data)
             if (response.ok) {
                 setMetrics(data)
             } else {
@@ -37,15 +115,68 @@ const Overview = () => {
             }
         } catch {
             console.error('Erro ao buscar métricas')
+        } finally {
+            setIsLoading(false)
+        }
+    }, [inicio, fim])
+
+    // Update dates when filter changes (unless it's custom)
+    useEffect(() => {
+        if (filter !== 'custom') {
+            setDatesFromFilter(filter)
+        }
+        if (filter === 'custom') {
+            setShowDateInputs(true)
+        } else {
+            setShowDateInputs(false)
+        }
+    }, [filter])
+
+    // Fetch metrics when inicio or fim changes
+    useEffect(() => {
+        fetchMetrics()
+    }, [fetchMetrics])
+
+    // Format the date range for display
+    const formatDateRange = (start: string, end: string) => {
+        const startDate = new Date(start)
+        const endDate = new Date(end)
+        const startFormatted = format(startDate, 'MMM d')
+        const endFormatted = format(endDate, 'MMM d, yyyy')
+        return `${startFormatted} - ${endFormatted}`
+    }
+
+    // Handle click outside to close date inputs
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (dateInputsRef.current && !dateInputsRef.current.contains(event.target as Node)) {
+                setShowDateInputs(false)
+            }
+        }
+
+        document.addEventListener('mousedown', handleClickOutside)
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside)
+        }
+    }, [])
+
+    // Handle custom date selection
+    const handleCustomDateChange = () => {
+        if (inicio && fim && inicio <= fim) {
+            setFilter('custom')
+            setShowDateInputs(false)
         }
     }
 
-    useEffect(() => {
-        fetchMetrics()
-    }, [inicio, fim])
+    // Handle opening date inputs and set filter to custom
+    const handleOpenDateInputs = () => {
+        setFilter('custom')
+        setShowDateInputs(true)
+    }
 
-    const handleFilter = () => {
-        fetchMetrics()
+    // Format monetary values
+    const formatMonetaryValue = (value: number) => {
+        return `R$ ${Number(value).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`
     }
 
     return (
@@ -58,76 +189,76 @@ const Overview = () => {
                 </p>
             </S.Header>
             <S.Filtro>
-                <S.InputsContainer>
-                    <S.InputGroup>
-                        <p>Início</p>
-                        <input
-                            type="date"
-                            value={inicio}
-                            onChange={(e) => setInicio(e.target.value)}
-                        />
-                    </S.InputGroup>
-                    <S.InputGroup>
-                        <p>Fim</p>
-                        <input type="date" value={fim} onChange={(e) => setFim(e.target.value)} />
-                    </S.InputGroup>
-                </S.InputsContainer>
-                <button onClick={handleFilter}>Filtrar</button>
+                <select value={filter} onChange={(e) => setFilter(e.target.value)}>
+                    <option value="hoje">Hoje</option>
+                    <option value="ontem">Ontem</option>
+                    <option value="essa semana">Essa Semana</option>
+                    <option value="esse mes">Esse Mês</option>
+                    <option value="esse ano">Esse Ano</option>
+                    <option value="custom">Período Personalizado</option>
+                </select>
+                <S.DateRange onClick={handleOpenDateInputs}>
+                    <span>Período:</span> {formatDateRange(inicio, fim)}
+                </S.DateRange>
+                {showDateInputs && (
+                    <S.DateInputsWrapper ref={dateInputsRef}>
+                        <S.InputGroup>
+                            <label>Início</label>
+                            <input
+                                type="date"
+                                value={inicio}
+                                onChange={(e) => setInicio(e.target.value)}
+                                max={fim}
+                            />
+                        </S.InputGroup>
+                        <S.InputGroup>
+                            <label>Fim</label>
+                            <input
+                                type="date"
+                                value={fim}
+                                onChange={(e) => setFim(e.target.value)}
+                                min={inicio}
+                                max={hojeISO}
+                            />
+                        </S.InputGroup>
+                        <button onClick={handleCustomDateChange}>Aplicar</button>
+                    </S.DateInputsWrapper>
+                )}
             </S.Filtro>
             <S.FirstLine>
                 <S.Card>
                     <i className="ri-line-chart-line"></i>
                     <div className="valor">
                         <h3>Faturamento</h3>
-                        <p>
-                            R${' '}
-                            {Number(metrics.faturamento).toLocaleString('pt-BR', {
-                                minimumFractionDigits: 2,
-                            })}
-                        </p>
+                        <p>{formatMonetaryValue(animatedFaturamento)}</p>
                     </div>
                 </S.Card>
                 <S.Card>
                     <i className="ri-refund-2-line"></i>
                     <div className="valor">
                         <h3>Total de Custos</h3>
-                        <p>
-                            R${' '}
-                            {Number(metrics.total_custos).toLocaleString('pt-BR', {
-                                minimumFractionDigits: 2,
-                            })}
-                        </p>
+                        <p>{formatMonetaryValue(animatedTotalCustos)}</p>
                     </div>
                 </S.Card>
                 <S.Card>
                     <i className="ri-coins-fill"></i>
                     <div className="valor">
                         <h3>Total de Lucro</h3>
-                        <p>
-                            R${' '}
-                            {Number(metrics.total_lucro).toLocaleString('pt-BR', {
-                                minimumFractionDigits: 2,
-                            })}
-                        </p>
+                        <p>{formatMonetaryValue(animatedTotalLucro)}</p>
                     </div>
                 </S.Card>
                 <S.Card>
                     <i className="ri-user-follow-fill"></i>
                     <div className="valor">
                         <h3>Clientes Atendidos</h3>
-                        <p>{metrics.clientes_atendidos}</p>
+                        <p>{animatedClientesAtendidos}</p>
                     </div>
                 </S.Card>
                 <S.Card>
                     <i className="ri-swap-line"></i>
                     <div className="valor">
                         <h3>Ticket Médio</h3>
-                        <p>
-                            R${' '}
-                            {Number(metrics.ticket_medio).toLocaleString('pt-BR', {
-                                minimumFractionDigits: 2,
-                            })}
-                        </p>
+                        <p>{formatMonetaryValue(animatedTicketMedio)}</p>
                     </div>
                 </S.Card>
             </S.FirstLine>
@@ -140,14 +271,14 @@ const Overview = () => {
                         <i className="ri-calendar-schedule-line"></i>
                         <div className="valor">
                             <h3>Agendamentos</h3>
-                            <p>{metrics.agendamentos}</p>
+                            <p>{animatedAgendamentos}</p>
                         </div>
                     </S.Card>
                     <S.Card id="secondline">
                         <i className="ri-user-add-line"></i>
                         <div className="valor">
                             <h3>Clientes Novos</h3>
-                            <p>{metrics.clientes_novos}</p>
+                            <p>{animatedClientesNovos}</p>
                         </div>
                     </S.Card>
                 </S.Services>

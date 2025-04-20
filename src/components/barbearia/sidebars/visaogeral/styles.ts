@@ -24,19 +24,120 @@ export const Header = styled.div`
 export const Filtro = styled.div`
     display: flex;
     align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    position: relative;
 
-    input {
+    select {
         height: 42px;
-        width: 100%;
+        width: 205px;
+        padding: 8px;
+        color: ${colors.branco};
+        background-color: transparent;
+        border-radius: 20px;
+        border: 1px solid rgba(134, 126, 126, 0.53);
+        font-size: 16px;
+        font-weight: bold;
+        transition: 0.3s;
+        cursor: pointer;
+
+        &:hover {
+            border: 1px solid ${colors.branco};
+        }
+
+        &:focus {
+            border: 1px solid ${colors.corPrimaria};
+            outline: none;
+        }
+
+        option {
+            background-color: ${colors.cinzaClaro};
+            color: ${colors.branco};
+        }
+    }
+`
+
+export const DateRange = styled.div`
+    height: 42px;
+    padding: 8px 12px;
+    background-color: transparent;
+    border: 1px solid rgba(134, 126, 126, 0.53);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: ${colors.texto};
+    cursor: pointer;
+    transition: 0.3s;
+
+    &:hover {
+        border: 1px solid ${colors.branco};
+    }
+
+    span {
+        font-weight: bold;
+        margin-right: 6px;
+        color: ${colors.branco};
+    }
+`
+
+export const DateInputsWrapper = styled.div`
+    position: absolute;
+    top: 50px;
+    left: 170px;
+    z-index: 10;
+    background: ${colors.cinzaClaro};
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 12px;
+    display: flex;
+    gap: 8px;
+    align-items: flex-end;
+
+    button {
+        height: 36px;
+        padding: 0 12px;
+        font-weight: bold;
+        color: ${colors.cinzaEscuro};
+        background: linear-gradient(45deg, ${colors.corPrimaria}, ${colors.corPrimaria}CC);
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: 0.3s;
+
+        &:hover {
+            opacity: 0.9;
+        }
+    }
+`
+
+export const InputsContainer = styled.div`
+    display: flex;
+    width: 30%;
+`
+
+export const InputGroup = styled.div`
+    display: flex;
+    flex-direction: column;
+
+    label {
+        font-size: 12px;
+        font-weight: 600;
+        margin-bottom: 4px;
+        color: ${colors.branco};
+    }
+
+    input[type='date'] {
+        height: 36px;
+        width: 140px;
         padding: 8px;
         color: ${colors.branco};
         background-color: transparent;
         border-radius: 8px;
         border: 1px solid rgba(134, 126, 126, 0.53);
-        font-size: 16px;
-        font-weight: bold;
+        font-size: 14px;
         transition: 0.3s;
-        color-scheme: dark light; /* Tenta adaptar ao tema */
+        cursor: pointer;
 
         &:hover {
             border: 1px solid ${colors.branco};
@@ -48,38 +149,8 @@ export const Filtro = styled.div`
         }
 
         &::-webkit-calendar-picker-indicator {
-            filter: invert(1); /* Inverte a cor do ícone */
-            cursor: pointer;
+            filter: invert(1); // Makes the calendar icon white
         }
-    }
-
-    button {
-        height: 42px;
-        width: 140px;
-        font-weight: bold;
-        color: ${colors.cinzaEscuro};
-        background: linear-gradient(45deg, ${colors.corPrimaria}, ${colors.corPrimaria}CC);
-        border: none;
-        border-radius: 10px;
-        cursor: pointer;
-    }
-`
-
-export const InputsContainer = styled.div`
-    display: flex;
-    width: 30%;
-`
-
-export const InputGroup = styled.div`
-    width: 100%;
-    margin-right: 8px;
-    margin-bottom: 25px;
-
-    p {
-        font-size: 16px;
-        font-weight: 600;
-        margin-bottom: 8px;
-        color: ${colors.texto};
     }
 `
 

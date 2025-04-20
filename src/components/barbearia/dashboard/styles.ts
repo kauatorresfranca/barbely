@@ -147,6 +147,7 @@ export const Filtro = styled.div`
 `
 
 export const Profile = styled.div`
+    position: relative;
     display: flex;
     align-items: center;
     margin-top: 32px;
@@ -180,7 +181,6 @@ export const Activity = styled.div`
     padding: 8px 0px;
     border-radius: 10px;
     background-color: ${colors.cinzaEscuro};
-    cursor: pointer;
 
     div {
         display: flex;
