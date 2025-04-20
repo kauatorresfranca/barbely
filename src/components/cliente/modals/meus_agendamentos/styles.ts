@@ -37,6 +37,10 @@ export const ModalContent = styled.div`
     position: relative;
     animation: slideUp 0.3s ease-out;
 
+    .empty {
+        color: ${colors.texto};
+    }
+
     /* Personalizar o scroll */
     &::-webkit-scrollbar {
         width: 6px;

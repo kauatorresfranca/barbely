@@ -58,7 +58,7 @@ export const Filtro = styled.div`
         width: 140px;
         font-weight: bold;
         color: ${colors.cinzaEscuro};
-        background-color: ${colors.corPrimaria};
+        background: linear-gradient(45deg, ${colors.corPrimaria}, ${colors.corPrimaria}CC);
         border: none;
         border-radius: 10px;
         cursor: pointer;
@@ -101,7 +101,7 @@ export const Card = styled.div`
     display: flex;
     align-items: center;
     position: relative;
-    background: ${colors.cinzaClaro};
+    background: linear-gradient(-45deg, ${colors.cinzaClaro}, ${colors.cinzaClaro}AA);
     height: 130px;
     width: 100%;
     padding: 20px;

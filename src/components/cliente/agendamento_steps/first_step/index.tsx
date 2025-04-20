@@ -85,22 +85,20 @@ const FirstStep = ({ setActiveTab }: Props) => {
             <S.Employee>
                 <h3>Escolha um barbeiro</h3>
                 <S.EmployeeList>
-                    {funcionarios.map((func) => (
-                        <S.EmployeeItem
-                            key={func.id}
-                            onClick={() => setSelectedFuncionarioId(func.id)}
-                            $selected={selectedFuncionarioId === func.id}
-                        >
-                            <img src={user} alt="Barbeiro" />
-                            <h4>{func.nome}</h4>
-                        </S.EmployeeItem>
-                    ))}
-                    <S.EmployeeItem
-                        onClick={() => setSelectedFuncionarioId(null)}
-                        $selected={selectedFuncionarioId === null}
-                    >
-                        <h4>Não tenho preferência</h4>
-                    </S.EmployeeItem>
+                    {funcionarios.length > 0 ? (
+                        funcionarios.map((func) => (
+                            <S.EmployeeItem
+                                key={func.id}
+                                onClick={() => setSelectedFuncionarioId(func.id)}
+                                $selected={selectedFuncionarioId === func.id}
+                            >
+                                <img src={user} alt={`Foto de ${func.nome}`} />
+                                <h4>{func.nome}</h4>
+                            </S.EmployeeItem>
+                        ))
+                    ) : (
+                        <p>A barbearia ainda não tem barbeiros cadastrados.</p>
+                    )}
                 </S.EmployeeList>
             </S.Employee>
             <S.Service>

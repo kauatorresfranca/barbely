@@ -59,6 +59,10 @@ export const Tab = styled.div`
     &.active {
         border: 2px solid ${colors.corPrimaria};
 
+        h3 {
+            color: ${colors.corPrimaria};
+        }
+
         .icon_right {
             position: absolute;
             right: 8px;

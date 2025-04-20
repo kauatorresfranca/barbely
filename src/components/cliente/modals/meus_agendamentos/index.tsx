@@ -168,7 +168,7 @@ const MeusAgendamentosModal = ({ onClose, cliente }: MeusAgendamentosModalProps)
                     {loading && <p>Carregando agendamentos...</p>}
                     {error && <p style={{ color: 'red' }}>{error}</p>}
                     {!loading && !error && agendamentos.length === 0 && (
-                        <p>Nenhum agendamento encontrado.</p>
+                        <p className="empty">Nenhum agendamento encontrado.</p>
                     )}
                     {agendamentos.map((agendamento) => (
                         <S.AgendamentoItem key={agendamento.id}>

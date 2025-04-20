@@ -76,7 +76,7 @@ export const IconsGroup = styled.div`
     }
 
     .edit {
-        color: ${colors.corPrimaria};
+        color: ${colors.branco};
     }
 
     .delete {
