@@ -163,6 +163,10 @@ const AgendaGrafico = () => {
         try {
             setError(null)
             const token = sessionStorage.getItem('access_token_barbearia')
+            console.log('Tokens no sessionStorage antes da requisição:', {
+                access_token: sessionStorage.getItem('access_token_barbearia'),
+                refresh_token: sessionStorage.getItem('refresh_token_barbearia'),
+            })
             if (!token) {
                 throw new Error('Você precisa estar logado para atualizar o status.')
             }
@@ -325,11 +329,12 @@ const AgendaGrafico = () => {
                                                 return (
                                                     <S.AgendamentoBlock
                                                         key={agendamento.id}
-                                                        hora={agendamento.hora_inicio}
                                                         style={{ top: `${top}px` }}
-                                                        status={agendamento.status}
                                                     >
-                                                        <S.AgendamentoInfo>
+                                                        <S.AgendamentoInfo
+                                                            hora={agendamento.hora_inicio}
+                                                            status={agendamento.status}
+                                                        >
                                                             <p className="status">
                                                                 {formatarStatus(agendamento.status)}
                                                             </p>

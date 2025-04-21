@@ -13,8 +13,10 @@ export const colors = {
     cinzaClaro: '#2e333a',
     cinzaTransparent: 'rgba(134, 126, 126, 0.53)',
     branco: '#ffffff',
-    verde: '#4caf50',
-    vermelho: 'red',
+    verde: 'rgb(83, 223, 27)',
+    verdeTransparent: 'rgba(83, 223, 27, 0.65)',
+    vermelho: 'rgb(202, 54, 54)',
+    vermelhoTransparent: 'rgba(202, 54, 54, 0.53)',
 }
 
 export const GlobalStyle = createGlobalStyle`

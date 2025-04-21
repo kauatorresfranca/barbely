@@ -147,10 +147,7 @@ export const AgendamentosArea = styled.div`
     flex: 1;
 `
 
-export const AgendamentoBlock = styled.div<{
-    hora: string
-    status: 'CONFIRMADO' | 'CANCELADO' | 'EXPIRADO' | 'CONCLUIDO'
-}>`
+export const AgendamentoBlock = styled.div`
     position: absolute;
     left: 10px;
     right: 10px;
@@ -160,28 +157,13 @@ export const AgendamentoBlock = styled.div<{
     height: 40px;
     width: 95%;
     margin: 0 auto;
-    background: ${({ status }) =>
-        status === 'CANCELADO'
-            ? `linear-gradient(45deg, ${colors.cinzaTransparent}, ${colors.cinzaEscuro})`
-            : status === 'EXPIRADO'
-            ? `linear-gradient(45deg, #d3d3d3, #e0e0e0)`
-            : status === 'CONCLUIDO'
-            ? `linear-gradient(45deg, #d4edda, #c3e6cb)`
-            : `linear-gradient(45deg, ${colors.corPrimaria}, ${colors.corPrimaria}CC)`};
+    background: linear-gradient(45deg, ${colors.corPrimaria}, ${colors.corPrimaria}CC);
     border-radius: 10px;
     padding: 10px;
     font-size: 14px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     transition: all 0.3s ease;
-    border: 1px solid
-        ${({ status }) =>
-            status === 'CANCELADO'
-                ? '#ff6666'
-                : status === 'EXPIRADO'
-                ? '#cccccc'
-                : status === 'CONCLUIDO'
-                ? '#28a745'
-                : '#3399ff'};
+    border: 1px solid ${colors.cinzaTransparent};
 
     &:hover {
         transform: translateY(-3px);
@@ -189,7 +171,10 @@ export const AgendamentoBlock = styled.div<{
     }
 `
 
-export const AgendamentoInfo = styled.div`
+export const AgendamentoInfo = styled.div<{
+    hora: string
+    status: 'CONFIRMADO' | 'CANCELADO' | 'EXPIRADO' | 'CONCLUIDO'
+}>`
     display: flex;
     align-items: center;
 
@@ -215,7 +200,14 @@ export const AgendamentoInfo = styled.div`
         font-size: 11px;
         color: ${colors.branco};
         font-weight: 600;
-        background: rgba(0, 0, 0, 0.2);
+        background: ${({ status }) =>
+            status === 'CANCELADO'
+                ? `${colors.vermelho}`
+                : status === 'EXPIRADO'
+                ? '#cccccc'
+                : status === 'CONCLUIDO'
+                ? `${colors.verdeTransparent}`
+                : `${colors.corPrimariaEscura}`};
         padding: 2px 8px;
         border-radius: 10px;
         display: inline-block;
@@ -231,7 +223,7 @@ export const Button = styled.div`
     font-size: 13px;
     font-weight: 500;
     transition: all 0.3s ease;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid ${colors.cinzaTransparent};
 
     &:hover {
         background-color: ${colors.cinzaClaro};

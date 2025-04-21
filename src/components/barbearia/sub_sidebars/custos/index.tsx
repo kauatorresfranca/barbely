@@ -79,9 +79,11 @@ const Custos = () => {
                     setError(data.error || 'Erro ao buscar custos.')
                     console.error('Erro ao buscar custos:', data.error)
                 }
-            } catch (error) {
-                setError('Erro de conexão com o servidor.')
-                console.error('Erro ao buscar custos:', error)
+            } catch (err: unknown) {
+                const errorMessage =
+                    err instanceof Error ? err.message : 'Erro de conexão com o servidor.'
+                setError(errorMessage)
+                console.error('Erro ao buscar custos:', err)
             } finally {
                 setIsLoading(false)
             }
@@ -162,9 +164,11 @@ const Custos = () => {
                 setError(data.error || 'Erro ao salvar custo.')
                 console.error('Erro ao salvar custo:', data.error)
             }
-        } catch (error) {
-            setError('Erro de conexão com o servidor.')
-            console.error('Erro ao salvar custo:', error)
+        } catch (err: unknown) {
+            const errorMessage =
+                err instanceof Error ? err.message : 'Erro de conexão com o servidor.'
+            setError(errorMessage)
+            console.error('Erro ao salvar custo:', err)
         }
     }
 
@@ -200,14 +204,28 @@ const Custos = () => {
                 setError(data.error || 'Erro ao deletar custo.')
                 console.error('Erro ao deletar custo:', data.error)
             }
-        } catch (error) {
-            setError('Erro de conexão com o servidor.')
-            console.error('Erro ao deletar custo:', error)
+        } catch (err: unknown) {
+            const errorMessage =
+                err instanceof Error ? err.message : 'Erro de conexão com o servidor.'
+            setError(errorMessage)
+            console.error('Erro ao deletar custo:', err)
         }
     }
 
     const handleToggleForm = () => {
         setIsFormVisible((prev) => !prev)
+        setEditingCostId(null)
+        setFormData({
+            description: '',
+            value: '',
+            date: new Date().toISOString().split('T')[0],
+            type: 'fixed',
+        })
+        setError(null)
+    }
+
+    const handleCloseModal = () => {
+        setIsFormVisible(false)
         setEditingCostId(null)
         setFormData({
             description: '',
@@ -240,72 +258,83 @@ const Custos = () => {
 
             {error && <S.ErrorMessage>{error}</S.ErrorMessage>}
 
-            <S.ButtonContainer>
-                <S.ToggleFormButton onClick={handleToggleForm}>
-                    {isFormVisible ? 'Fechar Formulário' : 'Adicionar Custo'}
-                </S.ToggleFormButton>
-            </S.ButtonContainer>
-
             {isFormVisible && (
-                <S.Form>
-                    <S.InputGroup>
-                        <label>Descrição</label>
-                        <S.Input
-                            type="text"
-                            name="description"
-                            value={formData.description}
-                            onChange={handleInputChange}
-                            placeholder="Ex.: Aluguel, Conta de luz"
-                        />
-                    </S.InputGroup>
-                    <S.InputGroup>
-                        <label>Valor (R$)</label>
-                        <S.Input
-                            type="number"
-                            name="value"
-                            value={formData.value}
-                            onChange={handleInputChange}
-                            placeholder="0.00"
-                            step="0.01"
-                        />
-                    </S.InputGroup>
-                    <S.InputGroup>
-                        <label>Data</label>
-                        <S.Input
-                            type="date"
-                            name="date"
-                            value={formData.date}
-                            onChange={handleInputChange}
-                        />
-                    </S.InputGroup>
-                    <S.InputGroup>
-                        <label>Tipo</label>
-                        <S.Select name="type" value={formData.type} onChange={handleInputChange}>
-                            <option value="fixed">Fixo</option>
-                            <option value="variable">Variável</option>
-                        </S.Select>
-                    </S.InputGroup>
-                    <S.SubmitButton onClick={handleAddOrUpdateCost}>
-                        {editingCostId ? 'Atualizar Custo' : 'Adicionar Custo'}
-                    </S.SubmitButton>
-                </S.Form>
+                <S.ModalOverlay>
+                    <S.ModalContent>
+                        <S.ModalHeader>
+                            <h3>{editingCostId ? 'Editar Custo' : 'Adicionar Custo'}</h3>
+                            <S.CloseButton onClick={handleCloseModal}>×</S.CloseButton>
+                        </S.ModalHeader>
+                        <S.Form>
+                            <S.InputGroup>
+                                <label>Descrição</label>
+                                <S.Input
+                                    type="text"
+                                    name="description"
+                                    value={formData.description}
+                                    onChange={handleInputChange}
+                                    placeholder="Ex.: Aluguel, Conta de luz"
+                                />
+                            </S.InputGroup>
+                            <S.InputGroup>
+                                <label>Valor (R$)</label>
+                                <S.Input
+                                    type="number"
+                                    name="value"
+                                    value={formData.value}
+                                    onChange={handleInputChange}
+                                    placeholder="0.00"
+                                    step="0.01"
+                                />
+                            </S.InputGroup>
+                            <S.InputGroup>
+                                <label>Data</label>
+                                <S.Input
+                                    type="date"
+                                    name="date"
+                                    value={formData.date}
+                                    onChange={handleInputChange}
+                                />
+                            </S.InputGroup>
+                            <S.InputGroup>
+                                <label>Tipo</label>
+                                <S.Select
+                                    name="type"
+                                    value={formData.type}
+                                    onChange={handleInputChange}
+                                >
+                                    <option value="fixed">Fixo</option>
+                                    <option value="variable">Variável</option>
+                                </S.Select>
+                            </S.InputGroup>
+                            <S.SubmitButton onClick={handleAddOrUpdateCost}>
+                                {editingCostId ? 'Atualizar Custo' : 'Adicionar Custo'}
+                            </S.SubmitButton>
+                        </S.Form>
+                    </S.ModalContent>
+                </S.ModalOverlay>
             )}
 
-            <S.FilterGroup>
-                <label>Filtrar por mês</label>
-                <S.Select value={monthFilter} onChange={(e) => setMonthFilter(e.target.value)}>
-                    <option value="">Todos os meses</option>
-                    {getMonthOptions().map((month) => (
-                        <option key={month} value={month}>
-                            {new Date(month + '-01').toLocaleString('pt-BR', {
-                                month: 'long',
-                                year: 'numeric',
-                            })}
-                        </option>
-                    ))}
-                </S.Select>
-            </S.FilterGroup>
-
+            <S.HeaderCostGroup>
+                <S.FilterGroup>
+                    <S.Select value={monthFilter} onChange={(e) => setMonthFilter(e.target.value)}>
+                        <option value="">Todos os meses</option>
+                        {getMonthOptions().map((month) => (
+                            <option key={month} value={month}>
+                                {new Date(month + '-01').toLocaleString('pt-BR', {
+                                    month: 'long',
+                                    year: 'numeric',
+                                })}
+                            </option>
+                        ))}
+                    </S.Select>
+                </S.FilterGroup>
+                <S.ButtonContainer>
+                    <S.ToggleFormButton onClick={handleToggleForm}>
+                        Adicionar Custo
+                    </S.ToggleFormButton>
+                </S.ButtonContainer>
+            </S.HeaderCostGroup>
             {isLoading ? (
                 <p>Carregando custos...</p>
             ) : (
@@ -313,28 +342,37 @@ const Custos = () => {
                     {filteredCosts.length === 0 ? (
                         <p>Nenhum custo registrado.</p>
                     ) : (
-                        filteredCosts.map((cost) => (
-                            <S.CostItem key={cost.id}>
-                                <S.CostDescription>{cost.description}</S.CostDescription>
-                                <S.CostValue>
-                                    R$ {cost.value != null ? cost.value.toFixed(2) : 'N/A'}
-                                </S.CostValue>
-                                <S.CostDate>
-                                    {new Date(cost.date).toLocaleDateString('pt-BR')}
-                                </S.CostDate>
-                                <S.CostType>
-                                    {cost.type === 'fixed' ? 'Fixo' : 'Variável'}
-                                </S.CostType>
-                                <S.ActionButtons>
-                                    <S.EditButton onClick={() => handleEditCost(cost)}>
-                                        Editar
-                                    </S.EditButton>
-                                    <S.DeleteButton onClick={() => handleDeleteCost(cost.id)}>
-                                        Apagar
-                                    </S.DeleteButton>
-                                </S.ActionButtons>
-                            </S.CostItem>
-                        ))
+                        <>
+                            <S.CostHeader>
+                                <p>Descrição</p>
+                                <p>Valor</p>
+                                <p>Data</p>
+                                <p>Fixo/Variável</p>
+                                <p>Ações</p>
+                            </S.CostHeader>
+                            {filteredCosts.map((cost) => (
+                                <S.CostItem key={cost.id}>
+                                    <S.CostDescription>{cost.description}</S.CostDescription>
+                                    <S.CostValue>
+                                        R$ {cost.value != null ? cost.value.toFixed(2) : 'N/A'}
+                                    </S.CostValue>
+                                    <S.CostDate>
+                                        {new Date(cost.date).toLocaleDateString('pt-BR')}
+                                    </S.CostDate>
+                                    <S.CostType>
+                                        {cost.type === 'fixed' ? 'Fixo' : 'Variável'}
+                                    </S.CostType>
+                                    <S.ActionButtons>
+                                        <S.EditButton onClick={() => handleEditCost(cost)}>
+                                            Editar
+                                        </S.EditButton>
+                                        <S.DeleteButton onClick={() => handleDeleteCost(cost.id)}>
+                                            Apagar
+                                        </S.DeleteButton>
+                                    </S.ActionButtons>
+                                </S.CostItem>
+                            ))}
+                        </>
                     )}
                 </S.CostList>
             )}

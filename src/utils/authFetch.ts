@@ -1,8 +1,7 @@
 export async function authFetch(url: string, options: RequestInit = {}): Promise<Response> {
-    // Excluir /api/clientes/barbearia/ de isClienteRequest
+    // Ajustar a lógica para considerar /api/agendamentos/ como requisição de barbearia
     const isClienteRequest =
-        url.includes('/api/agendamentos/') ||
-        (url.includes('/api/clientes/') && !url.includes('/api/clientes/barbearia/'))
+        url.includes('/api/clientes/') && !url.includes('/api/clientes/barbearia/')
     const tokenKey = isClienteRequest ? 'access_token_cliente' : 'access_token_barbearia'
     const refreshKey = isClienteRequest ? 'refresh_token_cliente' : 'refresh_token_barbearia'
 
@@ -17,12 +16,14 @@ export async function authFetch(url: string, options: RequestInit = {}): Promise
 
     if (!accessToken) {
         console.error(`Token de acesso (${tokenKey}) não encontrado.`)
+        const slug = sessionStorage.getItem('barbearia_slug') || 'default-slug'
+        window.location.href = `/barbearia/${slug}/login`
         throw new Error('Token de acesso não encontrado.')
     }
 
     const headers =
         options.body instanceof FormData
-            ? { Authorization: `Bearer ${accessToken}`, ...options.headers } // Não define Content-Type para FormData
+            ? { Authorization: `Bearer ${accessToken}`, ...options.headers }
             : {
                   'Content-Type': 'application/json',
                   Authorization: `Bearer ${accessToken}`,
@@ -58,8 +59,8 @@ export async function authFetch(url: string, options: RequestInit = {}): Promise
             response = await fetch(url, { ...options, headers: retryHeaders })
         } else {
             console.error('Erro ao renovar token:', await refreshResponse.text())
-            sessionStorage.removeItem(tokenKey)
-            sessionStorage.removeItem(refreshKey)
+            const slug = sessionStorage.getItem('barbearia_slug') || 'default-slug'
+            window.location.href = `/barbearia/${slug}/login`
             throw new Error('Erro ao renovar token.')
         }
     }
