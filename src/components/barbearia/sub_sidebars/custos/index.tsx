@@ -1,12 +1,11 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import * as S from './styles'
 
-// Define interfaces for cost and form data
 interface Cost {
     id: number
     description: string
     value: number
-    date: string // ISO date string (e.g., '2025-04-01')
+    date: string
     type: 'fixed' | 'variable'
 }
 
@@ -22,54 +21,151 @@ const Custos = () => {
     const [formData, setFormData] = useState<FormData>({
         description: '',
         value: '',
-        date: new Date().toISOString().split('T')[0], // Default to today
+        date: new Date().toISOString().split('T')[0],
         type: 'fixed',
     })
     const [monthFilter, setMonthFilter] = useState<string>('')
     const [isFormVisible, setIsFormVisible] = useState(false)
     const [editingCostId, setEditingCostId] = useState<number | null>(null)
+    const [isLoading, setIsLoading] = useState(false)
+    const [error, setError] = useState<string | null>(null)
+
+    useEffect(() => {
+        const fetchCosts = async () => {
+            setIsLoading(true)
+            setError(null)
+            const token = sessionStorage.getItem('access_token_barbearia')
+            if (!token) {
+                setError('Você precisa estar logado como barbearia.')
+                setIsLoading(false)
+                return
+            }
+            try {
+                const response = await fetch('http://localhost:8000/api/custos/', {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                })
+                const data = await response.json()
+                console.log('Resposta de /api/custos/:', data)
+                if (response.ok) {
+                    // Mapear campos do backend para o formato esperado pelo frontend
+                    const mappedCosts = data.map((cost: any, index: number) => {
+                        const mappedCost = {
+                            id: cost.id,
+                            description: cost.descricao || 'Sem descrição',
+                            value: parseFloat(cost.valor) || 0,
+                            date: cost.data || new Date().toISOString().split('T')[0],
+                            type: (cost.tipo as 'fixed' | 'variable') || 'fixed',
+                        }
+                        console.log(`Custo mapeado [${index}]:`, mappedCost)
+                        return mappedCost
+                    })
+                    // Validar dados
+                    const validatedCosts = mappedCosts.filter((cost: Cost, index: number) => {
+                        const isValid = cost.id && !isNaN(cost.value)
+                        if (!isValid) {
+                            console.log(`Custo inválido [${index}]:`, cost)
+                        }
+                        return isValid
+                    })
+                    console.log('Custos validados:', validatedCosts)
+                    setCosts(validatedCosts)
+                    if (data.length > 0 && validatedCosts.length === 0) {
+                        setError('Os custos retornados contêm dados inválidos.')
+                    }
+                } else {
+                    setError(data.error || 'Erro ao buscar custos.')
+                    console.error('Erro ao buscar custos:', data.error)
+                }
+            } catch (error) {
+                setError('Erro de conexão com o servidor.')
+                console.error('Erro ao buscar custos:', error)
+            } finally {
+                setIsLoading(false)
+            }
+        }
+        fetchCosts()
+    }, [])
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target
         setFormData((prev) => ({ ...prev, [name]: value }))
     }
 
-    const handleAddOrUpdateCost = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const handleAddOrUpdateCost = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
-        if (editingCostId) {
-            // Update existing cost
-            setCosts((prev) =>
-                prev.map((cost) =>
-                    cost.id === editingCostId
-                        ? {
-                              ...cost,
-                              description: formData.description,
-                              value: parseFloat(formData.value),
-                              date: formData.date,
-                              type: formData.type,
-                          }
-                        : cost,
-                ),
-            )
-            setEditingCostId(null)
-        } else {
-            // Add new cost
-            const newCost: Cost = {
-                id: costs.length + 1,
-                description: formData.description,
-                value: parseFloat(formData.value),
-                date: formData.date,
-                type: formData.type,
-            }
-            setCosts((prev) => [...prev, newCost])
+        setError(null)
+        const token = sessionStorage.getItem('access_token_barbearia')
+        if (!token) {
+            setError('Você precisa estar logado como barbearia.')
+            return
         }
-        setFormData({
-            description: '',
-            value: '',
-            date: new Date().toISOString().split('T')[0],
-            type: 'fixed',
-        })
-        setIsFormVisible(false)
+        const payload = {
+            descricao: formData.description,
+            valor: parseFloat(formData.value) || 0,
+            data: formData.date,
+            tipo: formData.type,
+        }
+
+        try {
+            let response
+            if (editingCostId) {
+                response = await fetch(`http://localhost:8000/api/custos/${editingCostId}/`, {
+                    method: 'PUT',
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(payload),
+                })
+            } else {
+                response = await fetch('http://localhost:8000/api/custos/', {
+                    method: 'POST',
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(payload),
+                })
+            }
+
+            const data = await response.json()
+            console.log('Resposta de POST/PUT /api/custos/:', data)
+            if (response.ok) {
+                // Mapear o custo retornado
+                const mappedCost = {
+                    id: data.id,
+                    description: data.descricao || 'Sem descrição',
+                    value: parseFloat(data.valor) || 0,
+                    date: data.data || new Date().toISOString().split('T')[0],
+                    type: (data.tipo as 'fixed' | 'variable') || 'fixed',
+                }
+                console.log('Custo mapeado (POST/PUT):', mappedCost)
+                if (editingCostId) {
+                    setCosts((prev) =>
+                        prev.map((cost) => (cost.id === editingCostId ? mappedCost : cost)),
+                    )
+                } else {
+                    setCosts((prev) => [...prev, mappedCost])
+                }
+                setFormData({
+                    description: '',
+                    value: '',
+                    date: new Date().toISOString().split('T')[0],
+                    type: 'fixed',
+                })
+                setEditingCostId(null)
+                setIsFormVisible(false)
+            } else {
+                setError(data.error || 'Erro ao salvar custo.')
+                console.error('Erro ao salvar custo:', data.error)
+            }
+        } catch (error) {
+            setError('Erro de conexão com o servidor.')
+            console.error('Erro ao salvar custo:', error)
+        }
     }
 
     const handleEditCost = (cost: Cost) => {
@@ -83,8 +179,31 @@ const Custos = () => {
         setIsFormVisible(true)
     }
 
-    const handleDeleteCost = (id: number) => {
-        setCosts((prev) => prev.filter((cost) => cost.id !== id))
+    const handleDeleteCost = async (id: number) => {
+        setError(null)
+        const token = sessionStorage.getItem('access_token_barbearia')
+        if (!token) {
+            setError('Você precisa estar logado como barbearia.')
+            return
+        }
+        try {
+            const response = await fetch(`http://localhost:8000/api/custos/${id}/`, {
+                method: 'DELETE',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            })
+            if (response.ok) {
+                setCosts((prev) => prev.filter((cost) => cost.id !== id))
+            } else {
+                const data = await response.json()
+                setError(data.error || 'Erro ao deletar custo.')
+                console.error('Erro ao deletar custo:', data.error)
+            }
+        } catch (error) {
+            setError('Erro de conexão com o servidor.')
+            console.error('Erro ao deletar custo:', error)
+        }
     }
 
     const handleToggleForm = () => {
@@ -96,21 +215,20 @@ const Custos = () => {
             date: new Date().toISOString().split('T')[0],
             type: 'fixed',
         })
+        setError(null)
     }
 
-    // Generate month options (e.g., '2025-04' for April 2025)
     const getMonthOptions = () => {
         const months: string[] = []
         const currentDate = new Date()
         for (let i = 0; i < 12; i++) {
             const date = new Date(currentDate.getFullYear(), currentDate.getMonth() - i, 1)
-            const monthStr = date.toISOString().slice(0, 7) // e.g., '2025-04'
+            const monthStr = date.toISOString().slice(0, 7)
             months.push(monthStr)
         }
         return months
     }
 
-    // Filter costs by selected month
     const filteredCosts = monthFilter
         ? costs.filter((cost) => cost.date.startsWith(monthFilter))
         : costs
@@ -119,6 +237,8 @@ const Custos = () => {
         <S.Container>
             <h2>Custos</h2>
             <p className="subtitle">Adicione aqui todos os custos operacionais da sua barbearia</p>
+
+            {error && <S.ErrorMessage>{error}</S.ErrorMessage>}
 
             <S.ButtonContainer>
                 <S.ToggleFormButton onClick={handleToggleForm}>
@@ -186,30 +306,38 @@ const Custos = () => {
                 </S.Select>
             </S.FilterGroup>
 
-            <S.CostList>
-                {filteredCosts.length === 0 ? (
-                    <p>Nenhum custo registrado.</p>
-                ) : (
-                    filteredCosts.map((cost) => (
-                        <S.CostItem key={cost.id}>
-                            <S.CostDescription>{cost.description}</S.CostDescription>
-                            <S.CostValue>R$ {cost.value.toFixed(2)}</S.CostValue>
-                            <S.CostDate>
-                                {new Date(cost.date).toLocaleDateString('pt-BR')}
-                            </S.CostDate>
-                            <S.CostType>{cost.type === 'fixed' ? 'Fixo' : 'Variável'}</S.CostType>
-                            <S.ActionButtons>
-                                <S.EditButton onClick={() => handleEditCost(cost)}>
-                                    Editar
-                                </S.EditButton>
-                                <S.DeleteButton onClick={() => handleDeleteCost(cost.id)}>
-                                    Apagar
-                                </S.DeleteButton>
-                            </S.ActionButtons>
-                        </S.CostItem>
-                    ))
-                )}
-            </S.CostList>
+            {isLoading ? (
+                <p>Carregando custos...</p>
+            ) : (
+                <S.CostList>
+                    {filteredCosts.length === 0 ? (
+                        <p>Nenhum custo registrado.</p>
+                    ) : (
+                        filteredCosts.map((cost) => (
+                            <S.CostItem key={cost.id}>
+                                <S.CostDescription>{cost.description}</S.CostDescription>
+                                <S.CostValue>
+                                    R$ {cost.value != null ? cost.value.toFixed(2) : 'N/A'}
+                                </S.CostValue>
+                                <S.CostDate>
+                                    {new Date(cost.date).toLocaleDateString('pt-BR')}
+                                </S.CostDate>
+                                <S.CostType>
+                                    {cost.type === 'fixed' ? 'Fixo' : 'Variável'}
+                                </S.CostType>
+                                <S.ActionButtons>
+                                    <S.EditButton onClick={() => handleEditCost(cost)}>
+                                        Editar
+                                    </S.EditButton>
+                                    <S.DeleteButton onClick={() => handleDeleteCost(cost.id)}>
+                                        Apagar
+                                    </S.DeleteButton>
+                                </S.ActionButtons>
+                            </S.CostItem>
+                        ))
+                    )}
+                </S.CostList>
+            )}
         </S.Container>
     )
 }

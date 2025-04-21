@@ -1,5 +1,5 @@
-import styled from 'styled-components';
-import { colors } from '../../../../styles';
+import styled from 'styled-components'
+import { colors } from '../../../../styles'
 
 export const Container = styled.div`
     display: flex;
@@ -8,7 +8,7 @@ export const Container = styled.div`
     flex-direction: column;
     width: 100%;
     padding: 12px;
-    background-color: ${colors.cinzaClaro};
+    background: linear-gradient(-45deg, ${colors.cinzaClaro}, ${colors.cinzaClaro}AA);
     border-radius: 8px;
     text-align: center;
-`;
+`

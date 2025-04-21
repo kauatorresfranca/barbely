@@ -4,12 +4,12 @@ import GraficoVendas from '../../gradico_vendas'
 import * as S from './styles'
 
 // Custom hook to animate counting up
-const useCountUp = (endValue: number, duration: number = 1000) => {
+const useCountUp = (endValue: number, duration: number = 500) => {
     const [count, setCount] = useState(0)
 
     useEffect(() => {
         let start = 0
-        const increment = endValue / (duration / 16) // ~60fps (16ms per frame)
+        const increment = endValue / (duration / 16)
         const step = () => {
             start += increment
             if (start >= endValue) {
@@ -19,7 +19,7 @@ const useCountUp = (endValue: number, duration: number = 1000) => {
             setCount(Math.ceil(start))
             requestAnimationFrame(step)
         }
-        setCount(0) // Reset to 0 when endValue changes
+        setCount(0)
         requestAnimationFrame(step)
     }, [endValue, duration])
 
@@ -90,12 +90,11 @@ const Overview = () => {
                 setFim(today.toISOString().split('T')[0])
                 break
             default:
-                // For custom range, we don't reset dates
                 break
         }
     }
 
-    // Wrap fetchMetrics in useCallback to prevent recreation on every render
+    // Fetch metrics function
     const fetchMetrics = useCallback(async () => {
         setIsLoading(true)
         const token = sessionStorage.getItem('access_token_barbearia')
@@ -107,7 +106,7 @@ const Overview = () => {
                 },
             )
             const data = await response.json()
-            console.log('dados so s', data)
+            console.log('valor recebido do back:', data)
             if (response.ok) {
                 setMetrics(data)
             } else {
@@ -120,22 +119,27 @@ const Overview = () => {
         }
     }, [inicio, fim])
 
-    // Update dates when filter changes (unless it's custom)
+    // Update dates and fetch metrics when filter changes (except for custom)
     useEffect(() => {
         if (filter !== 'custom') {
             setDatesFromFilter(filter)
+            fetchMetrics() // Fetch metrics for predefined filters
         }
         if (filter === 'custom') {
             setShowDateInputs(true)
         } else {
             setShowDateInputs(false)
         }
-    }, [filter])
+    }, [filter, fetchMetrics])
 
-    // Fetch metrics when inicio or fim changes
-    useEffect(() => {
-        fetchMetrics()
-    }, [fetchMetrics])
+    // Handle custom date selection and fetch metrics
+    const handleCustomDateChange = () => {
+        if (inicio && fim && inicio <= fim) {
+            setFilter('custom')
+            setShowDateInputs(false)
+            fetchMetrics() // Fetch metrics only when "Filtrar" is clicked
+        }
+    }
 
     // Format the date range for display
     const formatDateRange = (start: string, end: string) => {
@@ -159,14 +163,6 @@ const Overview = () => {
             document.removeEventListener('mousedown', handleClickOutside)
         }
     }, [])
-
-    // Handle custom date selection
-    const handleCustomDateChange = () => {
-        if (inicio && fim && inicio <= fim) {
-            setFilter('custom')
-            setShowDateInputs(false)
-        }
-    }
 
     // Handle opening date inputs and set filter to custom
     const handleOpenDateInputs = () => {
@@ -221,7 +217,7 @@ const Overview = () => {
                                 max={hojeISO}
                             />
                         </S.InputGroup>
-                        <button onClick={handleCustomDateChange}>Aplicar</button>
+                        <button onClick={handleCustomDateChange}>Filtrar</button>
                     </S.DateInputsWrapper>
                 )}
             </S.Filtro>
@@ -264,7 +260,7 @@ const Overview = () => {
             </S.FirstLine>
             <S.SecondLine>
                 <S.GraficoContainer>
-                    <GraficoVendas />
+                    <GraficoVendas inicio={inicio} fim={fim} />
                 </S.GraficoContainer>
                 <S.Services>
                     <S.Card id="secondline">

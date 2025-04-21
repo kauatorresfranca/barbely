@@ -37,7 +37,10 @@ const AgendaGrafico = () => {
     const [funcionarios, setFuncionarios] = useState<Funcionario[]>([])
     const [carregando, setCarregando] = useState<boolean>(false)
     const [modalIsOpen, setModalIsOpen] = useState(false)
+    const [statusModalIsOpen, setStatusModalIsOpen] = useState(false)
     const [selectedAgendamento, setSelectedAgendamento] = useState<Agendamento | null>(null)
+    const [error, setError] = useState<string | null>(null)
+    const [authError, setAuthError] = useState<string | null>(null) // Novo estado para erros de autenticação
 
     const intervalo = 30
     const horas = gerarHoras(intervalo)
@@ -66,9 +69,24 @@ const AgendaGrafico = () => {
         setSelectedAgendamento(null)
     }
 
+    const openStatusModal = (agendamento: Agendamento) => {
+        setSelectedAgendamento(agendamento)
+        setStatusModalIsOpen(true)
+    }
+
+    const closeStatusModal = () => {
+        setStatusModalIsOpen(false)
+        setSelectedAgendamento(null)
+        setError(null)
+    }
+
     const buscarFuncionarios = async () => {
         try {
             const token = sessionStorage.getItem('access_token_barbearia')
+            if (!token) {
+                throw new Error('Você precisa estar logado para acessar os funcionários.')
+            }
+
             const res = await authFetch('http://localhost:8000/api/funcionarios/', {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -76,11 +94,18 @@ const AgendaGrafico = () => {
                 },
             })
 
-            if (!res.ok) throw new Error('Falha ao buscar funcionários')
+            if (!res.ok) {
+                if (res.status === 401) {
+                    throw new Error('Sessão expirada. Por favor, faça login novamente.')
+                }
+                throw new Error('Falha ao buscar funcionários')
+            }
+
             const dados: Funcionario[] = await res.json()
             setFuncionarios(dados)
-        } catch (err) {
+        } catch (err: any) {
             console.error('Erro ao buscar funcionários:', err)
+            setAuthError(err.message || 'Erro ao buscar funcionários')
         }
     }
 
@@ -88,6 +113,10 @@ const AgendaGrafico = () => {
         try {
             setCarregando(true)
             const token = sessionStorage.getItem('access_token_barbearia')
+            if (!token) {
+                throw new Error('Você precisa estar logado para acessar os agendamentos.')
+            }
+
             const res = await authFetch(
                 `http://localhost:8000/api/barbearia/agendamentos/?data=${data}`,
                 {
@@ -102,7 +131,12 @@ const AgendaGrafico = () => {
             const respostaTexto = await res.text()
             console.log('Resposta da API:', respostaTexto)
 
-            if (!res.ok) throw new Error('Falha ao buscar agendamentos')
+            if (!res.ok) {
+                if (res.status === 401) {
+                    throw new Error('Sessão expirada. Por favor, faça login novamente.')
+                }
+                throw new Error('Falha ao buscar agendamentos')
+            }
 
             try {
                 const dados: Agendamento[] = JSON.parse(respostaTexto)
@@ -114,10 +148,61 @@ const AgendaGrafico = () => {
                 console.error('Erro ao analisar JSON:', jsonError)
                 throw new Error('Resposta da API não é um JSON válido')
             }
-        } catch (err) {
+        } catch (err: any) {
             console.error('Erro ao buscar agendamentos:', err)
+            setAuthError(err.message || 'Erro ao buscar agendamentos')
         } finally {
             setCarregando(false)
+        }
+    }
+
+    const atualizarStatusAgendamento = async (
+        agendamentoId: number,
+        novoStatus: Agendamento['status'],
+    ) => {
+        try {
+            setError(null)
+            const token = sessionStorage.getItem('access_token_barbearia')
+            if (!token) {
+                throw new Error('Você precisa estar logado para atualizar o status.')
+            }
+
+            const res = await authFetch(
+                `http://localhost:8000/api/agendamentos/${agendamentoId}/`,
+                {
+                    method: 'PATCH',
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ status: novoStatus }),
+                },
+            )
+
+            if (!res.ok) {
+                if (res.status === 401) {
+                    throw new Error('Sessão expirada. Por favor, faça login novamente.')
+                }
+                const erroData = await res.json()
+                throw new Error(erroData.error || 'Falha ao atualizar o status do agendamento')
+            }
+
+            const updatedAgendamento: Agendamento = await res.json()
+            console.log('Agendamento atualizado:', updatedAgendamento)
+
+            // Atualizar o estado local
+            setAgendamentos((prev) =>
+                prev.map((agendamento) =>
+                    agendamento.id === agendamentoId
+                        ? { ...agendamento, status: novoStatus }
+                        : agendamento,
+                ),
+            )
+
+            closeStatusModal()
+        } catch (err: any) {
+            console.error('Erro ao atualizar status:', err)
+            setError(err.message || 'Erro ao atualizar o status')
         }
     }
 
@@ -142,6 +227,12 @@ const AgendaGrafico = () => {
         }
     }
 
+    // Função para redirecionar para a página de login
+    const handleRedirectToLogin = () => {
+        const slug = sessionStorage.getItem('barbearia_slug') || 'default-slug'
+        window.location.href = `/barbearia/${slug}/login`
+    }
+
     return (
         <S.Container>
             <h2>Meus Agendamentos</h2>
@@ -149,6 +240,17 @@ const AgendaGrafico = () => {
                 Visualize e acompanhe os horários marcados pelos seus clientes, com todos os
                 detalhes.
             </p>
+            {authError && (
+                <S.ErrorMessage>
+                    {authError}{' '}
+                    <span
+                        style={{ color: '#3399ff', cursor: 'pointer' }}
+                        onClick={handleRedirectToLogin}
+                    >
+                        Fazer login
+                    </span>
+                </S.ErrorMessage>
+            )}
             <S.Filtro>
                 <S.DateNavigator>
                     <S.ArrowButton className="voltarDia" onClick={() => mudarDia('anterior')}>
@@ -242,11 +344,24 @@ const AgendaGrafico = () => {
                                                                 </p>
                                                             </div>
                                                         </S.AgendamentoInfo>
-                                                        <S.Button
-                                                            onClick={() => openModal(agendamento)}
+                                                        <div
+                                                            style={{ display: 'flex', gap: '8px' }}
                                                         >
-                                                            Detalhes
-                                                        </S.Button>
+                                                            <S.Button
+                                                                onClick={() =>
+                                                                    openModal(agendamento)
+                                                                }
+                                                            >
+                                                                Detalhes
+                                                            </S.Button>
+                                                            <S.Button
+                                                                onClick={() =>
+                                                                    openStatusModal(agendamento)
+                                                                }
+                                                            >
+                                                                Alterar Status
+                                                            </S.Button>
+                                                        </div>
                                                     </S.AgendamentoBlock>
                                                 )
                                             })}
@@ -258,6 +373,7 @@ const AgendaGrafico = () => {
                 </S.HorariosContainer>
             )}
 
+            {/* Modal de Detalhes */}
             {modalIsOpen && selectedAgendamento && (
                 <S.Overlay>
                     <S.Modal>
@@ -288,6 +404,60 @@ const AgendaGrafico = () => {
                                     {formatarStatus(selectedAgendamento.status)}
                                 </S.InfoValue>
                             </S.InfoItem>
+                        </S.ModalContent>
+                    </S.Modal>
+                </S.Overlay>
+            )}
+
+            {/* Modal de Alteração de Status */}
+            {statusModalIsOpen && selectedAgendamento && (
+                <S.Overlay>
+                    <S.Modal>
+                        <S.CloseButton onClick={closeStatusModal}>×</S.CloseButton>
+                        <h2>Alterar Status do Agendamento</h2>
+                        {error && <S.ErrorMessage>{error}</S.ErrorMessage>}
+                        <S.ModalContent>
+                            <S.InfoItem>
+                                <S.InfoLabel>Cliente</S.InfoLabel>
+                                <S.InfoValue>{selectedAgendamento.cliente_nome}</S.InfoValue>
+                            </S.InfoItem>
+                            <S.InfoItem>
+                                <S.InfoLabel>Serviço</S.InfoLabel>
+                                <S.InfoValue>{selectedAgendamento.servico_nome}</S.InfoValue>
+                            </S.InfoItem>
+                            <S.InfoItem>
+                                <S.InfoLabel>Status Atual</S.InfoLabel>
+                                <S.InfoValue status={selectedAgendamento.status}>
+                                    {formatarStatus(selectedAgendamento.status)}
+                                </S.InfoValue>
+                            </S.InfoItem>
+                            <S.InfoItem>
+                                <S.InfoLabel>Novo Status</S.InfoLabel>
+                                <S.Select
+                                    value={selectedAgendamento.status}
+                                    onChange={(e) =>
+                                        setSelectedAgendamento({
+                                            ...selectedAgendamento,
+                                            status: e.target.value as Agendamento['status'],
+                                        })
+                                    }
+                                >
+                                    <option value="CONFIRMADO">Confirmado</option>
+                                    <option value="CANCELADO">Cancelado</option>
+                                    <option value="EXPIRADO">Expirado</option>
+                                    <option value="CONCLUIDO">Concluído</option>
+                                </S.Select>
+                            </S.InfoItem>
+                            <S.SubmitButton
+                                onClick={() =>
+                                    atualizarStatusAgendamento(
+                                        selectedAgendamento.id,
+                                        selectedAgendamento.status,
+                                    )
+                                }
+                            >
+                                Salvar Alteração
+                            </S.SubmitButton>
                         </S.ModalContent>
                     </S.Modal>
                 </S.Overlay>

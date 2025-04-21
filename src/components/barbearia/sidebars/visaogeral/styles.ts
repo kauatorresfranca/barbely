@@ -95,7 +95,7 @@ export const DateInputsWrapper = styled.div`
     align-items: flex-end;
 
     button {
-        height: 36px;
+        height: 40px;
         padding: 0 12px;
         font-weight: bold;
         color: ${colors.cinzaEscuro};
@@ -128,7 +128,7 @@ export const InputGroup = styled.div`
     }
 
     input[type='date'] {
-        height: 36px;
+        height: 40px;
         width: 140px;
         padding: 8px;
         color: ${colors.branco};

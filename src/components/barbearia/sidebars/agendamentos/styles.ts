@@ -347,3 +347,49 @@ export const InfoValue = styled.span<{
             : colors.branco};
     text-align: right;
 `
+
+export const Select = styled.select`
+    padding: 8px 12px;
+    font-size: 1rem;
+    color: ${colors.branco};
+    background: ${colors.cinzaEscuro};
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:hover {
+        border-color: ${colors.corPrimaria};
+    }
+
+    option {
+        background: ${colors.cinzaEscuro};
+        color: ${colors.branco};
+    }
+`
+
+export const ErrorMessage = styled.p`
+    color: #ff4444;
+    font-size: 0.9rem;
+    text-align: center;
+    margin-bottom: 1rem;
+`
+
+export const SubmitButton = styled.button`
+    padding: 12px;
+    background: linear-gradient(45deg, ${colors.corPrimaria}, ${colors.corPrimaria}AA);
+    color: ${colors.branco};
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 1rem;
+
+    &:hover {
+        transform: scale(1.03);
+        background: linear-gradient(45deg, ${colors.corPrimaria}CC, ${colors.corPrimaria});
+    }
+`

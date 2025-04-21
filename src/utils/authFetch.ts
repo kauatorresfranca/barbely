@@ -17,8 +17,6 @@ export async function authFetch(url: string, options: RequestInit = {}): Promise
 
     if (!accessToken) {
         console.error(`Token de acesso (${tokenKey}) não encontrado.`)
-        const redirectPath = isClienteRequest ? '/barbearia/:slug/login' : '/login'
-        window.location.href = redirectPath
         throw new Error('Token de acesso não encontrado.')
     }
 
@@ -62,8 +60,6 @@ export async function authFetch(url: string, options: RequestInit = {}): Promise
             console.error('Erro ao renovar token:', await refreshResponse.text())
             sessionStorage.removeItem(tokenKey)
             sessionStorage.removeItem(refreshKey)
-            const redirectPath = isClienteRequest ? '/barbearia/:slug/login' : '/login'
-            window.location.href = redirectPath
             throw new Error('Erro ao renovar token.')
         }
     }

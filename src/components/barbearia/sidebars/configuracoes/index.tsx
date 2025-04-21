@@ -12,14 +12,12 @@ const Configuracoes = () => {
         {
             id: 'Configuracoes_agendamento',
             title: 'Configurações de Agendamento',
-            icon_left: 'ri-list-settings-line',
             icon_right: 'ri-arrow-right-s-line',
             component: <ConfiguracoesAgendamento />,
         },
         {
             id: 'personalizar',
             title: 'Personalizar',
-            icon_left: 'ri-palette-fill',
             icon_right: 'ri-arrow-right-s-line',
             component: <Personalizar />,
         },
@@ -39,7 +37,6 @@ const Configuracoes = () => {
                             id={tab.id}
                             onClick={() => setActiveTab(tab.id)}
                         >
-                            <i className={`${tab.icon_left} icon_left`}></i>
                             <h3>{tab.title}</h3>
                             <i className={`${tab.icon_right} icon_right`}></i>
                         </S.Tab>
