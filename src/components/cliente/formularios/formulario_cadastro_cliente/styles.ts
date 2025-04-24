@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { colors } from '../../../../../styles'
+import { breakpoints, colors } from '../../../../../styles'
 
 export const FormularioContainer = styled.div`
     display: flex;
@@ -33,6 +33,11 @@ export const FormularioContainer = styled.div`
         color: ${colors.texto};
         margin-bottom: 16px;
         text-align: center;
+    }
+
+    @media (max-width: ${breakpoints.tablet}) {
+        width: 90%;
+        padding: 20px;
     }
 `
 

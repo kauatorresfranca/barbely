@@ -1,5 +1,10 @@
 import styled from 'styled-components'
-import { colors } from '../../../../styles'
+import { breakpoints, colors } from '../../../../styles'
+
+// Definindo a interface para as props do SideBar
+interface SideBarProps {
+    isOpen: boolean
+}
 
 export const Container = styled.div`
     display: flex;
@@ -7,7 +12,24 @@ export const Container = styled.div`
     overflow: hidden;
 `
 
-export const SideBar = styled.div`
+export const HamburgerButton = styled.button`
+    display: none;
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    z-index: 1000;
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: ${colors.branco};
+    cursor: pointer;
+
+    @media (max-width: 768px) {
+        display: block;
+    }
+`
+
+export const SideBar = styled.div<SideBarProps>`
     position: relative;
     background-color: ${colors.cinzaEscuro};
     display: flex;
@@ -18,12 +40,22 @@ export const SideBar = styled.div`
     padding: 16px;
     border-right: 1px solid ${colors.cinzaTransparent};
 
+    @media (max-width: 768px) {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 999;
+        width: 100%;
+        padding: 20px;
+        transform: ${(props) => (props.isOpen ? 'translateX(0)' : 'translateX(-100%)')};
+        transition: transform 0.3s ease-in-out;
+    }
+
     #logo_barberly {
         width: 120px;
         margin: 12px auto;
     }
 
-    /* Personalizar o scroll */
     &::-webkit-scrollbar {
         width: 6px;
     }
@@ -37,7 +69,6 @@ export const SideBar = styled.div`
         border-radius: 4px;
     }
 
-    /* Firefox */
     scrollbar-width: thin;
     scrollbar-color: ${colors.cinzaTransparent} transparent;
 `
@@ -101,7 +132,10 @@ export const Content = styled.div`
     overflow-y: auto;
     height: 100vh;
 
-    /* Personalizar o scroll */
+    @media (max-width: 768px) {
+        padding-top: 60px;
+    }
+
     &::-webkit-scrollbar {
         width: 6px;
     }
@@ -115,7 +149,6 @@ export const Content = styled.div`
         border-radius: 4px;
     }
 
-    /* Firefox */
     scrollbar-width: thin;
     scrollbar-color: ${colors.cinzaTransparent} transparent;
 `
@@ -170,6 +203,19 @@ export const Profile = styled.div`
         text-align: center;
         color: ${colors.branco};
         font-weight: bold;
+    }
+
+    @media (max-width: ${breakpoints.tablet}) {
+        justify-content: center;
+        width: 85%;
+        margin: 16px auto 0 auto;
+        padding: 16px 0;
+
+        img {
+            width: 65px;
+            height: 65px;
+            margin-right: 32px;
+        }
     }
 `
 

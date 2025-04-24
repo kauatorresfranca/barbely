@@ -1,5 +1,5 @@
-import styled from "styled-components"
-import { colors } from "../../../../../styles"
+import styled from 'styled-components'
+import { breakpoints, colors } from '../../../../../styles'
 
 export const FormularioContainer = styled.div`
     display: flex;
@@ -22,7 +22,7 @@ export const FormularioContainer = styled.div`
 
     h2 {
         font-size: 24px;
-        font-weight: bold; 
+        font-weight: bold;
         color: ${colors.branco};
         margin-bottom: 4px;
     }
@@ -33,6 +33,11 @@ export const FormularioContainer = styled.div`
         color: ${colors.texto};
         margin-bottom: 16px;
         text-align: center;
+    }
+
+    @media (max-width: ${breakpoints.tablet}) {
+        width: 90%;
+        padding: 20px;
     }
 `
 
@@ -103,8 +108,8 @@ export const inputGroup = styled.div`
         border: 1px solid transparent;
         border-radius: 3px;
         background-color: #181b20;
-        transition: border .4s ease-in-out;
-            
+        transition: border 0.4s ease-in-out;
+
         &:hover {
             border: 1px solid ${colors.branco};
         }
@@ -112,7 +117,7 @@ export const inputGroup = styled.div`
         &:focus {
             border: 1px solid ${colors.corPrimaria};
             outline: none;
-            }
+        }
 
         &::placeholder {
             color: ${colors.cinzaClaro};
@@ -124,10 +129,9 @@ export const inputGroup = styled.div`
         position: absolute;
         right: 10px;
         color: ${colors.texto};
-        
+
         &:hover {
             cursor: pointer;
         }
     }
 `
-

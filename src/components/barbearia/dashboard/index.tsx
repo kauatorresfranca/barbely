@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useBarbeariaAtual } from '../../../hooks/useBarbeariaAtual'
 import { useNavigate } from 'react-router-dom'
-import { toZonedTime } from 'date-fns-tz' // Para lidar com fusos horários
-import { getDay, format } from 'date-fns' // Para manipulação de datas
+import { toZonedTime } from 'date-fns-tz'
+import { getDay, format } from 'date-fns'
 
 // Importação dos componentes do dashboard
 import Overview from '../sidebars/visaogeral/index'
@@ -19,6 +19,13 @@ import * as S from './styles'
 
 import logo from '../../../assets/images/logo.png'
 
+// Definindo a interface para o tipo do horário
+interface Horario {
+    dia_semana: number
+    horario_abertura: string
+    horario_fechamento: string
+}
+
 const Dash = () => {
     const barbearia = useBarbeariaAtual()
     const navigate = useNavigate()
@@ -26,10 +33,9 @@ const Dash = () => {
 
     const [activeTab, setActiveTab] = useState('overview')
     const [preview, setPreview] = useState<string | null>(null)
-    const [barbeariaIsOpen, setBarbeariaIsOpen] = useState<boolean>(false)
-    const [horarios, setHorarios] = useState<
-        { dia_semana: number; horario_abertura: string; horario_fechamento: string }[]
-    >([])
+    const [barbeariaIsOpen, setBarbeariaIsOpen] = useState(false)
+    const [horarios, setHorarios] = useState<Horario[]>([])
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false)
 
     // Buscar a imagem da barbearia
     useEffect(() => {
@@ -62,7 +68,7 @@ const Dash = () => {
                 }
                 const data = await response.json()
                 setHorarios(data)
-                console.log('Horários recebidos:', data) // Depuração
+                console.log('Horários recebidos:', data)
             } catch (error) {
                 console.error('Erro ao buscar horários:', error)
             }
@@ -74,28 +80,12 @@ const Dash = () => {
     // Verificar se a barbearia está aberta
     useEffect(() => {
         const isBarbeariaAberta = () => {
-            // Obter a data atual
             const agora = new Date()
-            console.log('Data antes do ajuste (local):', agora.toISOString()) // Depuração: data no fuso horário local
-            console.log('Fuso horário local:', Intl.DateTimeFormat().resolvedOptions().timeZone) // Depuração: fuso horário do navegador
-
-            // Converter para o fuso horário da barbearia
             const agoraZoned = toZonedTime(agora, 'America/Sao_Paulo')
-            console.log('Data após ajuste (America/Sao_Paulo):', agoraZoned.toISOString()) // Depuração: data ajustada
-
-            const diaAtual = getDay(agoraZoned) // 0 = Domingo, 1 = Segunda, ..., 6 = Sábado
-            const horaAtual = format(agoraZoned, 'HH:mm') // Formato HH:mm (ex.: "14:30")
-
-            console.log('Fuso horário ajustado:', 'America/Sao_Paulo')
-            console.log('Dia atual (0-6):', diaAtual)
-            console.log(
-                'Data ajustada (formato legível):',
-                format(agoraZoned, 'dd/MM/yyyy HH:mm:ss'),
-            ) // Depuração: data ajustada formatada
-            console.log('Hora atual:', horaAtual)
+            const diaAtual = getDay(agoraZoned)
+            const horaAtual = format(agoraZoned, 'HH:mm')
 
             const horarioHoje = horarios.find((h) => h.dia_semana === diaAtual)
-            console.log('Horário de hoje:', horarioHoje)
 
             if (!horarioHoje || !horarioHoje.horario_abertura || !horarioHoje.horario_fechamento) {
                 setBarbeariaIsOpen(false)
@@ -106,17 +96,15 @@ const Dash = () => {
                 horaAtual >= horarioHoje.horario_abertura.slice(0, 5) &&
                 horaAtual <= horarioHoje.horario_fechamento.slice(0, 5)
             setBarbeariaIsOpen(isAberta)
-            console.log('Barbearia aberta?', isAberta)
         }
 
         if (horarios.length > 0) {
             isBarbeariaAberta()
-            const interval = setInterval(isBarbeariaAberta, 60000) // Atualizar a cada minuto
+            const interval = setInterval(isBarbeariaAberta, 60000)
             return () => clearInterval(interval)
         }
     }, [horarios])
 
-    // Mapeamento de abas e seus componentes correspondentes
     const tabs = [
         {
             id: 'overview',
@@ -158,16 +146,23 @@ const Dash = () => {
         },
     ]
 
-    // Função para fazer logout
     const handleLogout = () => {
         sessionStorage.removeItem('access_token_barbearia')
         sessionStorage.removeItem('refresh_token_barbearia')
-        navigate('/login') // Redirecionando para login
+        navigate('/login')
+    }
+
+    const toggleSidebar = () => {
+        setIsSidebarOpen(!isSidebarOpen)
     }
 
     return (
         <S.Container>
-            <S.SideBar>
+            <S.HamburgerButton onClick={toggleSidebar}>
+                <i className={isSidebarOpen ? 'ri-close-line' : 'ri-menu-line'}></i>
+            </S.HamburgerButton>
+
+            <S.SideBar isOpen={isSidebarOpen}>
                 <S.BarberProfile>
                     <img id="logo_barberly" src={logo} alt="Barberly" />
                 </S.BarberProfile>
@@ -195,7 +190,10 @@ const Dash = () => {
                             <li key={tab.id}>
                                 <button
                                     className={activeTab === tab.id ? 'active' : ''}
-                                    onClick={() => setActiveTab(tab.id)}
+                                    onClick={() => {
+                                        setActiveTab(tab.id)
+                                        setIsSidebarOpen(false)
+                                    }}
                                 >
                                     <i className={tab.icon}></i> {tab.label}
                                 </button>

@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { colors } from '../../../../styles'
+import { breakpoints, colors } from '../../../../styles'
 
 export const Container = styled.div`
     display: flex;
@@ -7,8 +7,16 @@ export const Container = styled.div`
     justify-content: center;
     flex-direction: column;
     width: 100%;
-    padding: 12px;
-    background: linear-gradient(-45deg, ${colors.cinzaClaro}, ${colors.cinzaClaro}AA);
+    padding: 12px 12px 0 12px;
     border-radius: 8px;
     text-align: center;
+
+    p {
+        font-size: 14px;
+        color: ${colors.texto};
+    }
+
+    @media (max-width: ${breakpoints.tablet}) {
+        padding: 4px;
+    }
 `

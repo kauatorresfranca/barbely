@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { colors } from '../../../../../styles'
+import { breakpoints, colors } from '../../../../../styles'
 
 export const Container = styled.div`
     width: 100%;
@@ -36,7 +36,7 @@ export const Filtro = styled.div`
         background-color: transparent;
         border-radius: 10px;
         border: 1px solid rgba(134, 126, 126, 0.53);
-        font-size: 16px;
+        font-size: 14px;
         font-weight: bold;
         transition: 0.3s;
         cursor: pointer;
@@ -53,6 +53,13 @@ export const Filtro = styled.div`
         option {
             background-color: ${colors.cinzaClaro};
             color: ${colors.branco};
+        }
+    }
+
+    @media (max-width: ${breakpoints.tablet}) {
+        select {
+            width: 160px;
+            font-size: 12px;
         }
     }
 `
@@ -73,6 +80,11 @@ export const DateRange = styled.div`
         font-weight: bold;
         margin-right: 6px;
         color: ${colors.branco};
+    }
+
+    @media (max-width: ${breakpoints.tablet}) {
+        font-size: 12px;
+        padding: 0px 0px 0px 0px;
     }
 `
 
@@ -153,6 +165,11 @@ export const InputGroup = styled.div`
 export const FirstLine = styled.div`
     display: flex;
     gap: 20px;
+
+    @media (max-width: ${breakpoints.tablet}) {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+    }
 `
 
 export const SecondLine = styled.div`
@@ -162,6 +179,10 @@ export const SecondLine = styled.div`
     width: 100%;
     margin-top: 40px;
     gap: 20px;
+
+    @media (max-width: ${breakpoints.tablet}) {
+        flex-direction: column;
+    }
 `
 
 export const Card = styled.div`
@@ -209,13 +230,48 @@ export const Card = styled.div`
             right: 240px;
         }
     }
+
+    @media (max-width: ${breakpoints.tablet}) {
+        flex-direction: column;
+        padding: 8px;
+
+        .valor {
+            position: static;
+        }
+
+        h3 {
+            font-size: 14px;
+            margin-bottom: 10px;
+            color: ${colors.texto};
+        }
+
+        p {
+            font-size: 16px;
+            font-weight: bold;
+            color: ${colors.branco};
+        }
+
+        &#secondline {
+            height: 175px;
+            width: 100%;
+            border: none;
+
+            .valor {
+                position: static;
+            }
+        }
+    }
 `
 
 export const GraficoContainer = styled.div`
-    background: ${colors.cinzaClaro};
+    background: linear-gradient(-45deg, ${colors.cinzaClaro}, ${colors.cinzaClaro}AA);
     border-radius: 8px;
     width: 60.5%;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+    @media (max-width: ${breakpoints.tablet}) {
+        width: 100%;
+    }
 `
 
 export const Services = styled.div`
@@ -223,4 +279,10 @@ export const Services = styled.div`
     flex-direction: column;
     gap: 20px;
     width: 40%;
+
+    @media (max-width: ${breakpoints.tablet}) {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        width: 100%;
+    }
 `
