@@ -69,7 +69,8 @@ const Clientes = () => {
                 setClientes(data)
                 setFilteredClientes(data)
             })
-            .catch((err) => {
+            .catch((err: Error) => {
+                // Explicitly type err as Error
                 console.error('Erro na requisição:', err)
                 setErro(err.message)
                 if (err.message.includes('Sessão expirada')) {
@@ -150,12 +151,14 @@ const Clientes = () => {
             // Atualizar os estados removendo o cliente deletado
             setClientes((prev) => prev.filter((c) => c.id !== cliente.id))
             setFilteredClientes((prev) => prev.filter((c) => c.id !== cliente.id))
-        } catch (err) {
+        } catch (err: unknown) {
+            // Use 'unknown' to satisfy TS1196
             console.error('Erro ao deletar cliente:', err)
-            setErro(err.message)
-            if (err.message.includes('Sessão expirada')) {
+            const errorMessage = err instanceof Error ? err.message : String(err)
+            setErro(errorMessage)
+            if (errorMessage.includes('Sessão expirada')) {
                 sessionStorage.removeItem('access_token_barbearia')
-                navigate('/clientes/login')
+                navigate('/login')
             }
         }
     }
