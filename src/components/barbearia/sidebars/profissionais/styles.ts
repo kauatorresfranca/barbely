@@ -16,15 +16,19 @@ export const ServiceHeader = styled.div`
     button {
         position: absolute;
         right: 8px;
-        height: 40px;
-        width: 130px;
-        background-color: ${colors.corPrimaria};
-        color: ${colors.cinzaEscuro};
+        height: 42px;
+        width: 140px;
         font-weight: bold;
-        border-radius: 15px;
-        border: none;
-        padding: 4px;
+        color: ${colors.branco};
+        background: ${colors.cinzaClaro};
+        border: 1px solid ${colors.cinzaTransparent};
+        border-radius: 10px;
         cursor: pointer;
+        transition: transform 0.3s ease;
+
+        &:hover {
+            transform: scale(1.03);
+        }
     }
 `
 
@@ -41,7 +45,6 @@ export const Head = styled.div`
 
     p {
         font-weight: 500;
-        width: 50%;
     }
 `
 
@@ -55,16 +58,17 @@ export const ListItem = styled.li`
     display: flex;
     justify-content: space-between;
     align-items: center;
+    height: 58px;
     padding: 20px;
-    height: 60px;
     background-color: ${colors.cinzaClaro};
+    border: 0.04rem solid ${colors.cinzaTransparent};
     margin-bottom: 8px;
     border-radius: 4px;
     box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
 
     p {
+        width: 35%;
         color: ${colors.branco};
-        width: 50%;
     }
 `
 

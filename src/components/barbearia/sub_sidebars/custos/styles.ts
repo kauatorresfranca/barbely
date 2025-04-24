@@ -117,17 +117,26 @@ export const InputGroup = styled.div`
 `
 
 export const Input = styled.input`
-    padding: 8px;
-    border: none;
-    border-radius: 4px;
-    background: ${colors.texto}33;
-    color: ${colors.branco};
-    font-size: 14px;
-    width: 100%; // Garante que o input ocupe todo o espaço disponível
-    box-sizing: border-box; // Evita que padding cause overflow
+    width: 100%;
+    height: 52px;
+    padding: 12px;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    background-color: #181b20;
+    transition: border 0.4s ease-in-out;
+
+    &:hover {
+        border: 1px solid ${colors.branco};
+    }
+
+    &:focus {
+        border: 1px solid ${colors.corPrimaria};
+        outline: none;
+    }
 
     &::placeholder {
-        color: ${colors.texto};
+        color: ${colors.cinzaClaro};
+        font-weight: bold;
     }
 
     &[type='date']::-webkit-calendar-picker-indicator {
@@ -136,9 +145,9 @@ export const Input = styled.input`
 `
 
 export const Select = styled.select`
-    padding: 8px;
     border: none;
-    height: 40px;
+    height: 52px;
+    padding: 12px;
     border-radius: 4px;
     background: ${colors.texto}33;
     color: ${colors.branco};

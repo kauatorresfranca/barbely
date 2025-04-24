@@ -1,4 +1,5 @@
 import { toZonedTime, format } from 'date-fns-tz'
+import { useNavigate } from 'react-router-dom'
 
 import { AgendamentoData } from '../../../cliente/agendamento'
 import { authFetch } from '../../../../utils/authFetch'
@@ -12,6 +13,7 @@ type Props = {
 
 const ConfirmacaoStep = ({ setActiveTab, agendamentoData }: Props) => {
     const fusoHorario = 'America/Sao_Paulo'
+    const navigate = useNavigate()
 
     const dataFormatada = agendamentoData.data
         ? format(toZonedTime(agendamentoData.data, fusoHorario), 'dd/MM/yyyy', {
@@ -23,7 +25,8 @@ const ConfirmacaoStep = ({ setActiveTab, agendamentoData }: Props) => {
         const token = sessionStorage.getItem('access_token_cliente')
 
         if (!token) {
-            alert('Você precisa estar logado para agendar.')
+            const slug = sessionStorage.getItem('barbearia_slug') || 'default-slug'
+            navigate(`/clientes/login?redirect=/barbearia/${slug}/agendamento`)
             return
         }
 

@@ -83,7 +83,7 @@ const Servicos = () => {
                             <p>Nome</p>
                             <p>Valor</p>
                             <p>Duração</p>
-                            <i className="ri-tools-line"></i>
+                            <p>Ações</p>
                         </>
                     )}
                 </S.Head>

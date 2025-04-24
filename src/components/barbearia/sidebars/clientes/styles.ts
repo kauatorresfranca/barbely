@@ -11,17 +11,73 @@ export const Container = styled.div`
 
 export const Head = styled.div`
     display: flex;
+    flex-direction: column;
     justify-content: space-between;
-    padding: 10px 20px 0 20px;
+    padding-top: 10px;
+    gap: 16px;
 
     .empty {
         width: 100%;
         font-weight: 400;
         color: ${colors.texto};
     }
+`
+
+export const Search = styled.div`
+    input {
+        width: 100%;
+        height: 48px;
+        padding: 12px;
+        border: 1px solid ${colors.cinzaTransparent};
+        border-radius: 3px;
+        background-color: ${colors.texto};
+        transition: border 0.4s ease-in-out;
+        color: ${colors.cinzaEscuro};
+
+        &:hover {
+            border: 1px solid ${colors.branco};
+        }
+
+        &:focus {
+            outline: none;
+        }
+
+        &::placeholder {
+            ${colors.cinzaEscuro};
+            font-weight: bold;
+        }
+    }
+`
+
+export const FieldNames = styled.div`
+    display: flex;
+    padding: 0 20px;
+    justify-content: space-between;
 
     p {
         font-weight: 500;
+    }
+`
+
+export const IconGroup = styled.div`
+    display: flex;
+    gap: 8px;
+
+    i {
+        &.edit {
+            color: ${colors.branco};
+            cursor: pointer;
+        }
+
+        &.details {
+            color: ${colors.verdeTransparent};
+            cursor: pointer;
+        }
+
+        &.delete {
+            color: ${colors.vermelho};
+            cursor: pointer;
+        }
     }
 `
 
@@ -29,15 +85,21 @@ export const List = styled.ul`
     list-style: none;
     margin-top: 16px;
     padding: 0;
+
+    .cliente_length {
+        text-align: center;
+        color: ${colors.texto};
+    }
 `
 
 export const ListItem = styled.li`
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 60px;
+    height: 58px;
     padding: 20px;
     background-color: ${colors.cinzaClaro};
+    border: 0.04rem solid ${colors.cinzaTransparent};
     margin-bottom: 8px;
     border-radius: 4px;
     box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
@@ -45,18 +107,5 @@ export const ListItem = styled.li`
     p {
         width: 35%;
         color: ${colors.branco};
-    }
-`
-
-export const Button = styled.button`
-    padding: 6px 10px;
-    border: none;
-    border-radius: 4px;
-    background-color: ${colors.corPrimaria};
-    color: white;
-    cursor: pointer;
-
-    &:hover {
-        background-color: #0056b3;
     }
 `

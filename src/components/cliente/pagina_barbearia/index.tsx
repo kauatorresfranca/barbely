@@ -18,7 +18,7 @@ const PaginaBarbearia = () => {
 
     const [barbearia, setBarbearia] = useState<Barbearia | null>(null)
     const [horarios, setHorarios] = useState<
-        { dia_semana: number; horario_abertura: string; horario_fechamento: string }[]
+        { dia_semana: number; horario_abertura: string | null; horario_fechamento: string | null }[]
     >([])
     const [modalIsOpen, setModalIsOpen] = useState(false)
     const [minhaContaModalIsOpen, setMinhaContaModalIsOpen] = useState(false)
@@ -89,7 +89,11 @@ const PaginaBarbearia = () => {
                 if (servicosRes.ok) {
                     setServicos(await servicosRes.json())
                 } else {
-                    console.error('Erro ao buscar serviços')
+                    console.error(
+                        'Erro ao buscar serviços:',
+                        servicosRes.status,
+                        servicosRes.statusText,
+                    )
                 }
             } catch (error) {
                 console.error('Erro ao buscar dados:', error)
@@ -110,7 +114,7 @@ const PaginaBarbearia = () => {
                     const enderecoFormatado = `${data.endereco}, ${data.numero} - ${data.bairro}, ${data.cidade} - ${data.estado}, ${data.cep}`
                     setEndereco(enderecoFormatado)
                 } else {
-                    console.error('Erro ao buscar endereço')
+                    console.error('Erro ao buscar endereço:', response.status, response.statusText)
                 }
             } catch (error) {
                 console.error('Erro ao buscar endereço:', error)
@@ -134,12 +138,16 @@ const PaginaBarbearia = () => {
                 const response = await fetch(
                     `http://localhost:8000/api/barbearias/buscar-por-slug/${slug}/`,
                 )
-                const data = await response.json()
-                setBarbearia(data)
+                if (response.ok) {
+                    const data = await response.json()
+                    setBarbearia(data)
 
-                if (data.imagem) {
-                    const isFullUrl = data.imagem.startsWith('http')
-                    setPreview(isFullUrl ? data.imagem : `http://localhost:8000${data.imagem}`)
+                    if (data.imagem) {
+                        const isFullUrl = data.imagem.startsWith('http')
+                        setPreview(isFullUrl ? data.imagem : `http://localhost:8000${data.imagem}`)
+                    }
+                } else {
+                    console.error('Erro ao buscar barbearia:', response.status, response.statusText)
                 }
             } catch (error) {
                 console.error('Erro ao buscar barbearia:', error)
@@ -153,14 +161,19 @@ const PaginaBarbearia = () => {
         const fetchHorarios = async () => {
             try {
                 const response = await fetch(`http://localhost:8000/api/horarios/?slug=${slug}`)
-                const data = await response.json()
-                setHorarios(data)
+                if (response.ok) {
+                    const data = await response.json()
+                    console.log('Horários recebidos:', data) // Debug log to inspect the fetched data
+                    setHorarios(data)
+                } else {
+                    console.error('Erro ao buscar horários:', response.status, response.statusText)
+                }
             } catch (error) {
                 console.error('Erro ao buscar horários:', error)
             }
         }
 
-        fetchHorarios()
+        if (slug) fetchHorarios()
     }, [slug])
 
     function ToAgendamento() {

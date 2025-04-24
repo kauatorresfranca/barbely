@@ -53,7 +53,7 @@ const HorariosStep = ({ setActiveTab, servico, funcionario }: Props) => {
                 const token = sessionStorage.getItem('access_token_cliente')
                 const dataNormalizada = toZonedTime(dataSelecionada, fusoHorario)
                 const dataFormatada = formatInTimeZone(dataNormalizada, fusoHorario, 'yyyy-MM-dd')
-                const diaSemana = dataSelecionada.getDay() // 0 = Domingo, 1 = Segunda, ..., 6 = Sábado
+                const diaSemana = dataSelecionada.getDay()
 
                 console.log('Data selecionada:', dataFormatada, 'Dia da semana:', diaSemana)
 
@@ -119,7 +119,6 @@ const HorariosStep = ({ setActiveTab, servico, funcionario }: Props) => {
                     />
                 </S.DataPickWrapper>
             </S.Data>
-
             <S.Horario>
                 <h3>Escolha o melhor horário</h3>
                 {error && <p style={{ color: 'red' }}>{error}</p>}
@@ -145,7 +144,6 @@ const HorariosStep = ({ setActiveTab, servico, funcionario }: Props) => {
                                 <p>Noite</p>
                             </S.TurnoItem>
                         </S.TurnosList>
-
                         <S.HorarioList>
                             {horariosPorTurno[turnoSelecionado].length > 0 ? (
                                 horariosPorTurno[turnoSelecionado].map((horario) => (
@@ -168,7 +166,6 @@ const HorariosStep = ({ setActiveTab, servico, funcionario }: Props) => {
                     <p className="nenhum_horario">Nenhum horário disponível nesse dia</p>
                 )}
             </S.Horario>
-
             <S.Button onClick={handleNext}>Prosseguir</S.Button>
         </S.Container>
     )

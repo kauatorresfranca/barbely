@@ -38,8 +38,10 @@ const CompartilharBarbearia = () => {
                     <div className="link">
                         <i className="ri-link-m"></i>
                         <p className="linktext">{linkCompleto}</p>
+                        <S.Button onClick={copiarLink}>
+                            <i className="ri-file-copy-line"></i>
+                        </S.Button>
                     </div>
-                    <S.Button onClick={copiarLink}>Copiar link</S.Button>
                     <S.ToBarberClientLink to={`/barbearia/${barbearia.slug}`}>
                         Ver barbearia
                     </S.ToBarberClientLink>

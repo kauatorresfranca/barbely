@@ -5,7 +5,6 @@ import { Funcionario } from '../../../../models/funcionario'
 import { Servico } from '../../../../models/servico'
 
 import * as S from './styles'
-
 import user from '../../../../assets/images/user.png'
 
 type Props = {
@@ -23,6 +22,11 @@ const FirstStep = ({ setActiveTab }: Props) => {
     const [selectedFuncionarioId, setSelectedFuncionarioId] = useState<number | null>(null)
 
     useEffect(() => {
+        // Store slug in sessionStorage
+        if (slug) {
+            sessionStorage.setItem('barbearia_slug', slug)
+        }
+
         const fetchData = async () => {
             try {
                 const [servicosRes, funcionariosRes] = await Promise.all([
@@ -119,7 +123,6 @@ const FirstStep = ({ setActiveTab }: Props) => {
                     ))}
                 </S.ServicesList>
             </S.Service>
-
             <S.Button onClick={handleNext}>Prosseguir</S.Button>
         </S.Container>
     )

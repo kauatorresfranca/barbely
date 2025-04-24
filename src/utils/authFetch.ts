@@ -1,7 +1,10 @@
 export async function authFetch(url: string, options: RequestInit = {}): Promise<Response> {
-    // Ajustar a lógica para considerar /api/agendamentos/ como requisição de barbearia
+    // Identify client requests
     const isClienteRequest =
-        url.includes('/api/clientes/') && !url.includes('/api/clientes/barbearia/')
+        (url.includes('/api/clientes/') && !url.includes('/api/clientes/barbearia/')) ||
+        url.includes('/api/agendamentos/horarios-disponiveis/') ||
+        url.includes('/api/agendamentos/criar/')
+
     const tokenKey = isClienteRequest ? 'access_token_cliente' : 'access_token_barbearia'
     const refreshKey = isClienteRequest ? 'refresh_token_cliente' : 'refresh_token_barbearia'
 
@@ -14,10 +17,15 @@ export async function authFetch(url: string, options: RequestInit = {}): Promise
         }`,
     )
 
+    // Skip token check for horarios-disponiveis (allow unauthenticated)
+    if (url.includes('/api/agendamentos/horarios-disponiveis/') && !accessToken) {
+        return fetch(url, options)
+    }
+
     if (!accessToken) {
         console.error(`Token de acesso (${tokenKey}) não encontrado.`)
         const slug = sessionStorage.getItem('barbearia_slug') || 'default-slug'
-        window.location.href = `/barbearia/${slug}/login`
+        window.location.href = isClienteRequest ? '/clientes/login' : `/barbearia/${slug}/login`
         throw new Error('Token de acesso não encontrado.')
     }
 
@@ -60,7 +68,7 @@ export async function authFetch(url: string, options: RequestInit = {}): Promise
         } else {
             console.error('Erro ao renovar token:', await refreshResponse.text())
             const slug = sessionStorage.getItem('barbearia_slug') || 'default-slug'
-            window.location.href = `/barbearia/${slug}/login`
+            window.location.href = isClienteRequest ? '/clientes/login' : `/barbearia/${slug}/login`
             throw new Error('Erro ao renovar token.')
         }
     }

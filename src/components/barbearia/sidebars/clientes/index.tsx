@@ -4,14 +4,18 @@ import { useNavigate } from 'react-router-dom'
 import { Cliente } from '../../../../models/cliente'
 import { authFetch } from '../../../../utils/authFetch'
 import ClienteDetail from '../../modals/cliente/cliente_detail'
+import ClienteEdit from '../../modals/cliente/editar'
 
 import * as S from './styles'
 
 const Clientes = () => {
     const [clientes, setClientes] = useState<Cliente[]>([])
+    const [filteredClientes, setFilteredClientes] = useState<Cliente[]>([])
+    const [searchTerm, setSearchTerm] = useState<string>('')
     const [loading, setLoading] = useState(true)
     const [erro, setErro] = useState<string | null>(null)
-    const [modalIsOpen, setModalIsOpen] = useState<boolean>(false)
+    const [modalDetailsIsOpen, setModalDetailsIsOpen] = useState<boolean>(false)
+    const [modalEditIsOpen, setModalEditIsOpen] = useState<boolean>(false)
     const [selectedCliente, setSelectedCliente] = useState<Cliente | null>(null)
     const navigate = useNavigate()
 
@@ -41,6 +45,7 @@ const Clientes = () => {
         if (!token || !barbeariaId) {
             setErro('Token ou ID da barbearia ausente. Por favor, faça login novamente.')
             setLoading(false)
+            navigate('/clientes/login') // Redirecionar para login se token ou barbeariaId estiverem ausentes
             return
         }
 
@@ -51,6 +56,9 @@ const Clientes = () => {
         })
             .then((res) => {
                 console.log('Resposta da API /api/clientes/barbearia:', res.status, res.statusText)
+                if (res.status === 401) {
+                    throw new Error('Sessão expirada. Por favor, faça login novamente.')
+                }
                 if (!res.ok) {
                     throw new Error(`Erro ao buscar clientes: ${res.status} ${res.statusText}`)
                 }
@@ -59,22 +67,97 @@ const Clientes = () => {
             .then((data) => {
                 console.log('Clientes recebidos:', data)
                 setClientes(data)
+                setFilteredClientes(data)
             })
             .catch((err) => {
                 console.error('Erro na requisição:', err)
                 setErro(err.message)
+                if (err.message.includes('Sessão expirada')) {
+                    sessionStorage.removeItem('access_token_barbearia')
+                    navigate('/clientes/login')
+                }
             })
             .finally(() => setLoading(false))
     }, [navigate])
 
-    const handleOpenModal = (cliente: Cliente) => {
-        setSelectedCliente(cliente)
-        setModalIsOpen(true)
+    useEffect(() => {
+        const filtered = clientes.filter((cliente) => {
+            const nome = cliente?.user?.nome || ''
+            const telefone = (cliente?.user?.telefone || '').replace(/[()-/\s]/g, '')
+            const normalizedSearchTerm = searchTerm.replace(/[()-/\s]/g, '')
+            return (
+                nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                telefone.toLowerCase().includes(normalizedSearchTerm.toLowerCase())
+            )
+        })
+        setFilteredClientes(filtered)
+    }, [searchTerm, clientes])
+
+    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchTerm(e.target.value)
     }
 
-    const handleCloseModal = () => {
+    const handleOpenModalDetails = (cliente: Cliente) => {
+        setSelectedCliente(cliente)
+        setModalDetailsIsOpen(true)
+    }
+
+    const handleOpenModalEdit = (cliente: Cliente) => {
+        setSelectedCliente(cliente)
+        setModalEditIsOpen(true)
+    }
+
+    const handleCloseModalEdit = () => {
         setSelectedCliente(null)
-        setModalIsOpen(false)
+        setModalEditIsOpen(false)
+    }
+
+    const handleCloseModalDetails = () => {
+        setSelectedCliente(null)
+        setModalDetailsIsOpen(false)
+    }
+
+    const handleDeleteCliente = async (cliente: Cliente) => {
+        const confirmDelete = window.confirm(
+            `Tem certeza que deseja deletar o cliente ${cliente.user?.nome || 'desconhecido'}?`,
+        )
+        if (!confirmDelete) return
+
+        const token = sessionStorage.getItem('access_token_barbearia')
+        if (!token) {
+            setErro('Token ausente. Por favor, faça login novamente.')
+            navigate('/clientes/login')
+            return
+        }
+
+        try {
+            const response = await authFetch(`http://localhost:8000/api/clientes/${cliente.id}/`, {
+                method: 'DELETE',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            })
+
+            if (response.status === 401) {
+                throw new Error('Sessão expirada. Por favor, faça login novamente.')
+            }
+            if (!response.ok) {
+                throw new Error(
+                    `Erro ao deletar cliente: ${response.status} ${response.statusText}`,
+                )
+            }
+
+            // Atualizar os estados removendo o cliente deletado
+            setClientes((prev) => prev.filter((c) => c.id !== cliente.id))
+            setFilteredClientes((prev) => prev.filter((c) => c.id !== cliente.id))
+        } catch (err) {
+            console.error('Erro ao deletar cliente:', err)
+            setErro(err.message)
+            if (err.message.includes('Sessão expirada')) {
+                sessionStorage.removeItem('access_token_barbearia')
+                navigate('/clientes/login')
+            }
+        }
     }
 
     if (loading) return <S.Container>Carregando...</S.Container>
@@ -92,23 +175,63 @@ const Clientes = () => {
                     <p className="empty">Você ainda não tem clientes cadastrados</p>
                 ) : (
                     <>
-                        <p>Nome</p>
-                        <p>Celular</p>
-                        <p>Detalhes</p>
+                        <S.Search>
+                            <input
+                                type="text"
+                                placeholder="Buscar por nome ou telefone..."
+                                value={searchTerm}
+                                onChange={handleSearchChange}
+                            />
+                        </S.Search>
+                        {filteredClientes.length > 0 && (
+                            <S.FieldNames>
+                                <p>Nome</p>
+                                <p>Celular</p>
+                                <p>Ações</p>
+                            </S.FieldNames>
+                        )}
                     </>
                 )}
             </S.Head>
             <S.List>
-                {clientes.map((cliente) => (
-                    <S.ListItem key={cliente.id}>
-                        <p>{cliente.user.nome}</p>
-                        <p>{cliente.user.telefone}</p>
-                        <S.Button onClick={() => handleOpenModal(cliente)}>Detalhes</S.Button>
-                    </S.ListItem>
-                ))}
+                {filteredClientes.length > 0
+                    ? filteredClientes.map((cliente) => (
+                          <S.ListItem key={cliente.id}>
+                              <p>{cliente.user?.nome || 'Nome indisponível'}</p>
+                              <p>{cliente.user?.telefone || 'Telefone indisponível'}</p>
+                              <S.IconGroup>
+                                  <i
+                                      title="Detalhes do Cliente"
+                                      className="ri-info-card-line details"
+                                      onClick={() => handleOpenModalDetails(cliente)}
+                                  ></i>
+                                  <i
+                                      className="ri-edit-2-line edit"
+                                      title="Editar Cliente"
+                                      onClick={() => handleOpenModalEdit(cliente)}
+                                  ></i>
+                                  <i
+                                      className="ri-delete-bin-line delete"
+                                      title="Apagar Cliente"
+                                      onClick={() => handleDeleteCliente(cliente)}
+                                  ></i>
+                              </S.IconGroup>
+                          </S.ListItem>
+                      ))
+                    : clientes.length > 0 && (
+                          <p className="empty">
+                              {searchTerm
+                                  ? `Nenhum cliente encontrado com o nome ou telefone "${searchTerm}"`
+                                  : 'Nenhum cliente encontrado'}
+                          </p>
+                      )}
+                <p className="cliente_length">{filteredClientes.length} Clientes</p>
             </S.List>
-            {modalIsOpen && (
-                <ClienteDetail cliente={selectedCliente} closeModal={handleCloseModal} />
+            {modalDetailsIsOpen && (
+                <ClienteDetail cliente={selectedCliente} closeModal={handleCloseModalDetails} />
+            )}
+            {modalEditIsOpen && (
+                <ClienteEdit cliente={selectedCliente} closeModal={handleCloseModalEdit} />
             )}
         </S.Container>
     )

@@ -24,7 +24,7 @@ export const Header = styled.div`
 export const Filtro = styled.div`
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 6px;
     margin-bottom: 20px;
     position: relative;
 
@@ -34,7 +34,7 @@ export const Filtro = styled.div`
         padding: 8px;
         color: ${colors.branco};
         background-color: transparent;
-        border-radius: 20px;
+        border-radius: 10px;
         border: 1px solid rgba(134, 126, 126, 0.53);
         font-size: 16px;
         font-weight: bold;
@@ -61,18 +61,13 @@ export const DateRange = styled.div`
     height: 42px;
     padding: 8px 12px;
     background-color: transparent;
-    border: 1px solid rgba(134, 126, 126, 0.53);
-    border-radius: 20px;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     font-size: 14px;
     color: ${colors.texto};
     cursor: pointer;
     transition: 0.3s;
-
-    &:hover {
-        border: 1px solid ${colors.branco};
-    }
 
     span {
         font-weight: bold;
@@ -87,9 +82,10 @@ export const DateInputsWrapper = styled.div`
     left: 170px;
     z-index: 10;
     background: ${colors.cinzaClaro};
+    border: 1px solid ${colors.cinzaTransparent};
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    padding: 12px;
+    padding: 12px 12px 20px 12px;
     display: flex;
     gap: 8px;
     align-items: flex-end;

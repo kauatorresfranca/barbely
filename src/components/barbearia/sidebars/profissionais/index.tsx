@@ -80,7 +80,7 @@ const Profissionais = () => {
                     ) : (
                         <>
                             <p>Nome</p>
-                            <i className="ri-tools-line"></i>
+                            <p>Ações</p>
                         </>
                     )}
                 </S.Head>

@@ -6,15 +6,9 @@ import Custos from '../../sub_sidebars/custos'
 import * as S from './styles'
 
 const Financeiro = () => {
-    const [activeTab, setActiveTab] = useState('planos')
+    const [activeTab, setActiveTab] = useState('metodos_de_pagamento')
 
     const tabs = [
-        {
-            id: 'planos',
-            title: 'Planos',
-            icon_right: 'ri-arrow-right-s-line',
-            component: <Planos />,
-        },
         {
             id: 'metodos_de_pagamento',
             title: 'Metodos de Pagamento',
@@ -26,6 +20,12 @@ const Financeiro = () => {
             title: 'Custos',
             icon_right: 'ri-arrow-right-s-line',
             component: <Custos />,
+        },
+        {
+            id: 'planos',
+            title: 'Planos',
+            icon_right: 'ri-arrow-right-s-line',
+            component: <Planos />,
         },
     ]
 

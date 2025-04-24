@@ -13,7 +13,12 @@ export const Container = styled.div`
 
     .link {
         display: flex;
+        justify-content: center;
         align-items: center;
+        padding: 2px 12px;
+        margin: 20px 0;
+        background-color: ${colors.cinzaEscuro};
+        border-radius: 10px;
 
         i {
             font-size: 20px;
@@ -29,21 +34,21 @@ export const Container = styled.div`
         &.linktext {
             color: ${colors.branco};
             font-weight: 400;
-            text-decoration: underline;
         }
     }
 `
 export const Button = styled.button`
-    width: 100%;
-    margin: 12px 0;
+    width: 40px;
     background-color: ${colors.cinzaEscuro};
     color: ${colors.branco};
     border: none;
     padding: 12px;
-    border-radius: 5px;
-    font-weight: 600;
+    margin-left: 12px;
+    border-left: 1px solid ${colors.cinzaTransparent};
+    font-weight: 400;
     cursor: pointer;
     transition: 0.3s;
+    text-align: center;
 `
 
 export const ToBarberClientLink = styled(Link)`
