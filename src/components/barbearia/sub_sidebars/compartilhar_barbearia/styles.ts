@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { colors } from '../../../../../styles'
+import { breakpoints, colors } from '../../../../../styles'
 import { Link } from 'react-router-dom'
 
 export const Container = styled.div`
@@ -10,6 +10,7 @@ export const Container = styled.div`
     padding: 20px;
     border-radius: 10px;
     background-color: ${colors.cinzaClaro};
+    transition: 0.3s ease-in-out;
 
     .link {
         display: flex;
@@ -36,6 +37,23 @@ export const Container = styled.div`
             font-weight: 400;
         }
     }
+
+    @media (max-width: ${breakpoints.tablet}) {
+        width: 100%;
+        text-align: center;
+
+        .link {
+            width: 100%;
+
+            i {
+                font-size: 12px;
+            }
+        }
+
+        .linktext {
+            font-size: 12px;
+        }
+    }
 `
 export const Button = styled.button`
     width: 40px;
@@ -49,6 +67,10 @@ export const Button = styled.button`
     cursor: pointer;
     transition: 0.3s;
     text-align: center;
+
+    @media (max-width: ${breakpoints.tablet}) {
+        width: 24pc;
+    }
 `
 
 export const ToBarberClientLink = styled(Link)`

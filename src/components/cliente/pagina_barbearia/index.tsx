@@ -10,6 +10,7 @@ import MinhaContaModal from '../modals/minha_conta'
 import * as S from './styles'
 import logo from '../../../assets/images/logo.png'
 import user from '../../../assets/images/user.png'
+import { ClipLoader } from 'react-spinners'
 
 const PaginaBarbearia = () => {
     const navigate = useNavigate()
@@ -338,7 +339,7 @@ const PaginaBarbearia = () => {
                     )}
                 </S.Container>
             ) : (
-                <p>Carregando barbearia...</p>
+                <ClipLoader color="#00c1fe" size={32} speedMultiplier={1} />
             )}
         </div>
     )

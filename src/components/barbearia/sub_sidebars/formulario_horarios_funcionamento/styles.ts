@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { colors } from '../../../../../styles'
+import { breakpoints, colors } from '../../../../../styles'
 
 export const Container = styled.div`
     width: 680px;
@@ -7,6 +7,7 @@ export const Container = styled.div`
     padding: 20px;
     border-radius: 8px;
     color: #fff;
+    transition: 0.3s ease-in-out;
 
     h2 {
         text-align: center;
@@ -16,6 +17,10 @@ export const Container = styled.div`
         color: ${colors.texto};
         font-size: 14px;
         text-align: center;
+    }
+
+    @media (max-width: ${breakpoints.tablet}) {
+        width: 100%;
     }
 `
 

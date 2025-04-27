@@ -1,16 +1,17 @@
 import { useEffect, useState } from 'react'
-
+import { ClipLoader } from 'react-spinners' // Importe o ClipLoader
 import { authFetch } from '../../../../utils/authFetch'
 import { Funcionario } from '../../../../models/funcionario'
 import CriarProfissionalModal from '../../modals/profissional/profissional_criar'
 import EditarProfissionalModal from '../../modals/profissional/profissional_editar'
-
 import * as S from './styles'
 
 const Profissionais = () => {
     const [modalIsOpen, setModalIsOpen] = useState(false)
     const [editModalIsOpen, setEditModalIsOpen] = useState(false)
     const [funcionarios, setFuncionarios] = useState<Funcionario[]>([])
+    const [isLoading, setIsLoading] = useState(true) // Estado para carregamento
+    const [hasError, setHasError] = useState(false) // Estado para erro
 
     const openModal = () => setModalIsOpen(true)
     const closeModal = () => setModalIsOpen(false)
@@ -19,6 +20,8 @@ const Profissionais = () => {
     const closeEditModal = () => setEditModalIsOpen(false)
 
     const fetchFuncionarios = async () => {
+        setIsLoading(true)
+        setHasError(false)
         try {
             const token = sessionStorage.getItem('access_token_barbearia')
             const response = await authFetch('http://localhost:8000/api/funcionarios/', {
@@ -31,9 +34,13 @@ const Profissionais = () => {
                 setFuncionarios(data)
             } else {
                 console.error('Erro ao buscar profissionais')
+                setHasError(true)
             }
         } catch (error) {
             console.error('Erro:', error)
+            setHasError(true)
+        } finally {
+            setIsLoading(false)
         }
     }
 
@@ -64,6 +71,27 @@ const Profissionais = () => {
         fetchFuncionarios()
     }, [])
 
+    // Verifica se há dados válidos
+    const hasValidData = funcionarios.length > 0
+
+    // Renderiza o ClipLoader se estiver carregando, houver erro ou não houver dados
+    if (isLoading || hasError || !hasValidData) {
+        return (
+            <S.Container>
+                <div
+                    style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        height: '100vh',
+                    }}
+                >
+                    <ClipLoader color="#00c1fe" size={32} speedMultiplier={1} />
+                </div>
+            </S.Container>
+        )
+    }
+
     return (
         <>
             <S.Container>
@@ -75,14 +103,10 @@ const Profissionais = () => {
                     <button onClick={openModal}>+ Novo Profissional</button>
                 </S.ServiceHeader>
                 <S.Head>
-                    {funcionarios.length <= 0 ? (
-                        <p className="empty">Você ainda não tem profissionais cadastrados</p>
-                    ) : (
-                        <>
-                            <p>Nome</p>
-                            <p>Ações</p>
-                        </>
-                    )}
+                    <>
+                        <p>Nome</p>
+                        <p>Ações</p>
+                    </>
                 </S.Head>
                 <S.List>
                     {funcionarios.map((func) => (

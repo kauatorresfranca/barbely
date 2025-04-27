@@ -121,10 +121,14 @@ export const ModalButton = styled.button`
 `
 
 export const AgendamentoItem = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     background: ${colors.cinzaClaro};
     padding: 16px;
     border-radius: 8px;
     margin-bottom: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 
     p {
         font-size: 14px;
@@ -133,9 +137,10 @@ export const AgendamentoItem = styled.div`
 `
 
 export const CancelButton = styled.button`
-    background: transparent;
+    background: ${colors.vermelhoTransparent};
     color: ${colors.branco};
-    border: 2px solid ${colors.corPrimaria};
+    height: 48px;
+    border: 2px solid ${colors.vermelho};
     padding: 8px 16px;
     border-radius: 8px;
     font-weight: bold;
@@ -143,7 +148,6 @@ export const CancelButton = styled.button`
     transition: background 0.2s, transform 0.2s;
 
     &:hover {
-        background: ${colors.corPrimaria};
         transform: translateY(-2px);
     }
 

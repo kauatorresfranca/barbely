@@ -23,3 +23,4 @@
     npm install react-imask
     npm i react-icons
     react-date-range
+    react-spinners

@@ -45,6 +45,16 @@ const HorariosStep = ({ setActiveTab, servico, funcionario }: Props) => {
         noite: horariosNoite,
     }
 
+    // Função para verificar se o horário está no passado
+    const isHorarioPassado = (horario: string) => {
+        if (!dataSelecionada) return false
+        const [hora, minuto] = horario.split(':').map(Number)
+        const dataHorario = toZonedTime(new Date(dataSelecionada), fusoHorario)
+        dataHorario.setHours(hora, minuto, 0, 0)
+
+        return dataHorario < new Date()
+    }
+
     useEffect(() => {
         const fetchHorarios = async () => {
             if (!dataSelecionada) return
@@ -146,15 +156,21 @@ const HorariosStep = ({ setActiveTab, servico, funcionario }: Props) => {
                         </S.TurnosList>
                         <S.HorarioList>
                             {horariosPorTurno[turnoSelecionado].length > 0 ? (
-                                horariosPorTurno[turnoSelecionado].map((horario) => (
-                                    <S.HorarioItem
-                                        key={horario}
-                                        onClick={() => setHorarioSelecionado(horario)}
-                                        selected={horarioSelecionado === horario}
-                                    >
-                                        <p>{horario}</p>
-                                    </S.HorarioItem>
-                                ))
+                                horariosPorTurno[turnoSelecionado].map((horario) => {
+                                    const isPassado = dataSelecionada && isHorarioPassado(horario)
+                                    return (
+                                        <S.HorarioItem
+                                            key={horario}
+                                            onClick={() =>
+                                                !isPassado && setHorarioSelecionado(horario)
+                                            }
+                                            selected={horarioSelecionado === horario}
+                                            disabled={isPassado}
+                                        >
+                                            <p>{horario}</p>
+                                        </S.HorarioItem>
+                                    )
+                                })
                             ) : (
                                 <p className="nenhum_horario">
                                     Nenhum horário disponível nesse turno

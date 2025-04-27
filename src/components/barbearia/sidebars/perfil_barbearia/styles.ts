@@ -1,7 +1,9 @@
 import styled from 'styled-components'
-import { colors } from '../../../../../styles'
+import { breakpoints, colors } from '../../../../../styles'
 
 export const Container = styled.div`
+    transition: 0.3s ease-in-out;
+
     .subtitle {
         margin-top: 6px;
         margin-bottom: 16px;
@@ -13,6 +15,10 @@ export const Container = styled.div`
 export const PerfilBarbearia = styled.div`
     display: flex;
     gap: 40px;
+
+    @media (max-width: ${breakpoints.tablet}) {
+        flex-direction: column;
+    }
 `
 
 export const SiderBarPerfil = styled.div`
@@ -32,7 +38,7 @@ export const Tab = styled.div`
     border-radius: 10px;
     background-color: ${colors.cinzaClaro};
     cursor: pointer;
-    transition: 0.3s;
+    transition: 0.3s ease-in-out;
 
     h3 {
         color: ${colors.texto};
@@ -68,5 +74,9 @@ export const Tab = styled.div`
             right: 8px;
             color: ${colors.corPrimaria};
         }
+    }
+
+    @media (max-width: ${breakpoints.tablet}) {
+        width: 100%;
     }
 `

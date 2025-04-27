@@ -1,14 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
 import { IMaskInput } from 'react-imask'
-
+import { ClipLoader } from 'react-spinners' // Importe o ClipLoader
 import { authFetch } from '../../../../utils/authFetch'
 import { useBarbeariaAtual } from '../../../../hooks/useBarbeariaAtual'
-
 import * as S from './styles'
 
 const BarbeariaPerfilForm = () => {
-    const barbaria = useBarbeariaAtual()
-    const slug = barbaria?.slug
+    const barbearia = useBarbeariaAtual()
+    const slug = barbearia?.slug
     const [preview, setPreview] = useState<string | null>(null)
     const [formData, setFormData] = useState({
         nome_proprietario: '',
@@ -19,37 +18,52 @@ const BarbeariaPerfilForm = () => {
         descricao: '',
         imagem: null as File | null,
     })
+    const [isLoading, setIsLoading] = useState(true) // Estado para carregamento
+    const [hasError, setHasError] = useState(false) // Estado para erro
 
     const inputRef = useRef<HTMLInputElement>(null)
 
     useEffect(() => {
         const fetchBarbearia = async () => {
+            setIsLoading(true)
+            setHasError(false)
             try {
                 const response = await authFetch(
                     `http://localhost:8000/api/barbearias/buscar-por-slug/${slug}/`,
                 )
-                const data = await response.json()
-
-                setFormData((prev) => ({
-                    ...prev,
-                    nome_proprietario: data.nome_proprietario || '',
-                    nome_barbearia: data.nome_barbearia || '',
-                    telefone: data.telefone || '',
-                    cpf: data.cpf || '',
-                    cnpj: data.cnpj || '',
-                    descricao: data.descricao || '',
-                }))
-
-                if (data.imagem) {
-                    const isFullUrl = data.imagem.startsWith('http')
-                    setPreview(isFullUrl ? data.imagem : `http://localhost:8000${data.imagem}`)
+                if (response.ok) {
+                    const data = await response.json()
+                    setFormData((prev) => ({
+                        ...prev,
+                        nome_proprietario: data.nome_proprietario || '',
+                        nome_barbearia: data.nome_barbearia || '',
+                        telefone: data.telefone || '',
+                        cpf: data.cpf || '',
+                        cnpj: data.cnpj || '',
+                        descricao: data.descricao || '',
+                    }))
+                    if (data.imagem) {
+                        const isFullUrl = data.imagem.startsWith('http')
+                        setPreview(isFullUrl ? data.imagem : `http://localhost:8000${data.imagem}`)
+                    }
+                } else {
+                    console.error('Erro ao buscar barbearia')
+                    setHasError(true)
                 }
             } catch (error) {
                 console.error('Erro ao buscar barbearia:', error)
+                setHasError(true)
+            } finally {
+                setIsLoading(false)
             }
         }
 
-        if (slug) fetchBarbearia()
+        if (slug) {
+            fetchBarbearia()
+        } else {
+            setIsLoading(false)
+            setHasError(true)
+        }
     }, [slug])
 
     const handleImagemChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -95,19 +109,34 @@ const BarbeariaPerfilForm = () => {
             })
 
             if (response.ok) {
-                alert('dados enviados com sucesso!')
-            }
-
-            if (!response.ok) {
+                alert('Dados enviados com sucesso!')
+            } else {
                 const errorData = await response.json()
                 console.error('Erro ao salvar alterações:', errorData)
-                return
+                alert('Erro ao salvar alterações.')
             }
-
-            console.log('Alterações salvas com sucesso!')
         } catch (error) {
             console.error('Erro:', error)
+            alert('Erro ao conectar com o servidor.')
         }
+    }
+
+    // Renderiza o ClipLoader se estiver carregando, houver erro ou não houver dados válidos
+    if (isLoading || hasError) {
+        return (
+            <S.Container>
+                <div
+                    style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        height: '100vh',
+                    }}
+                >
+                    <ClipLoader color="#00c1fe" size={32} speedMultiplier={1} />
+                </div>
+            </S.Container>
+        )
     }
 
     return (

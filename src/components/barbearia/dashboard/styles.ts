@@ -207,7 +207,7 @@ export const Profile = styled.div`
 
     @media (max-width: ${breakpoints.tablet}) {
         justify-content: center;
-        width: 85%;
+        width: 80%;
         margin: 16px auto 0 auto;
         padding: 16px 0;
 

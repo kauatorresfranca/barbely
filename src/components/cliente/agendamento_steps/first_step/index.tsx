@@ -6,6 +6,7 @@ import { Servico } from '../../../../models/servico'
 
 import * as S from './styles'
 import user from '../../../../assets/images/user.png'
+import { ClipLoader } from 'react-spinners'
 
 type Props = {
     setActiveTab: (
@@ -88,40 +89,48 @@ const FirstStep = ({ setActiveTab }: Props) => {
         <S.Container>
             <S.Employee>
                 <h3>Escolha um barbeiro</h3>
-                <S.EmployeeList>
-                    {funcionarios.length > 0 ? (
-                        funcionarios.map((func) => (
-                            <S.EmployeeItem
-                                key={func.id}
-                                onClick={() => setSelectedFuncionarioId(func.id)}
-                                $selected={selectedFuncionarioId === func.id}
-                            >
-                                <img src={user} alt={`Foto de ${func.nome}`} />
-                                <h4>{func.nome}</h4>
-                            </S.EmployeeItem>
-                        ))
-                    ) : (
-                        <p>A barbearia ainda não tem barbeiros cadastrados.</p>
-                    )}
-                </S.EmployeeList>
+                {funcionarios ? (
+                    <S.EmployeeList>
+                        {funcionarios.length > 0 ? (
+                            funcionarios.map((func) => (
+                                <S.EmployeeItem
+                                    key={func.id}
+                                    onClick={() => setSelectedFuncionarioId(func.id)}
+                                    $selected={selectedFuncionarioId === func.id}
+                                >
+                                    <img src={user} alt={`Foto de ${func.nome}`} />
+                                    <h4>{func.nome}</h4>
+                                </S.EmployeeItem>
+                            ))
+                        ) : (
+                            <p>A barbearia ainda não tem barbeiros cadastrados.</p>
+                        )}
+                    </S.EmployeeList>
+                ) : (
+                    <ClipLoader color="#00c1fe" size={32} speedMultiplier={1} />
+                )}
             </S.Employee>
             <S.Service>
                 <h3>Escolha o serviço</h3>
-                <S.ServicesList>
-                    {servicos.map((servico) => (
-                        <S.ServiceItem
-                            key={servico.id}
-                            onClick={() => setSelectedServiceId(servico.id)}
-                            $selected={selectedServiceId === servico.id}
-                        >
-                            <div>
-                                <h4>{servico.nome}</h4>
-                                <p>{servico.duracao_minutos} min</p>
-                            </div>
-                            <p>R$ {servico.preco}</p>
-                        </S.ServiceItem>
-                    ))}
-                </S.ServicesList>
+                {servicos ? (
+                    <S.ServicesList>
+                        {servicos.map((servico) => (
+                            <S.ServiceItem
+                                key={servico.id}
+                                onClick={() => setSelectedServiceId(servico.id)}
+                                $selected={selectedServiceId === servico.id}
+                            >
+                                <div>
+                                    <h4>{servico.nome}</h4>
+                                    <p>{servico.duracao_minutos} min</p>
+                                </div>
+                                <p>R$ {servico.preco}</p>
+                            </S.ServiceItem>
+                        ))}
+                    </S.ServicesList>
+                ) : (
+                    <ClipLoader color="#00c1fe" size={32} speedMultiplier={1} />
+                )}
             </S.Service>
             <S.Button onClick={handleNext}>Prosseguir</S.Button>
         </S.Container>

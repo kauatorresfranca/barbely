@@ -8,6 +8,7 @@ interface TurnoItemProps {
 
 interface HorarioItemProps {
     selected: boolean
+    disabled?: boolean
 }
 
 export const Container = styled.div`
@@ -169,7 +170,7 @@ export const TurnoItem = styled.div<TurnoItemProps>`
     width: 90%;
     height: 48px;
     padding: 8px;
-    background-color: ${({ selected }) => (selected ? colors.texto : colors.cinzaEscuro)};
+    background-color: ${({ selected }) => (selected ? colors.corPrimaria : colors.cinzaEscuro)};
     color: ${({ selected }) => (selected ? '#fff' : '#000')};
     font-weight: 500;
     border-radius: 10px;
@@ -191,9 +192,15 @@ export const HorarioItem = styled.div<HorarioItemProps>`
     width: 90%;
     height: 48px;
     padding: 8px;
-    background-color: ${({ selected }) => (selected ? colors.texto : colors.cinzaEscuro)};
+    background-color: ${({ selected, disabled }) =>
+        disabled
+            ? `${colors.vermelhoTransparent}`
+            : selected
+            ? colors.corPrimaria
+            : colors.cinzaEscuro};
+    color: ${({ selected, disabled }) => (disabled ? '#fff' : selected ? '#fff' : '#000')};
     font-weight: 500;
     border-radius: 10px;
     transition: 0.3s;
-    cursor: pointer;
+    cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
 `

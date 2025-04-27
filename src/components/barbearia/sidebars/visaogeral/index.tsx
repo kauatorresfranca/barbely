@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { format } from 'date-fns'
 import GraficoVendas from '../../gradico_vendas'
 import * as S from './styles'
+import { ClipLoader } from 'react-spinners' // Importe o ClipLoader
 
 // Custom hook to animate counting up
 const useCountUp = (endValue: number, duration: number = 500) => {
@@ -46,7 +47,8 @@ const Overview = () => {
         agendamentos: 0,
         clientes_novos: 0,
     })
-    const [isLoading, setIsLoading] = useState(false)
+    const [isLoading, setIsLoading] = useState(true) // Começa como true para aguardar a primeira requisição
+    const [hasError, setHasError] = useState(false) // Novo estado para rastrear erros
     const [showDateInputs, setShowDateInputs] = useState(false)
     const dateInputsRef = useRef<HTMLDivElement>(null)
 
@@ -97,6 +99,7 @@ const Overview = () => {
     // Fetch metrics function
     const fetchMetrics = useCallback(async () => {
         setIsLoading(true)
+        setHasError(false) // Reseta o estado de erro antes de nova tentativa
         const token = sessionStorage.getItem('access_token_barbearia')
         try {
             const response = await fetch(
@@ -111,9 +114,11 @@ const Overview = () => {
                 setMetrics(data)
             } else {
                 console.error('Erro:', data.error)
+                setHasError(true) // Marca erro se a resposta não for ok
             }
         } catch {
             console.error('Erro ao buscar métricas')
+            setHasError(true) // Marca erro em caso de falha na requisição
         } finally {
             setIsLoading(false)
         }
@@ -173,6 +178,27 @@ const Overview = () => {
     // Format monetary values
     const formatMonetaryValue = (value: number) => {
         return `R$ ${Number(value).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`
+    }
+
+    // Verifica se há dados válidos para exibir
+    const hasValidData = Object.values(metrics).some((value) => value !== 0)
+
+    // Renderiza o conteúdo condicionalmente
+    if (isLoading || !hasValidData || hasError) {
+        return (
+            <S.Container>
+                <div
+                    style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        height: '100vh',
+                    }}
+                >
+                    <ClipLoader color="#00c1fe" size={32} speedMultiplier={1} />
+                </div>
+            </S.Container>
+        )
     }
 
     return (

@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react'
-
+import { ClipLoader } from 'react-spinners' // Importe o ClipLoader
 import { authFetch } from '../../../../utils/authFetch'
 import { useBarbeariaAtual } from '../../../../hooks/useBarbeariaAtual'
-
 import * as S from './styles'
 
 // Interface para os dados de horário retornados pela API
@@ -41,17 +40,19 @@ const HorarioFuncionamentoForm = () => {
             fecha_as: '19:00',
         })),
     )
-    const [erro, setErro] = useState<string | null>(null)
-    const [loading, setLoading] = useState<boolean>(false)
+    const [isLoading, setIsLoading] = useState(true) // Renomeado de loading para isLoading
+    const [hasError, setHasError] = useState(false) // Renomeado de erro para hasError
 
     useEffect(() => {
         const fetchHorarios = async () => {
             if (!slug) {
-                setErro('Slug da barbearia não fornecido.')
+                setHasError(true)
+                setIsLoading(false)
                 return
             }
 
-            setLoading(true)
+            setIsLoading(true)
+            setHasError(false)
             try {
                 const response = await authFetch(
                     `http://localhost:8000/api/horarios/?slug=${slug}`,
@@ -68,8 +69,6 @@ const HorarioFuncionamentoForm = () => {
 
                 if (response.ok) {
                     const data: HorarioAPI[] = await response.json()
-                    console.log('Dados da API:', data) // Depuração
-
                     const horariosFormatados = diasDaSemana.map((dia, index) => {
                         const horario = data.find((h) => h.dia_semana === index)
                         return {
@@ -89,17 +88,15 @@ const HorarioFuncionamentoForm = () => {
                         }
                     })
                     setHorarios(horariosFormatados)
-                    setErro(null)
                 } else {
-                    const errorData = await response.json()
-                    console.error('Erro ao carregar horários:', errorData)
-                    setErro('Erro ao carregar horários. Tente novamente.')
+                    console.error('Erro ao carregar horários')
+                    setHasError(true)
                 }
             } catch (error) {
                 console.error('Erro ao conectar com o servidor:', error)
-                setErro('Erro ao conectar com o servidor.')
+                setHasError(true)
             } finally {
-                setLoading(false)
+                setIsLoading(false)
             }
         }
 
@@ -157,21 +154,37 @@ const HorarioFuncionamentoForm = () => {
                 body: JSON.stringify(dadosParaEnviar),
             })
 
-            const responseData = await response.json()
-
             if (response.ok) {
                 alert('Alterações salvas com sucesso!')
-                setErro(null)
+                setHasError(false)
             } else {
-                console.error('Erro do servidor:', responseData)
+                console.error('Erro ao salvar horários')
                 alert('Erro ao salvar horários.')
-                setErro('Erro ao salvar horários.')
+                setHasError(true)
             }
         } catch (error) {
             console.error('Erro ao enviar os horários:', error)
             alert('Erro ao conectar com o servidor.')
-            setErro('Erro ao conectar com o servidor.')
+            setHasError(true)
         }
+    }
+
+    // Renderiza o ClipLoader se estiver carregando, houver erro ou não houver dados válidos
+    if (isLoading || hasError) {
+        return (
+            <S.Container>
+                <div
+                    style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        height: '100vh',
+                    }}
+                >
+                    <ClipLoader color="#00c1fe" size={32} speedMultiplier={1} />
+                </div>
+            </S.Container>
+        )
     }
 
     return (
@@ -180,8 +193,6 @@ const HorarioFuncionamentoForm = () => {
             <p className="subtitle">
                 Defina os dias e horários em que sua barbearia estará aberta para atendimento.
             </p>
-            {loading && <p>Carregando horários...</p>}
-            {erro && <p>{erro}</p>}
             <S.Form onSubmit={handleSubmit}>
                 <S.Table>
                     <thead>

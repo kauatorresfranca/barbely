@@ -255,6 +255,7 @@ export const TableHours = styled.div`
     gap: 20px;
     border-radius: 10px;
     background-color: ${colors.cinzaClaro};
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 
     @media (max-width: ${breakpoints.tablet}) {
         width: 100%;
@@ -288,6 +289,7 @@ export const Service = styled.div`
     width: 100%;
     border-radius: 10px;
     background-color: ${colors.cinzaClaro};
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 
     @media (max-width: ${breakpoints.tablet}) {
         width: 100%;

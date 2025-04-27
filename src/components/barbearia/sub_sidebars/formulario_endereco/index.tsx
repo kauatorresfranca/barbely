@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react'
 import { IMaskInput } from 'react-imask'
-
+import { ClipLoader } from 'react-spinners' // Importe o ClipLoader
 import { authFetch } from '../../../../utils/authFetch'
 import { useBarbeariaAtual } from '../../../../hooks/useBarbeariaAtual'
-
 import * as S from './styles'
 
 const Localizacao = () => {
@@ -16,6 +15,8 @@ const Localizacao = () => {
         numero: '',
         complemento: '',
     })
+    const [isLoading, setIsLoading] = useState(true) // Estado para carregamento
+    const [hasError, setHasError] = useState(false) // Estado para erro
 
     const barbearia = useBarbeariaAtual()
     const slug = barbearia?.slug
@@ -23,6 +24,8 @@ const Localizacao = () => {
     // Preenche os campos se já existir endereço cadastrado
     useEffect(() => {
         const fetchEndereco = async () => {
+            setIsLoading(true)
+            setHasError(false)
             try {
                 const response = await fetch(
                     `http://localhost:8000/api/endereco-barbearia-publico/${slug}/`,
@@ -41,14 +44,21 @@ const Localizacao = () => {
                     })
                 } else {
                     console.error('Erro ao buscar endereço')
+                    setHasError(true)
                 }
             } catch (error) {
                 console.error('Erro ao buscar endereço:', error)
+                setHasError(true)
+            } finally {
+                setIsLoading(false)
             }
         }
 
         if (slug) {
             fetchEndereco()
+        } else {
+            setIsLoading(false) // Se não houver slug, não carrega
+            setHasError(true)
         }
     }, [slug])
 
@@ -115,6 +125,24 @@ const Localizacao = () => {
             console.error('Erro ao salvar endereço:', err)
             alert('Erro ao conectar com o servidor.')
         }
+    }
+
+    // Renderiza o ClipLoader se estiver carregando, houver erro ou não houver dados válidos
+    if (isLoading || hasError) {
+        return (
+            <S.Container>
+                <div
+                    style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        height: '100vh',
+                    }}
+                >
+                    <ClipLoader color="#00c1fe" size={32} speedMultiplier={1} />
+                </div>
+            </S.Container>
+        )
     }
 
     return (

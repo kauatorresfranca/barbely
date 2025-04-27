@@ -4,6 +4,7 @@ import { Cliente } from '../../../../models/cliente'
 
 import * as S from './styles'
 import { authFetch } from '../../../../utils/authFetch'
+import { ClipLoader } from 'react-spinners'
 
 // Tipo ajustado para o modelo do backend
 export type Agendamento = {
@@ -164,36 +165,44 @@ const MeusAgendamentosModal = ({ onClose, cliente }: MeusAgendamentosModalProps)
                     ×
                 </S.CloseButton>
                 <h2>Meus Agendamentos</h2>
-                <S.ModalBody>
-                    {loading && <p>Carregando agendamentos...</p>}
-                    {error && <p style={{ color: 'red' }}>{error}</p>}
-                    {!loading && !error && agendamentos.length === 0 && (
-                        <p className="empty">Nenhum agendamento encontrado.</p>
-                    )}
-                    {agendamentos.map((agendamento) => (
-                        <S.AgendamentoItem key={agendamento.id}>
-                            <div>
-                                <p>
-                                    {agendamento.servico_nome} - {agendamento.servico_duracao} min
-                                </p>
-                                <p>
-                                    Data:{' '}
-                                    {formatarDataHora(agendamento.data, agendamento.hora_inicio)}
-                                </p>
-                                <p>Status: {formatarStatus(agendamento.status)}</p>
-                            </div>
-                            {agendamento.status === 'CONFIRMADO' && (
-                                <S.CancelButton
-                                    onClick={() => handleCancel(agendamento.id)}
-                                    aria-label={`Cancelar agendamento de ${agendamento.servico_nome}`}
-                                >
-                                    Cancelar
-                                </S.CancelButton>
-                            )}
-                        </S.AgendamentoItem>
-                    ))}
-                    {agendamentos.length > 0 && <S.ModalButton>Ver Todos</S.ModalButton>}
-                </S.ModalBody>
+                {agendamentos ? (
+                    <S.ModalBody>
+                        {loading && <p>Carregando agendamentos...</p>}
+                        {error && <p style={{ color: 'red' }}>{error}</p>}
+                        {!loading && !error && agendamentos.length === 0 && (
+                            <p className="empty">Nenhum agendamento encontrado.</p>
+                        )}
+                        {agendamentos.map((agendamento) => (
+                            <S.AgendamentoItem key={agendamento.id}>
+                                <div>
+                                    <p>
+                                        {agendamento.servico_nome} - {agendamento.servico_duracao}{' '}
+                                        min
+                                    </p>
+                                    <p>
+                                        Data:{' '}
+                                        {formatarDataHora(
+                                            agendamento.data,
+                                            agendamento.hora_inicio,
+                                        )}
+                                    </p>
+                                    <p>Status: {formatarStatus(agendamento.status)}</p>
+                                </div>
+                                {agendamento.status === 'CONFIRMADO' && (
+                                    <S.CancelButton
+                                        onClick={() => handleCancel(agendamento.id)}
+                                        aria-label={`Cancelar agendamento de ${agendamento.servico_nome}`}
+                                    >
+                                        Cancelar
+                                    </S.CancelButton>
+                                )}
+                            </S.AgendamentoItem>
+                        ))}
+                        {agendamentos.length > 0 && <S.ModalButton>Ver Todos</S.ModalButton>}
+                    </S.ModalBody>
+                ) : (
+                    <ClipLoader color="#00c1fe" size={32} speedMultiplier={1} />
+                )}
             </S.ModalContent>
         </S.ModalOverlay>
     )

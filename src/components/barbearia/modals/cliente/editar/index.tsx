@@ -11,6 +11,7 @@ interface ClienteEditProps {
 const ClienteEdit: React.FC<ClienteEditProps> = ({ cliente, closeModal }) => {
     const [nome, setNome] = useState(cliente?.user?.nome || '')
     const [telefone, setTelefone] = useState(cliente?.user?.telefone || '')
+    const [isEditing, setIsEditing] = useState(false)
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -67,10 +68,21 @@ const ClienteEdit: React.FC<ClienteEditProps> = ({ cliente, closeModal }) => {
                             />
                         </label>
                         <S.ButtonContainer>
-                            <S.CancelButton type="button" onClick={closeModal}>
-                                Cancelar
-                            </S.CancelButton>
-                            <S.Button type="submit">Salvar</S.Button>
+                            {isEditing ? (
+                                <>
+                                    <S.CancelButton
+                                        type="button"
+                                        onClick={() => setIsEditing(false)}
+                                    >
+                                        Cancelar
+                                    </S.CancelButton>
+                                    <S.Button type="submit">Salvar</S.Button>
+                                </>
+                            ) : (
+                                <S.ButtonEdit onClick={() => setIsEditing(true)}>
+                                    Editar Cliente
+                                </S.ButtonEdit>
+                            )}
                         </S.ButtonContainer>
                     </form>
                 ) : (

@@ -1,19 +1,18 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-
+import { ClipLoader } from 'react-spinners' // Importe o ClipLoader
 import { Cliente } from '../../../../models/cliente'
 import { authFetch } from '../../../../utils/authFetch'
 import ClienteDetail from '../../modals/cliente/cliente_detail'
 import ClienteEdit from '../../modals/cliente/editar'
-
 import * as S from './styles'
 
 const Clientes = () => {
     const [clientes, setClientes] = useState<Cliente[]>([])
     const [filteredClientes, setFilteredClientes] = useState<Cliente[]>([])
     const [searchTerm, setSearchTerm] = useState<string>('')
-    const [loading, setLoading] = useState(true)
-    const [erro, setErro] = useState<string | null>(null)
+    const [isLoading, setIsLoading] = useState(true) // Renomeado de loading para isLoading
+    const [hasError, setHasError] = useState(false) // Renomeado de erro para hasError
     const [modalDetailsIsOpen, setModalDetailsIsOpen] = useState<boolean>(false)
     const [modalEditIsOpen, setModalEditIsOpen] = useState<boolean>(false)
     const [selectedCliente, setSelectedCliente] = useState<Cliente | null>(null)
@@ -21,31 +20,23 @@ const Clientes = () => {
 
     useEffect(() => {
         const token = sessionStorage.getItem('access_token_barbearia')
-        const barbeariaData = sessionStorage.getItem('barbearia')
-        const barbeariaToken = sessionStorage.getItem('barbearia_token')
-
-        console.log('Token:', token)
-        console.log('Barbearia Data:', barbeariaData)
-        console.log('Barbearia Token:', barbeariaToken)
-
+        const barbeariaData =
+            sessionStorage.getItem('barbearia') || sessionStorage.getItem('barbearia_token')
         let barbeariaId: number | null = null
+
         try {
             if (barbeariaData) {
                 const parsedData = JSON.parse(barbeariaData)
-                barbeariaId = parsedData.id
-            } else if (barbeariaToken) {
-                barbeariaId = parseInt(barbeariaToken, 10)
+                barbeariaId = parsedData.id || parseInt(barbeariaData, 10)
             }
         } catch (e) {
             console.error('Erro ao parsear barbeariaData:', e)
         }
 
-        console.log('Barbearia ID:', barbeariaId)
-
         if (!token || !barbeariaId) {
-            setErro('Token ou ID da barbearia ausente. Por favor, faça login novamente.')
-            setLoading(false)
-            navigate('/clientes/login') // Redirecionar para login se token ou barbeariaId estiverem ausentes
+            setHasError(true)
+            setIsLoading(false)
+            navigate('/login')
             return
         }
 
@@ -55,7 +46,6 @@ const Clientes = () => {
             },
         })
             .then((res) => {
-                console.log('Resposta da API /api/clientes/barbearia:', res.status, res.statusText)
                 if (res.status === 401) {
                     throw new Error('Sessão expirada. Por favor, faça login novamente.')
                 }
@@ -65,20 +55,18 @@ const Clientes = () => {
                 return res.json()
             })
             .then((data) => {
-                console.log('Clientes recebidos:', data)
                 setClientes(data)
                 setFilteredClientes(data)
             })
             .catch((err: Error) => {
-                // Explicitly type err as Error
                 console.error('Erro na requisição:', err)
-                setErro(err.message)
+                setHasError(true)
                 if (err.message.includes('Sessão expirada')) {
                     sessionStorage.removeItem('access_token_barbearia')
-                    navigate('/clientes/login')
+                    navigate('/login')
                 }
             })
-            .finally(() => setLoading(false))
+            .finally(() => setIsLoading(false))
     }, [navigate])
 
     useEffect(() => {
@@ -126,8 +114,8 @@ const Clientes = () => {
 
         const token = sessionStorage.getItem('access_token_barbearia')
         if (!token) {
-            setErro('Token ausente. Por favor, faça login novamente.')
-            navigate('/clientes/login')
+            setHasError(true)
+            navigate('/login')
             return
         }
 
@@ -148,23 +136,39 @@ const Clientes = () => {
                 )
             }
 
-            // Atualizar os estados removendo o cliente deletado
             setClientes((prev) => prev.filter((c) => c.id !== cliente.id))
             setFilteredClientes((prev) => prev.filter((c) => c.id !== cliente.id))
         } catch (err: unknown) {
-            // Use 'unknown' to satisfy TS1196
             console.error('Erro ao deletar cliente:', err)
+            setHasError(true)
             const errorMessage = err instanceof Error ? err.message : String(err)
-            setErro(errorMessage)
             if (errorMessage.includes('Sessão expirada')) {
-                sessionStorage.removeItem('access_token_barbearia')
+                sessionStorage.removeItem('access_weak_token_barbearia')
                 navigate('/login')
             }
         }
     }
 
-    if (loading) return <S.Container>Carregando...</S.Container>
-    if (erro) return <S.Container>Erro: {erro}</S.Container>
+    // Verifica se há dados válidos
+    const hasValidData = clientes.length > 0
+
+    // Renderiza o ClipLoader se estiver carregando, houver erro ou não houver dados
+    if (isLoading || hasError || !hasValidData) {
+        return (
+            <S.Container>
+                <div
+                    style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        height: '100vh',
+                    }}
+                >
+                    <ClipLoader color="#00c1fe" size={32} speedMultiplier={1} />
+                </div>
+            </S.Container>
+        )
+    }
 
     return (
         <S.Container>
@@ -174,61 +178,58 @@ const Clientes = () => {
                 agendamentos.
             </p>
             <S.Head>
-                {clientes.length <= 0 ? (
-                    <p className="empty">Você ainda não tem clientes cadastrados</p>
-                ) : (
-                    <>
-                        <S.Search>
-                            <input
-                                type="text"
-                                placeholder="Buscar por nome ou telefone..."
-                                value={searchTerm}
-                                onChange={handleSearchChange}
-                            />
-                        </S.Search>
-                        {filteredClientes.length > 0 && (
-                            <S.FieldNames>
-                                <p>Nome</p>
-                                <p>Celular</p>
-                                <p>Ações</p>
-                            </S.FieldNames>
-                        )}
-                    </>
-                )}
+                <>
+                    <S.SearchAndAdd>
+                        <input
+                            type="text"
+                            placeholder="Buscar por nome ou telefone..."
+                            value={searchTerm}
+                            onChange={handleSearchChange}
+                        />
+                        <button>+ Novo Cliente</button>
+                    </S.SearchAndAdd>
+                    {filteredClientes.length > 0 && (
+                        <S.FieldNames>
+                            <p>Nome</p>
+                            <p>Celular</p>
+                            <p>Ações</p>
+                        </S.FieldNames>
+                    )}
+                </>
             </S.Head>
             <S.List>
-                {filteredClientes.length > 0
-                    ? filteredClientes.map((cliente) => (
-                          <S.ListItem key={cliente.id}>
-                              <p>{cliente.user?.nome || 'Nome indisponível'}</p>
-                              <p>{cliente.user?.telefone || 'Telefone indisponível'}</p>
-                              <S.IconGroup>
-                                  <i
-                                      title="Detalhes do Cliente"
-                                      className="ri-info-card-line details"
-                                      onClick={() => handleOpenModalDetails(cliente)}
-                                  ></i>
-                                  <i
-                                      className="ri-edit-2-line edit"
-                                      title="Editar Cliente"
-                                      onClick={() => handleOpenModalEdit(cliente)}
-                                  ></i>
-                                  <i
-                                      className="ri-delete-bin-line delete"
-                                      title="Apagar Cliente"
-                                      onClick={() => handleDeleteCliente(cliente)}
-                                  ></i>
-                              </S.IconGroup>
-                          </S.ListItem>
-                      ))
-                    : clientes.length > 0 && (
-                          <p className="empty">
-                              {searchTerm
-                                  ? `Nenhum cliente encontrado com o nome ou telefone "${searchTerm}"`
-                                  : 'Nenhum cliente encontrado'}
-                          </p>
-                      )}
-                <p className="cliente_length">{filteredClientes.length} Clientes</p>
+                {filteredClientes.length > 0 ? (
+                    filteredClientes.map((cliente) => (
+                        <S.ListItem key={cliente.id}>
+                            <p>{cliente.user?.nome || 'Nome indisponível'}</p>
+                            <p>{cliente.user?.telefone || 'Telefone indisponível'}</p>
+                            <S.IconGroup>
+                                <i
+                                    className="ri-edit-2-line edit"
+                                    title="Editar Cliente"
+                                    onClick={() => handleOpenModalEdit(cliente)}
+                                ></i>
+                                <i
+                                    className="ri-delete-bin-line delete"
+                                    title="Apagar Cliente"
+                                    onClick={() => handleDeleteCliente(cliente)}
+                                ></i>
+                                <button
+                                    title="Detalhes do Cliente"
+                                    onClick={() => handleOpenModalDetails(cliente)}
+                                >
+                                    Detalhes
+                                </button>
+                            </S.IconGroup>
+                        </S.ListItem>
+                    ))
+                ) : (
+                    <p className="empty">
+                        {searchTerm
+                            ? `Nenhum cliente encontrado com o nome ou telefone "${searchTerm}"`
+                            : 'Nenhum cliente encontrado'}
+                    </p>
+                )}
             </S.List>
             {modalDetailsIsOpen && (
                 <ClienteDetail cliente={selectedCliente} closeModal={handleCloseModalDetails} />
@@ -236,6 +237,7 @@ const Clientes = () => {
             {modalEditIsOpen && (
                 <ClienteEdit cliente={selectedCliente} closeModal={handleCloseModalEdit} />
             )}
+            <p className="cliente_length">{filteredClientes.length} Clientes</p>
         </S.Container>
     )
 }
