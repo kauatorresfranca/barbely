@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { colors } from '../../../../../styles'
+import { breakpoints, colors } from '../../../../../styles'
 
 export const Container = styled.div`
     width: 680px;
@@ -15,6 +15,10 @@ export const Container = styled.div`
     p {
         margin-bottom: 24px;
         color: ${colors.texto};
+    }
+
+    @media (max-width: ${breakpoints.tablet}) {
+        width: 100%;
     }
 `
 

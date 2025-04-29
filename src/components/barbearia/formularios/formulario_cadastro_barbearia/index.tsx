@@ -15,16 +15,43 @@ const FormularioCadastro = () => {
     })
     const [showPassword, setShowPassword] = useState(false)
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+    const [errors, setErrors] = useState({
+        password: '',
+        confirmarSenha: '',
+    })
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value })
+        const { name, value } = e.target
+        setFormData({ ...formData, [name]: value })
+
+        // Limpa erros ao digitar
+        setErrors((prev) => ({ ...prev, [name]: '' }))
+    }
+
+    const validateForm = () => {
+        let isValid = true
+        const newErrors = { password: '', confirmarSenha: '' }
+
+        // Verifica se a senha tem pelo menos 8 caracteres
+        if (formData.password.length < 8) {
+            newErrors.password = 'A senha deve ter pelo menos 8 caracteres'
+            isValid = false
+        }
+
+        // Verifica se as senhas coincidem
+        if (formData.password !== formData.confirmarSenha) {
+            newErrors.confirmarSenha = 'As senhas não coincidem'
+            isValid = false
+        }
+
+        setErrors(newErrors)
+        return isValid
     }
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
 
-        if (formData.password !== formData.confirmarSenha) {
-            alert('As senhas não coincidem')
+        if (!validateForm()) {
             return
         }
 
@@ -34,22 +61,37 @@ const FormularioCadastro = () => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(formData),
+                body: JSON.stringify({
+                    nome_barbearia: formData.nome_barbearia,
+                    nome_proprietario: formData.nome_proprietario,
+                    email: formData.email,
+                    password: formData.password,
+                }),
             })
 
             if (response.ok) {
                 alert('Cadastro realizado com sucesso!')
+                setFormData({
+                    nome_barbearia: '',
+                    nome_proprietario: '',
+                    email: '',
+                    password: '',
+                    confirmarSenha: '',
+                })
+                setErrors({ password: '', confirmarSenha: '' })
             } else {
-                alert('Erro ao enviar os dados.')
+                const errorData = await response.json()
+                alert(`Erro ao enviar os dados: ${errorData.message || 'Tente novamente.'}`)
             }
         } catch (error) {
             console.error('Erro na requisição:', error)
+            alert('Erro ao conectar com o servidor.')
         }
     }
 
     return (
         <S.FormularioContainer>
-            <img src={logo} alt="" />
+            <img src={logo} alt="Logo" />
             <h2>Criar uma conta</h2>
             <p>Comece agora a gerenciar sua barbearia de forma fácil e prática.</p>
             <S.Form onSubmit={handleSubmit}>
@@ -61,18 +103,20 @@ const FormularioCadastro = () => {
                         name="nome_barbearia"
                         value={formData.nome_barbearia}
                         onChange={handleChange}
-                        placeholder="Ex: Barbearia norte-oeste"
+                        placeholder="Ex: Barbearia Norte-Oeste"
+                        required
                     />
                 </S.inputGroup>
                 <S.inputGroup>
-                    <label htmlFor="nome_proprietario">Nome do proprietario</label>
+                    <label htmlFor="nome_proprietario">Nome do proprietário</label>
                     <input
                         type="text"
                         id="nome_proprietario"
                         name="nome_proprietario"
                         value={formData.nome_proprietario}
                         onChange={handleChange}
-                        placeholder="Ex: José lima"
+                        placeholder="Ex: José Lima"
+                        required
                     />
                 </S.inputGroup>
                 <S.inputGroup>
@@ -84,6 +128,7 @@ const FormularioCadastro = () => {
                         value={formData.email}
                         onChange={handleChange}
                         placeholder="E-mail"
+                        required
                     />
                 </S.inputGroup>
                 <S.inputGroup>
@@ -96,12 +141,14 @@ const FormularioCadastro = () => {
                             value={formData.password}
                             onChange={handleChange}
                             placeholder="Senha"
+                            required
                         />
                         <i
                             className={showPassword ? 'ri-eye-fill' : 'ri-eye-off-fill'}
                             onClick={() => setShowPassword(!showPassword)}
                         ></i>
                     </div>
+                    {errors.password && <p>{errors.password}</p>}
                 </S.inputGroup>
                 <S.inputGroup>
                     <label htmlFor="confirmarSenha">Confirmar senha</label>
@@ -113,12 +160,14 @@ const FormularioCadastro = () => {
                             value={formData.confirmarSenha}
                             onChange={handleChange}
                             placeholder="Confirmar senha"
+                            required
                         />
                         <i
                             className={showConfirmPassword ? 'ri-eye-fill' : 'ri-eye-off-fill'}
                             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                         ></i>
                     </div>
+                    {errors.confirmarSenha && <p>{errors.confirmarSenha}</p>}
                 </S.inputGroup>
                 <button type="submit">Cadastrar</button>
                 <Link to="/login">

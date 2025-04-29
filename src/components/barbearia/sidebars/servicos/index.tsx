@@ -127,6 +127,7 @@ const Servicos = () => {
                         </S.ListItem>
                     ))}
                 </S.List>
+                <p className="servicos_length">{servicos.length} Serviços</p>
             </S.Container>
 
             {modalIsOpen && <CriarServicoModal closeModal={closeModal} onSuccess={fetchServicos} />}

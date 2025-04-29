@@ -1,11 +1,10 @@
 import { useState, useEffect } from 'react'
-
 import { Funcionario } from '../../../models/funcionario'
 import { Servico } from '../../../models/servico'
 import HorariosStep from '../agendamento_steps/second_step'
 import FirstStep from '../agendamento_steps/first_step'
 import ConfirmacaoStep from '../agendamento_steps/confirmacao_dados'
-
+import SucessoStep from '../agendamento_steps/sucesso_step'
 import * as S from './styles'
 
 type Props = {
@@ -24,16 +23,13 @@ const Agendamento = ({ modalIsOpen, onClose }: Props) => {
     const [activeTab, setActiveTab] = useState('servico')
     const [agendamentoData, setAgendamentoData] = useState<AgendamentoData | null>(null)
 
-    // Depuração: Logar agendamentoData sempre que mudar
     useEffect(() => {
         console.log('agendamentoData atualizado:', agendamentoData)
     }, [agendamentoData])
 
-    // Validar se a aba pode ser acessada
     const canAccessTab = (tab: string, incomingData?: Partial<AgendamentoData>): boolean => {
         if (tab === 'servico') return true
 
-        // Usar incomingData se disponível, senão agendamentoData
         const dataToCheck = incomingData ? { ...agendamentoData, ...incomingData } : agendamentoData
 
         if (tab === 'horarios') {
@@ -104,14 +100,7 @@ const Agendamento = ({ modalIsOpen, onClose }: Props) => {
                             agendamentoData={agendamentoData}
                         />
                     )}
-                    {activeTab === 'sucesso' && (
-                        <S.Success>
-                            <h2>Sucesso!</h2>
-                            <p>Seu agendamento foi realizado com sucesso.</p>
-                            <p>Para mais detalhes, acesse a seção "Meus Agendamentos".</p>
-                            <S.Button onClick={onClose}>Fechar</S.Button>
-                        </S.Success>
-                    )}
+                    {activeTab === 'sucesso' && <SucessoStep onClose={onClose} />}
                 </S.Step>
             </S.Modal>
         </S.Overlay>

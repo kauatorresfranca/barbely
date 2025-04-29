@@ -122,6 +122,7 @@ const Profissionais = () => {
                         </S.ListItem>
                     ))}
                 </S.List>
+                <p className="profissionais_length">{funcionarios.length} Profissionais</p>
             </S.Container>
 
             {modalIsOpen && (

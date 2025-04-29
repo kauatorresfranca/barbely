@@ -2,10 +2,22 @@ import styled from 'styled-components'
 import { colors } from '../../../../../styles'
 
 export const Container = styled.div`
+    position: relative;
+    height: 100%;
+
     .subtitle {
         margin-top: 6px;
         color: ${colors.texto};
         font-size: 14px;
+    }
+
+    .servicos_length {
+        position: absolute;
+        right: 0;
+        left: 0;
+        bottom: 16px;
+        text-align: center;
+        color: ${colors.texto};
     }
 `
 
@@ -62,10 +74,9 @@ export const ListItem = styled.li`
     height: 58px;
     padding: 20px;
     background-color: ${colors.cinzaClaro};
-    border: 0.04rem solid ${colors.cinzaTransparent};
     margin-bottom: 8px;
     border-radius: 4px;
-    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 
     p {
         width: 25%;

@@ -1,3 +1,5 @@
+import api from '../services/api' // Importe o baseURL
+
 export async function authFetch(url: string, options: RequestInit = {}): Promise<Response> {
     // Identify client requests
     const isClienteRequest =
@@ -17,9 +19,14 @@ export async function authFetch(url: string, options: RequestInit = {}): Promise
         }`,
     )
 
+    // Construa a URL completa usando o baseURL
+    const fullUrl = url.startsWith('http')
+        ? url
+        : `${api.baseURL}${url.startsWith('/') ? url : `/${url}`}`
+
     // Skip token check for horarios-disponiveis (allow unauthenticated)
     if (url.includes('/api/agendamentos/horarios-disponiveis/') && !accessToken) {
-        return fetch(url, options)
+        return fetch(fullUrl, options)
     }
 
     if (!accessToken) {
@@ -38,11 +45,11 @@ export async function authFetch(url: string, options: RequestInit = {}): Promise
                   ...options.headers,
               }
 
-    let response = await fetch(url, { ...options, headers })
+    let response = await fetch(fullUrl, { ...options, headers })
 
     if (response.status === 401 && refreshToken) {
         console.warn(`Token expirado (${tokenKey}), tentando renovar...`)
-        const refreshResponse = await fetch('http://localhost:8000/api/token/refresh/', {
+        const refreshResponse = await fetch(`${api.baseURL}/token/refresh/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -64,7 +71,7 @@ export async function authFetch(url: string, options: RequestInit = {}): Promise
                           ...options.headers,
                       }
 
-            response = await fetch(url, { ...options, headers: retryHeaders })
+            response = await fetch(fullUrl, { ...options, headers: retryHeaders })
         } else {
             console.error('Erro ao renovar token:', await refreshResponse.text())
             const slug = sessionStorage.getItem('barbearia_slug') || 'default-slug'

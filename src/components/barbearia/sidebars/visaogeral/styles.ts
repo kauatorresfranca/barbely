@@ -33,22 +33,14 @@ export const Filtro = styled.div`
         width: 205px;
         padding: 8px;
         color: ${colors.branco};
-        background-color: transparent;
+        background-color: ${colors.cinzaClaro};
         border-radius: 10px;
-        border: 1px solid rgba(134, 126, 126, 0.53);
         font-size: 14px;
         font-weight: bold;
         transition: 0.3s;
+        border: none;
         cursor: pointer;
-
-        &:hover {
-            border: 1px solid ${colors.branco};
-        }
-
-        &:focus {
-            border: 1px solid ${colors.corPrimaria};
-            outline: none;
-        }
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 
         option {
             background-color: ${colors.cinzaClaro};

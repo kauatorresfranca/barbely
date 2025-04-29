@@ -81,15 +81,6 @@ export const Step = styled.div`
     flex-direction: column;
 `
 
-export const Success = styled.div`
-    text-align: center;
-
-    p {
-        color: ${colors.texto};
-        font-size: 14px;
-    }
-`
-
 export const Button = styled.button`
     width: 100%;
     padding: 12px;

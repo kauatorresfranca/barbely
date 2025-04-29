@@ -126,7 +126,7 @@ export const IconGroup = styled.div`
         }
 
         &.delete {
-            color: ${colors.vermelho};
+            color: red;
             cursor: pointer;
         }
     }
@@ -145,10 +145,9 @@ export const ListItem = styled.li`
     height: 58px;
     padding: 20px;
     background-color: ${colors.cinzaClaro};
-    border: 0.04rem solid ${colors.cinzaTransparent};
     margin-bottom: 8px;
     border-radius: 4px;
-    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 
     p {
         width: 35%;

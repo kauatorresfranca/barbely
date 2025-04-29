@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { formatInTimeZone, toZonedTime } from 'date-fns-tz'
+import { format } from 'date-fns'
 import { DayPicker } from 'react-day-picker'
 import { ptBR } from 'date-fns/locale'
 
@@ -24,10 +24,20 @@ type Props = {
 }
 
 const HorariosStep = ({ setActiveTab, servico, funcionario }: Props) => {
-    const fusoHorario = 'America/Sao_Paulo'
-    const hoje = toZonedTime(new Date(), fusoHorario)
+    const hoje = new Date()
+    console.log(
+        'Hoje (new Date):',
+        hoje.toString(),
+        'Fuso horário (horas):',
+        hoje.getTimezoneOffset() / -60,
+    )
+
+    // Normalizamos a data para meia-noite no fuso horário local
+    const hojeAjustado = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate())
+    console.log('Hoje ajustado (meia-noite local):', hojeAjustado.toString())
+
     const [horariosDisponiveis, setHorariosDisponiveis] = useState<string[]>([])
-    const [dataSelecionada, setDataSelecionada] = useState<Date | undefined>(hoje)
+    const [dataSelecionada, setDataSelecionada] = useState<Date | undefined>(hojeAjustado)
     const [turnoSelecionado, setTurnoSelecionado] = useState<'manha' | 'tarde' | 'noite'>('manha')
     const [horarioSelecionado, setHorarioSelecionado] = useState<string | null>(null)
     const [error, setError] = useState<string | null>(null)
@@ -49,10 +59,32 @@ const HorariosStep = ({ setActiveTab, servico, funcionario }: Props) => {
     const isHorarioPassado = (horario: string) => {
         if (!dataSelecionada) return false
         const [hora, minuto] = horario.split(':').map(Number)
-        const dataHorario = toZonedTime(new Date(dataSelecionada), fusoHorario)
+        const dataHorario = new Date(dataSelecionada)
         dataHorario.setHours(hora, minuto, 0, 0)
 
-        return dataHorario < new Date()
+        const agora = new Date()
+        console.log(
+            'Comparando dataHorario:',
+            dataHorario.toString(),
+            'com agora:',
+            agora.toString(),
+        )
+
+        return dataHorario < agora
+    }
+
+    // Função para normalizar a data selecionada
+    const handleDaySelect = (date: Date | undefined) => {
+        if (!date) {
+            setDataSelecionada(undefined)
+            return
+        }
+
+        const dataNormalizada = new Date(date.getFullYear(), date.getMonth(), date.getDate())
+        console.log('Data selecionada pelo DayPicker (original):', date.toString())
+        console.log('Data selecionada (normalizada):', dataNormalizada.toString())
+
+        setDataSelecionada(dataNormalizada)
     }
 
     useEffect(() => {
@@ -61,11 +93,20 @@ const HorariosStep = ({ setActiveTab, servico, funcionario }: Props) => {
 
             try {
                 const token = sessionStorage.getItem('access_token_cliente')
-                const dataNormalizada = toZonedTime(dataSelecionada, fusoHorario)
-                const dataFormatada = formatInTimeZone(dataNormalizada, fusoHorario, 'yyyy-MM-dd')
-                const diaSemana = dataSelecionada.getDay()
+                const dataAjustada = new Date(
+                    dataSelecionada.getFullYear(),
+                    dataSelecionada.getMonth(),
+                    dataSelecionada.getDate(),
+                )
+                const dataFormatada = format(dataAjustada, 'yyyy-MM-dd')
+                const diaSemana = dataAjustada.getDay()
 
-                console.log('Data selecionada:', dataFormatada, 'Dia da semana:', diaSemana)
+                console.log(
+                    'Data selecionada (formatada para API):',
+                    dataFormatada,
+                    'Dia da semana:',
+                    diaSemana,
+                )
 
                 const url = new URL('http://localhost:8000/api/agendamentos/horarios-disponiveis/')
                 url.searchParams.append('servico', String(servico.id))
@@ -73,6 +114,8 @@ const HorariosStep = ({ setActiveTab, servico, funcionario }: Props) => {
                 if (funcionario?.id != null) {
                     url.searchParams.append('funcionario', String(funcionario.id))
                 }
+
+                console.log('URL enviada para a API:', url.toString())
 
                 const response = await authFetch(url.toString(), {
                     headers: {
@@ -104,15 +147,23 @@ const HorariosStep = ({ setActiveTab, servico, funcionario }: Props) => {
             return
         }
 
-        const dataNormalizada = toZonedTime(dataSelecionada, fusoHorario)
-        const dataFormatada = formatInTimeZone(dataNormalizada, fusoHorario, 'yyyy-MM-dd')
+        const dataAjustada = new Date(
+            dataSelecionada.getFullYear(),
+            dataSelecionada.getMonth(),
+            dataSelecionada.getDate(),
+        )
+        const dataFormatada = format(dataAjustada, 'yyyy-MM-dd')
+        console.log('Data formatada para setActiveTab:', dataFormatada)
 
-        setActiveTab('dia', {
+        const dadosEnviados = {
             data: dataFormatada,
             horario: horarioSelecionado,
             servico,
             funcionario,
-        })
+        }
+        console.log('Dados enviados para setActiveTab:', dadosEnviados)
+
+        setActiveTab('dia', dadosEnviados)
     }
 
     return (
@@ -123,8 +174,8 @@ const HorariosStep = ({ setActiveTab, servico, funcionario }: Props) => {
                     <DayPicker
                         mode="single"
                         selected={dataSelecionada}
-                        onSelect={setDataSelecionada}
-                        disabled={[{ before: hoje }]}
+                        onSelect={handleDaySelect}
+                        disabled={[{ before: hojeAjustado }]}
                         locale={ptBR}
                     />
                 </S.DataPickWrapper>

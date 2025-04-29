@@ -213,7 +213,7 @@ const HorarioFuncionamentoForm = () => {
                                             onChange={() => handleCheckboxChange(index)}
                                         />
                                         <span className="checkmark"></span>
-                                        {horario.dia}
+                                        <h3>{horario.dia}</h3>
                                     </S.CheckboxWrapper>
                                 </td>
                                 <td>

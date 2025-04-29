@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { formatInTimeZone, toZonedTime } from 'date-fns-tz'
-import { addDays, subDays } from 'date-fns'
-import { ClipLoader } from 'react-spinners' // Importe o ClipLoader
+import { addDays, subDays, isSameDay } from 'date-fns'
+import { ClipLoader } from 'react-spinners'
 import { authFetch } from '../../../../utils/authFetch'
 import { Agendamento } from '../../../cliente/modals/meus_agendamentos'
 import DetalhesModal from '../../modals/agendamentos/Detalhes'
@@ -9,25 +9,7 @@ import StatusModal from '../../modals/agendamentos/status'
 import CriarAgendamentoModal from '../../modals/agendamentos/criar'
 import * as S from './styles'
 
-const fusoHorario = 'America/Sao_Paulo'
-const hoje = formatInTimeZone(new Date(), fusoHorario, 'yyyy-MM-dd')
-
-const gerarHoras = (intervalo: number) => {
-    const horas: string[] = []
-    const inicio = 8 * 60
-    const fim = 20 * 60
-
-    for (let minutos = inicio; minutos <= fim; minutos += intervalo) {
-        const h = Math.floor(minutos / 60)
-            .toString()
-            .padStart(2, '0')
-        const m = (minutos % 60).toString().padStart(2, '0')
-        horas.push(`${h}:${m}`)
-    }
-
-    return horas
-}
-
+// Define types for data models
 type Funcionario = {
     id: number
     nome: string
@@ -48,16 +30,35 @@ type NovoAgendamento = {
     hora_inicio: string
 }
 
+const fusoHorario = 'America/Sao_Paulo'
+const hoje = formatInTimeZone(new Date(), fusoHorario, 'yyyy-MM-dd')
+
+const gerarHoras = (intervalo: number): string[] => {
+    const horas: string[] = []
+    const inicio = 8 * 60
+    const fim = 20 * 60
+
+    for (let minutos = inicio; minutos <= fim; minutos += intervalo) {
+        const h = Math.floor(minutos / 60)
+            .toString()
+            .padStart(2, '0')
+        const m = (minutos % 60).toString().padStart(2, '0')
+        horas.push(`${h}:${m}`)
+    }
+
+    return horas
+}
+
 const AgendaGrafico = () => {
     const [dataSelecionada, setDataSelecionada] = useState<string>(hoje)
     const [agendamentos, setAgendamentos] = useState<Agendamento[]>([])
     const [funcionarios, setFuncionarios] = useState<Funcionario[]>([])
     const [servicos, setServicos] = useState<Servico[]>([])
-    const [isLoading, setIsLoading] = useState(true) // Renomeado de carregando para isLoading
-    const [hasError, setHasError] = useState(false) // Substitui authError
-    const [modalIsOpen, setModalIsOpen] = useState(false)
-    const [statusModalIsOpen, setStatusModalIsOpen] = useState(false)
-    const [createModalIsOpen, setCreateModalIsOpen] = useState(false)
+    const [isLoading, setIsLoading] = useState<boolean>(true)
+    const [hasError, setHasError] = useState<boolean>(false)
+    const [modalIsOpen, setModalIsOpen] = useState<boolean>(false)
+    const [statusModalIsOpen, setStatusModalIsOpen] = useState<boolean>(false)
+    const [createModalIsOpen, setCreateModalIsOpen] = useState<boolean>(false)
     const [selectedAgendamento, setSelectedAgendamento] = useState<Agendamento | null>(null)
     const [error, setError] = useState<string | null>(null)
     const [criandoAgendamento, setCriandoAgendamento] = useState<boolean>(false)
@@ -73,47 +74,58 @@ const AgendaGrafico = () => {
 
     const intervalo = 30
     const horas = gerarHoras(intervalo)
-
     const alturaPorMinuto = 1.5
     const totalMinutos = (20 - 8) * 60
     const alturaTimeline = totalMinutos * alturaPorMinuto
 
-    const formatarData = (data: string) => {
-        return formatInTimeZone(toZonedTime(data, fusoHorario), fusoHorario, 'dd/MM/yyyy')
+    const formatarData = (data: string): string => {
+        const selectedDate = toZonedTime(data, fusoHorario)
+        const today = toZonedTime(hoje, fusoHorario)
+        const yesterday = subDays(today, 1)
+        const tomorrow = addDays(today, 1)
+
+        if (isSameDay(selectedDate, today)) {
+            return 'HOJE'
+        } else if (isSameDay(selectedDate, yesterday)) {
+            return 'ONTEM'
+        } else if (isSameDay(selectedDate, tomorrow)) {
+            return 'AMANHÃ'
+        }
+        return formatInTimeZone(selectedDate, fusoHorario, 'dd/MM/yyyy')
     }
 
-    const mudarDia = (direcao: 'anterior' | 'proximo') => {
+    const mudarDia = (direcao: 'anterior' | 'proximo'): void => {
         const dataAtual = toZonedTime(dataSelecionada, fusoHorario)
         const novaData = direcao === 'anterior' ? subDays(dataAtual, 1) : addDays(dataAtual, 1)
         setDataSelecionada(formatInTimeZone(novaData, fusoHorario, 'yyyy-MM-dd'))
     }
 
-    const openModal = (agendamento: Agendamento) => {
+    const openModal = (agendamento: Agendamento): void => {
         setSelectedAgendamento(agendamento)
         setModalIsOpen(true)
     }
 
-    const closeModal = () => {
+    const closeModal = (): void => {
         setModalIsOpen(false)
         setSelectedAgendamento(null)
     }
 
-    const openStatusModal = (agendamento: Agendamento) => {
+    const openStatusModal = (agendamento: Agendamento): void => {
         setSelectedAgendamento(agendamento)
         setStatusModalIsOpen(true)
     }
 
-    const closeStatusModal = () => {
+    const closeStatusModal = (): void => {
         setStatusModalIsOpen(false)
         setSelectedAgendamento(null)
         setError(null)
     }
 
-    const openCreateModal = () => {
+    const openCreateModal = (): void => {
         setCreateModalIsOpen(true)
     }
 
-    const closeCreateModal = () => {
+    const closeCreateModal = (): void => {
         setCreateModalIsOpen(false)
         setError(null)
         setNovoAgendamento({
@@ -126,7 +138,7 @@ const AgendaGrafico = () => {
         })
     }
 
-    const buscarFuncionarios = async () => {
+    const buscarFuncionarios = async (): Promise<boolean> => {
         try {
             const token = sessionStorage.getItem('access_token_barbearia')
             if (!token) {
@@ -150,14 +162,15 @@ const AgendaGrafico = () => {
             const dados: Funcionario[] = await res.json()
             setFuncionarios(dados)
             return true
-        } catch (err: any) {
-            console.error('Erro ao buscar funcionários:', err)
+        } catch (err: unknown) {
+            const error = err as Error
+            console.error('Erro ao buscar funcionários:', error)
             setHasError(true)
             return false
         }
     }
 
-    const buscarServicos = async () => {
+    const buscarServicos = async (): Promise<boolean> => {
         try {
             const token = sessionStorage.getItem('access_token_barbearia')
             if (!token) {
@@ -181,14 +194,15 @@ const AgendaGrafico = () => {
             const dados: Servico[] = await res.json()
             setServicos(dados)
             return true
-        } catch (err: any) {
-            console.error('Erro ao buscar serviços:', err)
+        } catch (err: unknown) {
+            const error = err as Error
+            console.error('Erro ao buscar serviços:', error)
             setHasError(true)
             return false
         }
     }
 
-    const buscarAgendamentos = async (data: string) => {
+    const buscarAgendamentos = async (data: string): Promise<boolean> => {
         try {
             const token = sessionStorage.getItem('access_token_barbearia')
             if (!token) {
@@ -215,14 +229,15 @@ const AgendaGrafico = () => {
             const dados: Agendamento[] = await res.json()
             setAgendamentos(dados)
             return true
-        } catch (err: any) {
-            console.error('Erro ao buscar agendamentos:', err)
+        } catch (err: unknown) {
+            const error = err as Error
+            console.error('Erro ao buscar agendamentos:', error)
             setHasError(true)
             return false
         }
     }
 
-    const validateNovoAgendamento = () => {
+    const validateNovoAgendamento = (): string | null => {
         if (!novoAgendamento.cliente_email) {
             return 'O e-mail do cliente é obrigatório.'
         }
@@ -247,7 +262,7 @@ const AgendaGrafico = () => {
         return null
     }
 
-    const criarAgendamento = async () => {
+    const criarAgendamento = async (): Promise<void> => {
         try {
             const validationError = validateNovoAgendamento()
             if (validationError) {
@@ -293,7 +308,7 @@ const AgendaGrafico = () => {
                     if (erroData.non_field_errors) {
                         throw new Error(erroData.non_field_errors[0])
                     }
-                    const errorMessages = Object.values(erroData).flat().join(' ')
+                    const errorMessages = Object.values<string[]>(erroData).flat().join(' ')
                     throw new Error(errorMessages || 'Falha ao criar agendamento')
                 }
                 throw new Error('Falha ao criar agendamento')
@@ -302,9 +317,10 @@ const AgendaGrafico = () => {
             const novoAgendamentoData: Agendamento = await res.json()
             setAgendamentos([...agendamentos, novoAgendamentoData])
             closeCreateModal()
-        } catch (err: any) {
-            console.error('Erro ao criar agendamento:', err)
-            setError(err.message || 'Erro ao criar agendamento')
+        } catch (err: unknown) {
+            const error = err as Error
+            console.error('Erro ao criar agendamento:', error)
+            setError(error.message || 'Erro ao criar agendamento')
         } finally {
             setCriandoAgendamento(false)
         }
@@ -313,7 +329,7 @@ const AgendaGrafico = () => {
     const atualizarStatusAgendamento = async (
         agendamentoId: number,
         novoStatus: Agendamento['status'],
-    ) => {
+    ): Promise<void> => {
         try {
             setError(null)
             const token = sessionStorage.getItem('access_token_barbearia')
@@ -334,14 +350,10 @@ const AgendaGrafico = () => {
             )
 
             if (!res.ok) {
-                if (res.status === 401) {
-                    throw new Error('Sessão expirada. Por favor, faça login novamente.')
-                }
                 const erroData = await res.json()
                 throw new Error(erroData.error || 'Falha ao atualizar o status do agendamento')
             }
 
-            const updatedAgendamento: Agendamento = await res.json()
             setAgendamentos((prev) =>
                 prev.map((agendamento) =>
                     agendamento.id === agendamentoId
@@ -351,14 +363,15 @@ const AgendaGrafico = () => {
             )
 
             closeStatusModal()
-        } catch (err: any) {
-            console.error('Erro ao atualizar status:', err)
-            setError(err.message || 'Erro ao atualizar o status')
+        } catch (err: unknown) {
+            const error = err as Error
+            console.error('Erro ao atualizar status:', error)
+            setError(error.message || 'Erro ao atualizar o status')
         }
     }
 
     useEffect(() => {
-        const fetchData = async () => {
+        const fetchData = async (): Promise<void> => {
             setIsLoading(true)
             setHasError(false)
             try {
@@ -371,8 +384,9 @@ const AgendaGrafico = () => {
                 if (!funcionariosSuccess || !servicosSuccess || !agendamentosSuccess) {
                     setHasError(true)
                 }
-            } catch (err: any) {
-                console.error('Erro ao carregar dados:', err)
+            } catch (err: unknown) {
+                const error = err as Error
+                console.error('Erro ao carregar dados:', error)
                 setHasError(true)
             } finally {
                 setIsLoading(false)
@@ -381,7 +395,7 @@ const AgendaGrafico = () => {
         fetchData()
     }, [dataSelecionada])
 
-    const formatarStatus = (status: Agendamento['status']) => {
+    const formatarStatus = (status: Agendamento['status']): string => {
         switch (status) {
             case 'CONFIRMADO':
                 return 'Confirmado'
@@ -396,15 +410,13 @@ const AgendaGrafico = () => {
         }
     }
 
-    const handleRedirectToLogin = () => {
+    const handleRedirectToLogin = (): void => {
         const slug = sessionStorage.getItem('barbearia_slug') || 'default-slug'
         window.location.href = `/barbearia/${slug}/login`
     }
 
-    // Verifica se há dados válidos (funcionários e serviços são necessários)
     const hasValidData = funcionarios.length > 0 && servicos.length > 0
 
-    // Renderiza o ClipLoader se estiver carregando, houver erro ou não houver dados válidos
     if (isLoading || hasError || !hasValidData) {
         return (
             <S.Container>
@@ -446,9 +458,7 @@ const AgendaGrafico = () => {
                         <S.ArrowButton className="voltarDia" onClick={() => mudarDia('anterior')}>
                             <i className="ri-arrow-left-double-line"></i>
                         </S.ArrowButton>
-                        <S.DateDisplay>
-                            {dataSelecionada === hoje ? 'HOJE' : formatarData(dataSelecionada)}
-                        </S.DateDisplay>
+                        <S.DateDisplay>{formatarData(dataSelecionada)}</S.DateDisplay>
                         <S.ArrowButton className="avançarDia" onClick={() => mudarDia('proximo')}>
                             <i className="ri-arrow-right-double-line"></i>
                         </S.ArrowButton>
@@ -527,7 +537,7 @@ const AgendaGrafico = () => {
                                                                 {agendamento.cliente_nome}
                                                             </p>
                                                             <p className="servico">
-                                                                {kratos.servico_nome} -{' '}
+                                                                {agendamento.servico_nome} -{' '}
                                                                 {agendamento.servico_duracao} min
                                                             </p>
                                                         </div>
@@ -556,7 +566,7 @@ const AgendaGrafico = () => {
                 </S.TimelinesContainer>
             </S.HorariosContainer>
 
-            {/* Modais */}
+            {/* Modals */}
             <DetalhesModal
                 isOpen={modalIsOpen}
                 onClose={closeModal}

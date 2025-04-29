@@ -21,6 +21,7 @@ export const Container = styled.div`
 
     @media (max-width: ${breakpoints.tablet}) {
         width: 100%;
+        padding: 20px 10px;
     }
 `
 
@@ -56,6 +57,10 @@ export const CheckboxWrapper = styled.label`
     user-select: none;
     font-size: 16px;
 
+    h3 {
+        font-size: 16px;
+    }
+
     input {
         position: absolute;
         opacity: 0;
@@ -89,6 +94,12 @@ export const CheckboxWrapper = styled.label`
         left: 50%;
         transform: translate(-50%, -50%);
     }
+
+    @media (max-width: ${breakpoints.tablet}) {
+        h3 {
+            font-size: 12px;
+        }
+    }
 `
 
 export const Input = styled.input`
@@ -105,6 +116,10 @@ export const Input = styled.input`
 
     &:disabled {
         opacity: 0.5;
+    }
+
+    @media (max-width: ${breakpoints.tablet}) {
+        width: 100%;
     }
 `
 
