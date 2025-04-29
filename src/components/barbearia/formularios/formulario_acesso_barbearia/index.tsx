@@ -19,27 +19,15 @@ const LoginBarbearia = () => {
         setError('')
 
         try {
-            console.log('Base URL sendo usada:', api.baseURL) // Log para depurar a URL
-            console.log('Dados enviados:', { email: formData.email, password: formData.senha }) // Log para depurar os dados
-
             const response = await fetch(`${api.baseURL}/barbearias/login/`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email: formData.email, password: formData.senha }),
-                mode: 'no-cors', // Temporariamente para contornar o CORS (remover após resolver o problema)
             })
 
-            console.log('Resposta da requisição:', response) // Log para depurar a resposta
+            const data = await response.json()
 
-            // Como mode: 'no-cors' não permite acessar o corpo da resposta, simulamos a resposta para testes
-            // Remova isso e volte ao comportamento normal após resolver o CORS
-            const data = {
-                barbearia_id: 'temp-id',
-                access_token: 'temp-token',
-                refresh_token: 'temp-refresh-token',
-            } // Simulação
-
-            if (data.barbearia_id) {
+            if (response.ok && data.barbearia_id) {
                 sessionStorage.setItem('access_token_barbearia', data.access_token)
                 sessionStorage.setItem('refresh_token_barbearia', data.refresh_token)
                 sessionStorage.setItem('barbearia_token', data.barbearia_id)
@@ -49,24 +37,21 @@ const LoginBarbearia = () => {
                     {
                         method: 'GET',
                         headers: { Authorization: `Bearer ${data.access_token}` },
-                        mode: 'no-cors', // Temporariamente para contornar o CORS (remover após resolver o problema)
                     },
                 )
 
-                console.log('Resposta da segunda requisição:', barbeariaResponse) // Log para depurar
+                const barbeariaData = await barbeariaResponse.json()
 
-                // Simulação de resposta para testes
-                const barbeariaData = { id: 'temp-id', name: 'Temp Barbershop' } // Simulação
-
-                sessionStorage.setItem('barbearia', JSON.stringify(barbeariaData))
+                if (barbeariaResponse.ok) {
+                    sessionStorage.setItem('barbearia', JSON.stringify(barbeariaData))
+                }
 
                 window.dispatchEvent(new Event('storage'))
                 navigate('/dashboard')
             } else {
-                setError('Erro ao fazer login.')
+                setError(data.error || 'Erro ao fazer login.')
             }
-        } catch (err) {
-            console.error('Erro na requisição:', err)
+        } catch {
             setError('Erro ao conectar com o servidor.')
         }
     }
