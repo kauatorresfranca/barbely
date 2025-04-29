@@ -104,7 +104,7 @@ const Overview = () => {
         const token = sessionStorage.getItem('access_token_barbearia')
         try {
             const response = await fetch(
-                `${api.baseURL}http://localhost:8000/api/barbearias/overview/?inicio=${inicio}&fim=${fim}`,
+                `${api.baseURL}/barbearias/overview/?inicio=${inicio}&fim=${fim}`,
                 {
                     headers: { Authorization: `Bearer ${token}` },
                 },
