@@ -278,3 +278,24 @@ export const Services = styled.div`
         width: 100%;
     }
 `
+
+export const MetricsContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+`
+
+export const LoaderWrapper = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 40px; /* Ajuste conforme necessário para os cards */
+`
+
+export const Message = styled.p`
+    text-align: center;
+    padding: 2rem;
+    color: #666;
+    font-size: 1.1rem;
+    font-weight: 500;
+`

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { ClipLoader } from 'react-spinners' // Importe o ClipLoader
+import { ClipLoader } from 'react-spinners'
 import { authFetch } from '../../../../utils/authFetch'
 import { Servico } from '../../../../models/servico'
 import CriarServicoModal from '../../modals/servicos/servico_criar'
@@ -11,8 +11,8 @@ const Servicos = () => {
     const [modalIsOpen, setModalIsOpen] = useState(false)
     const [editModalIsOpen, setEditModalIsOpen] = useState(false)
     const [servicos, setServicos] = useState<Servico[]>([])
-    const [isLoading, setIsLoading] = useState(true) // Estado para carregamento
-    const [hasError, setHasError] = useState(false) // Estado para erro
+    const [isLoading, setIsLoading] = useState(true)
+    const [hasError, setHasError] = useState(false)
 
     const openModal = () => setModalIsOpen(true)
     const closeModal = () => setModalIsOpen(false)
@@ -72,27 +72,6 @@ const Servicos = () => {
         fetchServicos()
     }, [])
 
-    // Verifica se há dados válidos
-    const hasValidData = servicos.length > 0
-
-    // Renderiza o ClipLoader se estiver carregando, houver erro ou não houver dados
-    if (isLoading || hasError || !hasValidData) {
-        return (
-            <S.Container>
-                <div
-                    style={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        height: '100vh',
-                    }}
-                >
-                    <ClipLoader color="#00c1fe" size={32} speedMultiplier={1} />
-                </div>
-            </S.Container>
-        )
-    }
-
     return (
         <>
             <S.Container>
@@ -104,35 +83,48 @@ const Servicos = () => {
                 <S.ServiceHeader>
                     <button onClick={openModal}>+ Novo Serviço</button>
                 </S.ServiceHeader>
-                <S.Head>
+
+                {isLoading ? (
+                    <S.LoadingContainer>
+                        <ClipLoader color="#00c1fe" size={32} speedMultiplier={1} />
+                    </S.LoadingContainer>
+                ) : hasError ? (
+                    <S.Message>Erro ao carregar os serviços. Tente novamente.</S.Message>
+                ) : servicos.length === 0 ? (
+                    <S.Message>Você ainda não tem serviços cadastrados.</S.Message>
+                ) : (
                     <>
-                        <p>Nome</p>
-                        <p>Valor</p>
-                        <p>Duração</p>
-                        <p>Ações</p>
+                        <S.Head>
+                            <p>Nome</p>
+                            <p>Valor</p>
+                            <p>Duração</p>
+                            <p>Ações</p>
+                        </S.Head>
+                        <S.List>
+                            {servicos.map((servico) => (
+                                <S.ListItem key={servico.id}>
+                                    <p>{servico.nome}</p>
+                                    <p>R$ {Number(servico.preco).toFixed(2)}</p>
+                                    <p>{servico.duracao_minutos} min</p>
+                                    <S.IconsGroup>
+                                        <i
+                                            className="ri-edit-2-line edit"
+                                            onClick={openEditModal}
+                                        ></i>
+                                        <i
+                                            className="ri-delete-bin-line delete"
+                                            onClick={() => handleDelete(servico.id)}
+                                        ></i>
+                                    </S.IconsGroup>
+                                </S.ListItem>
+                            ))}
+                        </S.List>
+                        <p className="servicos_length">{servicos.length} Serviços</p>
                     </>
-                </S.Head>
-                <S.List>
-                    {servicos.map((servico) => (
-                        <S.ListItem key={servico.id}>
-                            <p>{servico.nome}</p>
-                            <p>R$ {Number(servico.preco).toFixed(2)}</p>
-                            <p>{servico.duracao_minutos} min</p>
-                            <S.IconsGroup>
-                                <i className="ri-edit-2-line edit" onClick={openEditModal}></i>
-                                <i
-                                    className="ri-delete-bin-line delete"
-                                    onClick={() => handleDelete(servico.id)}
-                                ></i>
-                            </S.IconsGroup>
-                        </S.ListItem>
-                    ))}
-                </S.List>
-                <p className="servicos_length">{servicos.length} Serviços</p>
+                )}
             </S.Container>
 
             {modalIsOpen && <CriarServicoModal closeModal={closeModal} onSuccess={fetchServicos} />}
-
             {editModalIsOpen && <EditarServicoModal closeModal={closeEditModal} />}
         </>
     )

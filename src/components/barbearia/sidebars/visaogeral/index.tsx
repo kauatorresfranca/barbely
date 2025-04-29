@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { format } from 'date-fns'
 import GraficoVendas from '../../gradico_vendas'
 import * as S from './styles'
-import { ClipLoader } from 'react-spinners' // Importe o ClipLoader
+import { ClipLoader } from 'react-spinners'
 import api from '../../../../services/api'
 
 // Custom hook to animate counting up
@@ -48,8 +48,8 @@ const Overview = () => {
         agendamentos: 0,
         clientes_novos: 0,
     })
-    const [isLoading, setIsLoading] = useState(true) // Começa como true para aguardar a primeira requisição
-    const [hasError, setHasError] = useState(false) // Novo estado para rastrear erros
+    const [isLoading, setIsLoading] = useState(true)
+    const [hasError, setHasError] = useState(false)
     const [showDateInputs, setShowDateInputs] = useState(false)
     const dateInputsRef = useRef<HTMLDivElement>(null)
 
@@ -100,7 +100,7 @@ const Overview = () => {
     // Fetch metrics function
     const fetchMetrics = useCallback(async () => {
         setIsLoading(true)
-        setHasError(false) // Reseta o estado de erro antes de nova tentativa
+        setHasError(false)
         const token = sessionStorage.getItem('access_token_barbearia')
         try {
             const response = await fetch(
@@ -110,16 +110,15 @@ const Overview = () => {
                 },
             )
             const data = await response.json()
-            console.log('valor recebido do back:', data)
             if (response.ok) {
                 setMetrics(data)
             } else {
                 console.error('Erro:', data.error)
-                setHasError(true) // Marca erro se a resposta não for ok
+                setHasError(true)
             }
         } catch {
             console.error('Erro ao buscar métricas')
-            setHasError(true) // Marca erro em caso de falha na requisição
+            setHasError(true)
         } finally {
             setIsLoading(false)
         }
@@ -129,7 +128,7 @@ const Overview = () => {
     useEffect(() => {
         if (filter !== 'custom') {
             setDatesFromFilter(filter)
-            fetchMetrics() // Fetch metrics for predefined filters
+            fetchMetrics()
         }
         if (filter === 'custom') {
             setShowDateInputs(true)
@@ -143,7 +142,7 @@ const Overview = () => {
         if (inicio && fim && inicio <= fim) {
             setFilter('custom')
             setShowDateInputs(false)
-            fetchMetrics() // Fetch metrics only when "Filtrar" is clicked
+            fetchMetrics()
         }
     }
 
@@ -179,27 +178,6 @@ const Overview = () => {
     // Format monetary values
     const formatMonetaryValue = (value: number) => {
         return `R$ ${Number(value).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`
-    }
-
-    // Verifica se há dados válidos para exibir
-    const hasValidData = Object.values(metrics).some((value) => value !== 0)
-
-    // Renderiza o conteúdo condicionalmente
-    if (isLoading || !hasValidData || hasError) {
-        return (
-            <S.Container>
-                <div
-                    style={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        height: '100vh',
-                    }}
-                >
-                    <ClipLoader color="#00c1fe" size={32} speedMultiplier={1} />
-                </div>
-            </S.Container>
-        )
     }
 
     return (
@@ -248,64 +226,137 @@ const Overview = () => {
                     </S.DateInputsWrapper>
                 )}
             </S.Filtro>
-            <S.FirstLine>
-                <S.Card>
-                    <i className="ri-line-chart-line"></i>
-                    <div className="valor">
-                        <h3>Faturamento</h3>
-                        <p>{formatMonetaryValue(animatedFaturamento)}</p>
-                    </div>
-                </S.Card>
-                <S.Card>
-                    <i className="ri-refund-2-line"></i>
-                    <div className="valor">
-                        <h3>Total de Custos</h3>
-                        <p>{formatMonetaryValue(animatedTotalCustos)}</p>
-                    </div>
-                </S.Card>
-                <S.Card>
-                    <i className="ri-coins-fill"></i>
-                    <div className="valor">
-                        <h3>Total de Lucro</h3>
-                        <p>{formatMonetaryValue(animatedTotalLucro)}</p>
-                    </div>
-                </S.Card>
-                <S.Card>
-                    <i className="ri-user-follow-fill"></i>
-                    <div className="valor">
-                        <h3>Clientes Atendidos</h3>
-                        <p>{animatedClientesAtendidos}</p>
-                    </div>
-                </S.Card>
-                <S.Card>
-                    <i className="ri-swap-line"></i>
-                    <div className="valor">
-                        <h3>Ticket Médio</h3>
-                        <p>{formatMonetaryValue(animatedTicketMedio)}</p>
-                    </div>
-                </S.Card>
-            </S.FirstLine>
-            <S.SecondLine>
-                <S.GraficoContainer>
-                    <GraficoVendas inicio={inicio} fim={fim} />
-                </S.GraficoContainer>
-                <S.Services>
-                    <S.Card id="secondline">
-                        <i className="ri-calendar-schedule-line"></i>
-                        <div className="valor">
-                            <h3>Agendamentos</h3>
-                            <p>{animatedAgendamentos}</p>
-                        </div>
-                    </S.Card>
-                    <S.Card id="secondline">
-                        <i className="ri-user-add-line"></i>
-                        <div className="valor">
-                            <h3>Clientes Novos</h3>
-                            <p>{animatedClientesNovos}</p>
-                        </div>
-                    </S.Card>
-                </S.Services>
-            </S.SecondLine>
+
+            {isLoading ? (
+                <S.MetricsContainer>
+                    <S.FirstLine>
+                        {[
+                            'Faturamento',
+                            'Total de Custos',
+                            'Total de Lucro',
+                            'Clientes Atendidos',
+                            'Ticket Médio',
+                        ].map((title) => (
+                            <S.Card key={title}>
+                                <i
+                                    className={`ri-${
+                                        title === 'Faturamento'
+                                            ? 'line-chart-line'
+                                            : title === 'Total de Custos'
+                                            ? 'refund-2-line'
+                                            : title === 'Total de Lucro'
+                                            ? 'coins-fill'
+                                            : title === 'Clientes Atendidos'
+                                            ? 'user-follow-fill'
+                                            : 'swap-line'
+                                    }`}
+                                ></i>
+                                <div className="valor">
+                                    <h3>{title}</h3>
+                                    <S.LoaderWrapper>
+                                        <ClipLoader color="#00c1fe" size={24} speedMultiplier={1} />
+                                    </S.LoaderWrapper>
+                                </div>
+                            </S.Card>
+                        ))}
+                    </S.FirstLine>
+                    <S.SecondLine>
+                        <S.GraficoContainer>
+                            <S.LoaderWrapper>
+                                <ClipLoader color="#00c1fe" size={32} speedMultiplier={1} />
+                            </S.LoaderWrapper>
+                        </S.GraficoContainer>
+                        <S.Services>
+                            {['Agendamentos', 'Clientes Novos'].map((title) => (
+                                <S.Card key={title} id="secondline">
+                                    <i
+                                        className={`ri-${
+                                            title === 'Agendamentos'
+                                                ? 'calendar-schedule-line'
+                                                : 'user-add-line'
+                                        }`}
+                                    ></i>
+                                    <div className="valor">
+                                        <h3>{title}</h3>
+                                        <S.LoaderWrapper>
+                                            <ClipLoader
+                                                color="#00c1fe"
+                                                size={24}
+                                                speedMultiplier={1}
+                                            />
+                                        </S.LoaderWrapper>
+                                    </div>
+                                </S.Card>
+                            ))}
+                        </S.Services>
+                    </S.SecondLine>
+                </S.MetricsContainer>
+            ) : hasError ? (
+                <S.Message>Erro ao carregar as métricas. Tente novamente.</S.Message>
+            ) : Object.values(metrics).every((value) => value === 0) ? (
+                <S.Message>Nenhum dado disponível para o período selecionado.</S.Message>
+            ) : (
+                <S.MetricsContainer>
+                    <S.FirstLine>
+                        <S.Card>
+                            <i className="ri-line-chart-line"></i>
+                            <div className="valor">
+                                <h3>Faturamento</h3>
+                                <p>{formatMonetaryValue(animatedFaturamento)}</p>
+                            </div>
+                        </S.Card>
+                        <S.Card>
+                            <i className="ri-refund-2-line"></i>
+                            <div className="valor">
+                                <h3>Total de Custos</h3>
+                                <p>{formatMonetaryValue(animatedTotalCustos)}</p>
+                            </div>
+                        </S.Card>
+                        <S.Card>
+                            <i className="ri-coins-fill"></i>
+                            <div className="valor">
+                                <h3>Total de Lucro</h3>
+                                <p>{formatMonetaryValue(animatedTotalLucro)}</p>
+                            </div>
+                        </S.Card>
+                        <S.Card>
+                            <i className="ri-user-follow-fill"></i>
+                            <div className="valor">
+                                <h3>Clientes Atendidos</h3>
+                                <p>{animatedClientesAtendidos}</p>
+                            </div>
+                        </S.Card>
+                        <S.Card>
+                            <i className="ri-swap-line"></i>
+                            <div className="valor">
+                                <h3>Ticket Médio</h3>
+                                <p>{formatMonetaryValue(animatedTicketMedio)}</p>
+                            </div>
+                        </S.Card>
+                    </S.FirstLine>
+                    <S.SecondLine>
+                        <S.GraficoContainer>
+                            <GraficoVendas inicio={inicio} fim={fim} />
+                        </S.GraficoContainer>
+                        <S.Services>
+                            <S.Card id="secondline">
+                                <i className="ri-calendar-schedule-line"></i>
+                                <div className="valor">
+                                    <h3>Agendamentos</h3>
+                                    <p>{animatedAgendamentos}</p>
+                                </div>
+                            </S.Card>
+                            <S.Card id="secondline">
+                                <i className="ri-user-add-line"></i>
+                                <div className="valor">
+                                    <h3>Clientes Novos</h3>
+                                    <p>{animatedClientesNovos}</p>
+                                </div>
+                            </S.Card>
+                        </S.Services>
+                    </S.SecondLine>
+                </S.MetricsContainer>
+            )}
         </S.Container>
     )
 }

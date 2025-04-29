@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { ClipLoader } from 'react-spinners' // Importe o ClipLoader
+import { ClipLoader } from 'react-spinners'
 import { authFetch } from '../../../../utils/authFetch'
 import { Funcionario } from '../../../../models/funcionario'
 import CriarProfissionalModal from '../../modals/profissional/profissional_criar'
@@ -11,8 +11,8 @@ const Profissionais = () => {
     const [modalIsOpen, setModalIsOpen] = useState(false)
     const [editModalIsOpen, setEditModalIsOpen] = useState(false)
     const [funcionarios, setFuncionarios] = useState<Funcionario[]>([])
-    const [isLoading, setIsLoading] = useState(true) // Estado para carregamento
-    const [hasError, setHasError] = useState(false) // Estado para erro
+    const [isLoading, setIsLoading] = useState(true)
+    const [hasError, setHasError] = useState(false)
 
     const openModal = () => setModalIsOpen(true)
     const closeModal = () => setModalIsOpen(false)
@@ -72,27 +72,6 @@ const Profissionais = () => {
         fetchFuncionarios()
     }, [])
 
-    // Verifica se há dados válidos
-    const hasValidData = funcionarios.length > 0
-
-    // Renderiza o ClipLoader se estiver carregando, houver erro ou não houver dados
-    if (isLoading || hasError || !hasValidData) {
-        return (
-            <S.Container>
-                <div
-                    style={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        height: '100vh',
-                    }}
-                >
-                    <ClipLoader color="#00c1fe" size={32} speedMultiplier={1} />
-                </div>
-            </S.Container>
-        )
-    }
-
     return (
         <>
             <S.Container>
@@ -103,33 +82,46 @@ const Profissionais = () => {
                 <S.ServiceHeader>
                     <button onClick={openModal}>+ Novo Profissional</button>
                 </S.ServiceHeader>
-                <S.Head>
+
+                {isLoading ? (
+                    <S.LoadingContainer>
+                        <ClipLoader color="#00c1fe" size={32} speedMultiplier={1} />
+                    </S.LoadingContainer>
+                ) : hasError ? (
+                    <S.Message>Erro ao carregar os profissionais. Tente novamente.</S.Message>
+                ) : funcionarios.length === 0 ? (
+                    <S.Message>Você ainda não tem profissionais cadastrados.</S.Message>
+                ) : (
                     <>
-                        <p>Nome</p>
-                        <p>Ações</p>
+                        <S.Head>
+                            <p>Nome</p>
+                            <p>Ações</p>
+                        </S.Head>
+                        <S.List>
+                            {funcionarios.map((func) => (
+                                <S.ListItem key={func.id}>
+                                    <p>{func.nome}</p>
+                                    <S.IconsGroup>
+                                        <i
+                                            className="ri-edit-2-line edit"
+                                            onClick={openEditModal}
+                                        ></i>
+                                        <i
+                                            className="ri-delete-bin-line delete"
+                                            onClick={() => handleDelete(func.id)}
+                                        ></i>
+                                    </S.IconsGroup>
+                                </S.ListItem>
+                            ))}
+                        </S.List>
+                        <p className="profissionais_length">{funcionarios.length} Profissionais</p>
                     </>
-                </S.Head>
-                <S.List>
-                    {funcionarios.map((func) => (
-                        <S.ListItem key={func.id}>
-                            <p>{func.nome}</p>
-                            <S.IconsGroup>
-                                <i className="ri-edit-2-line edit" onClick={openEditModal}></i>
-                                <i
-                                    className="ri-delete-bin-line delete"
-                                    onClick={() => handleDelete(func.id)}
-                                ></i>
-                            </S.IconsGroup>
-                        </S.ListItem>
-                    ))}
-                </S.List>
-                <p className="profissionais_length">{funcionarios.length} Profissionais</p>
+                )}
             </S.Container>
 
             {modalIsOpen && (
                 <CriarProfissionalModal closeModal={closeModal} onSuccess={fetchFuncionarios} />
             )}
-
             {editModalIsOpen && <EditarProfissionalModal closeModal={closeEditModal} />}
         </>
     )

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ClipLoader } from 'react-spinners' // Importe o ClipLoader
+import { ClipLoader } from 'react-spinners'
 import { Cliente } from '../../../../models/cliente'
 import { authFetch } from '../../../../utils/authFetch'
 import ClienteDetail from '../../modals/cliente/cliente_detail'
@@ -12,8 +12,8 @@ const Clientes = () => {
     const [clientes, setClientes] = useState<Cliente[]>([])
     const [filteredClientes, setFilteredClientes] = useState<Cliente[]>([])
     const [searchTerm, setSearchTerm] = useState<string>('')
-    const [isLoading, setIsLoading] = useState(true) // Renomeado de loading para isLoading
-    const [hasError, setHasError] = useState(false) // Renomeado de erro para hasError
+    const [isLoading, setIsLoading] = useState(true)
+    const [hasError, setHasError] = useState(false)
     const [modalDetailsIsOpen, setModalDetailsIsOpen] = useState<boolean>(false)
     const [modalEditIsOpen, setModalEditIsOpen] = useState<boolean>(false)
     const [selectedCliente, setSelectedCliente] = useState<Cliente | null>(null)
@@ -144,31 +144,10 @@ const Clientes = () => {
             setHasError(true)
             const errorMessage = err instanceof Error ? err.message : String(err)
             if (errorMessage.includes('Sessão expirada')) {
-                sessionStorage.removeItem('access_weak_token_barbearia')
+                sessionStorage.removeItem('access_token_barbearia')
                 navigate('/login')
             }
         }
-    }
-
-    // Verifica se há dados válidos
-    const hasValidData = clientes.length > 0
-
-    // Renderiza o ClipLoader se estiver carregando, houver erro ou não houver dados
-    if (isLoading || hasError || !hasValidData) {
-        return (
-            <S.Container>
-                <div
-                    style={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        height: '100vh',
-                    }}
-                >
-                    <ClipLoader color="#00c1fe" size={32} speedMultiplier={1} />
-                </div>
-            </S.Container>
-        )
     }
 
     return (
@@ -179,66 +158,78 @@ const Clientes = () => {
                 agendamentos.
             </p>
             <S.Head>
-                <>
-                    <S.SearchAndAdd>
-                        <input
-                            type="text"
-                            placeholder="Buscar por nome ou telefone..."
-                            value={searchTerm}
-                            onChange={handleSearchChange}
-                        />
-                        <button>+ Novo Cliente</button>
-                    </S.SearchAndAdd>
-                    {filteredClientes.length > 0 && (
-                        <S.FieldNames>
-                            <p>Nome</p>
-                            <p>Celular</p>
-                            <p>Ações</p>
-                        </S.FieldNames>
-                    )}
-                </>
-            </S.Head>
-            <S.List>
-                {filteredClientes.length > 0 ? (
-                    filteredClientes.map((cliente) => (
-                        <S.ListItem key={cliente.id}>
-                            <p>{cliente.user?.nome || 'Nome indisponível'}</p>
-                            <p>{cliente.user?.telefone || 'Telefone indisponível'}</p>
-                            <S.IconGroup>
-                                <i
-                                    className="ri-edit-2-line edit"
-                                    title="Editar Cliente"
-                                    onClick={() => handleOpenModalEdit(cliente)}
-                                ></i>
-                                <i
-                                    className="ri-delete-bin-line delete"
-                                    title="Apagar Cliente"
-                                    onClick={() => handleDeleteCliente(cliente)}
-                                ></i>
-                                <button
-                                    title="Detalhes do Cliente"
-                                    onClick={() => handleOpenModalDetails(cliente)}
-                                >
-                                    Detalhes
-                                </button>
-                            </S.IconGroup>
-                        </S.ListItem>
-                    ))
-                ) : (
-                    <p className="empty">
-                        {searchTerm
-                            ? `Nenhum cliente encontrado com o nome ou telefone "${searchTerm}"`
-                            : 'Nenhum cliente encontrado'}
-                    </p>
+                <S.SearchAndAdd>
+                    <input
+                        type="text"
+                        placeholder="Buscar por nome ou telefone..."
+                        value={searchTerm}
+                        onChange={handleSearchChange}
+                    />
+                    <button>+ Novo Cliente</button>
+                </S.SearchAndAdd>
+                {filteredClientes.length > 0 && (
+                    <S.FieldNames>
+                        <p>Nome</p>
+                        <p>Celular</p>
+                        <p>Ações</p>
+                    </S.FieldNames>
                 )}
-            </S.List>
+            </S.Head>
+
+            {isLoading ? (
+                <S.LoadingContainer>
+                    <ClipLoader color="#00c1fe" size={32} speedMultiplier={1} />
+                </S.LoadingContainer>
+            ) : hasError ? (
+                <S.Message>Erro ao carregar os clientes. Tente novamente.</S.Message>
+            ) : clientes.length === 0 ? (
+                <S.Message>Você ainda não tem clientes cadastrados.</S.Message>
+            ) : (
+                <S.List>
+                    {filteredClientes.length > 0 ? (
+                        filteredClientes.map((cliente) => (
+                            <S.ListItem key={cliente.id}>
+                                <p>{cliente.user?.nome || 'Nome indisponível'}</p>
+                                <p>{cliente.user?.telefone || 'Telefone indisponível'}</p>
+                                <S.IconGroup>
+                                    <i
+                                        className="ri-edit-2-line edit"
+                                        title="Editar Cliente"
+                                        onClick={() => handleOpenModalEdit(cliente)}
+                                    ></i>
+                                    <i
+                                        className="ri-delete-bin-line delete"
+                                        title="Apagar Cliente"
+                                        onClick={() => handleDeleteCliente(cliente)}
+                                    ></i>
+                                    <button
+                                        title="Detalhes do Cliente"
+                                        onClick={() => handleOpenModalDetails(cliente)}
+                                    >
+                                        Detalhes
+                                    </button>
+                                </S.IconGroup>
+                            </S.ListItem>
+                        ))
+                    ) : (
+                        <S.Message>
+                            {searchTerm
+                                ? `Nenhum cliente encontrado com o nome ou telefone "${searchTerm}"`
+                                : 'Nenhum cliente encontrado'}
+                        </S.Message>
+                    )}
+                </S.List>
+            )}
+
             {modalDetailsIsOpen && (
                 <ClienteDetail cliente={selectedCliente} closeModal={handleCloseModalDetails} />
             )}
             {modalEditIsOpen && (
                 <ClienteEdit cliente={selectedCliente} closeModal={handleCloseModalEdit} />
             )}
-            <p className="cliente_length">{filteredClientes.length} Clientes</p>
+            {!isLoading && !hasError && (
+                <p className="cliente_length">{filteredClientes.length} Clientes</p>
+            )}
         </S.Container>
     )
 }

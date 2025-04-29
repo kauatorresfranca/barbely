@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { ClipLoader } from 'react-spinners' // Importe o ClipLoader
+import { ClipLoader } from 'react-spinners'
 import { authFetch } from '../../../../utils/authFetch'
 import { useBarbeariaAtual } from '../../../../hooks/useBarbeariaAtual'
 import * as S from './styles'
@@ -41,13 +41,12 @@ const HorarioFuncionamentoForm = () => {
             fecha_as: '19:00',
         })),
     )
-    const [isLoading, setIsLoading] = useState(true) // Renomeado de loading para isLoading
-    const [hasError, setHasError] = useState(false) // Renomeado de erro para hasError
+    const [isLoading, setIsLoading] = useState(true)
+    const [hasError, setHasError] = useState(false)
 
     useEffect(() => {
         const fetchHorarios = async () => {
             if (!slug) {
-                setHasError(true)
                 setIsLoading(false)
                 return
             }
@@ -76,11 +75,11 @@ const HorarioFuncionamentoForm = () => {
                             abre_as:
                                 horario && horario.horario_abertura
                                     ? horario.horario_abertura.slice(0, 5)
-                                    : '',
+                                    : '08:00',
                             fecha_as:
                                 horario && horario.horario_fechamento
                                     ? horario.horario_fechamento.slice(0, 5)
-                                    : '',
+                                    : '19:00',
                         }
                     })
                     setHorarios(horariosFormatados)
@@ -165,79 +164,83 @@ const HorarioFuncionamentoForm = () => {
         }
     }
 
-    // Renderiza o ClipLoader se estiver carregando, houver erro ou não houver dados válidos
-    if (isLoading || hasError) {
-        return (
-            <S.Container>
-                <div
-                    style={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        height: '100vh',
-                    }}
-                >
-                    <ClipLoader color="#00c1fe" size={32} speedMultiplier={1} />
-                </div>
-            </S.Container>
-        )
-    }
-
     return (
         <S.Container>
             <h2>Horário de Funcionamento</h2>
             <p className="subtitle">
                 Defina os dias e horários em que sua barbearia estará aberta para atendimento.
             </p>
-            <S.Form onSubmit={handleSubmit}>
-                <S.Table>
-                    <thead>
-                        <tr>
-                            <th>Dia da Semana</th>
-                            <th>Abre às</th>
-                            <th>Fecha às</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {horarios.map((horario, index) => (
-                            <tr key={horario.dia}>
-                                <td>
-                                    <S.CheckboxWrapper>
-                                        <input
-                                            type="checkbox"
-                                            checked={horario.aberto}
-                                            onChange={() => handleCheckboxChange(index)}
-                                        />
-                                        <span className="checkmark"></span>
-                                        <h3>{horario.dia}</h3>
-                                    </S.CheckboxWrapper>
-                                </td>
-                                <td>
-                                    <S.Input
-                                        type="time"
-                                        value={horario.abre_as}
-                                        onChange={(e) =>
-                                            handleTimeChange(index, 'abre_as', e.target.value)
-                                        }
-                                        disabled={!horario.aberto}
-                                    />
-                                </td>
-                                <td>
-                                    <S.Input
-                                        type="time"
-                                        value={horario.fecha_as}
-                                        onChange={(e) =>
-                                            handleTimeChange(index, 'fecha_as', e.target.value)
-                                        }
-                                        disabled={!horario.aberto}
-                                    />
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </S.Table>
-                <S.Button type="submit">Salvar alterações</S.Button>
-            </S.Form>
+
+            {isLoading ? (
+                <S.LoadingContainer>
+                    <ClipLoader color="#00c1fe" size={32} speedMultiplier={1} />
+                </S.LoadingContainer>
+            ) : (
+                <>
+                    {hasError && (
+                        <S.Message>
+                            Erro ao carregar os horários. Você pode configurar os horários abaixo.
+                        </S.Message>
+                    )}
+                    <S.Form onSubmit={handleSubmit}>
+                        <S.Table>
+                            <thead>
+                                <tr>
+                                    <th>Dia da Semana</th>
+                                    <th>Abre às</th>
+                                    <th>Fecha às</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {horarios.map((horario, index) => (
+                                    <tr key={horario.dia}>
+                                        <td>
+                                            <S.CheckboxWrapper>
+                                                <input
+                                                    type="checkbox"
+                                                    checked={horario.aberto}
+                                                    onChange={() => handleCheckboxChange(index)}
+                                                />
+                                                <span className="checkmark"></span>
+                                                <h3>{horario.dia}</h3>
+                                            </S.CheckboxWrapper>
+                                        </td>
+                                        <td>
+                                            <S.Input
+                                                type="time"
+                                                value={horario.abre_as}
+                                                onChange={(e) =>
+                                                    handleTimeChange(
+                                                        index,
+                                                        'abre_as',
+                                                        e.target.value,
+                                                    )
+                                                }
+                                                disabled={!horario.aberto}
+                                            />
+                                        </td>
+                                        <td>
+                                            <S.Input
+                                                type="time"
+                                                value={horario.fecha_as}
+                                                onChange={(e) =>
+                                                    handleTimeChange(
+                                                        index,
+                                                        'fecha_as',
+                                                        e.target.value,
+                                                    )
+                                                }
+                                                disabled={!horario.aberto}
+                                            />
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </S.Table>
+                        <S.Button type="submit">Salvar alterações</S.Button>
+                    </S.Form>
+                </>
+            )}
         </S.Container>
     )
 }

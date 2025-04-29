@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { IMaskInput } from 'react-imask'
-import { ClipLoader } from 'react-spinners' // Importe o ClipLoader
+import { ClipLoader } from 'react-spinners'
 import { authFetch } from '../../../../utils/authFetch'
 import { useBarbeariaAtual } from '../../../../hooks/useBarbeariaAtual'
 import * as S from './styles'
@@ -19,13 +19,18 @@ const BarbeariaPerfilForm = () => {
         descricao: '',
         imagem: null as File | null,
     })
-    const [isLoading, setIsLoading] = useState(true) // Estado para carregamento
-    const [hasError, setHasError] = useState(false) // Estado para erro
+    const [isLoading, setIsLoading] = useState(true)
+    const [hasError, setHasError] = useState(false)
 
     const inputRef = useRef<HTMLInputElement>(null)
 
     useEffect(() => {
         const fetchBarbearia = async () => {
+            if (!slug) {
+                setIsLoading(false)
+                return
+            }
+
             setIsLoading(true)
             setHasError(false)
             try {
@@ -45,7 +50,7 @@ const BarbeariaPerfilForm = () => {
                     }))
                     if (data.imagem) {
                         const isFullUrl = data.imagem.startsWith('http')
-                        setPreview(isFullUrl ? data.imagem : `http://localhost:8000${data.imagem}`)
+                        setPreview(isFullUrl ? data.imagem : `${api.baseURL}${data.imagem}`)
                     }
                 } else {
                     console.error('Erro ao buscar barbearia')
@@ -59,12 +64,7 @@ const BarbeariaPerfilForm = () => {
             }
         }
 
-        if (slug) {
-            fetchBarbearia()
-        } else {
-            setIsLoading(false)
-            setHasError(true)
-        }
+        fetchBarbearia()
     }, [slug])
 
     const handleImagemChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -122,136 +122,132 @@ const BarbeariaPerfilForm = () => {
         }
     }
 
-    // Renderiza o ClipLoader se estiver carregando, houver erro ou não houver dados válidos
-    if (isLoading || hasError) {
-        return (
-            <S.Container>
-                <div
-                    style={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        height: '100vh',
-                    }}
-                >
-                    <ClipLoader color="#00c1fe" size={32} speedMultiplier={1} />
-                </div>
-            </S.Container>
-        )
-    }
-
     return (
         <S.Container>
             <h2>Informações da Barbearia</h2>
             <p className="subtitle">
                 Gerencie os dados principais da sua barbearia, como nome, contato, descrição.
             </p>
-            <S.Form onSubmit={handleSubmit}>
-                <S.ImagemWrapper>
-                    <S.ImagemContainer>
-                        <S.ImagemPerfil
-                            src={preview || 'https://via.placeholder.com/150x150'}
-                            alt="Foto da Sua Barbearia"
-                            onClick={handleClickImagem}
-                        />
-                        <i className="ri-pencil-line"></i>
-                    </S.ImagemContainer>
-                    <S.HiddenInput
-                        type="file"
-                        accept="image/*"
-                        ref={inputRef}
-                        onChange={handleImagemChange}
-                    />
-                </S.ImagemWrapper>
 
-                <S.inputGroup>
-                    <label htmlFor="nome_proprietario">Nome do Responsável</label>
-                    <S.Input
-                        type="text"
-                        id="nome_proprietario"
-                        name="nome_proprietario"
-                        value={formData.nome_proprietario}
-                        onChange={handleChange}
-                        required
-                    />
-                </S.inputGroup>
+            {isLoading ? (
+                <S.LoadingContainer>
+                    <ClipLoader color="#00c1fe" size={32} speedMultiplier={1} />
+                </S.LoadingContainer>
+            ) : (
+                <>
+                    {hasError && (
+                        <S.Message>
+                            Erro ao carregar os dados. Você pode preencher o formulário abaixo.
+                        </S.Message>
+                    )}
+                    <S.Form onSubmit={handleSubmit}>
+                        <S.ImagemWrapper>
+                            <S.ImagemContainer>
+                                <S.ImagemPerfil
+                                    src={preview || 'https://via.placeholder.com/150x150'}
+                                    alt="Foto da Sua Barbearia"
+                                    onClick={handleClickImagem}
+                                />
+                                <i className="ri-pencil-line"></i>
+                            </S.ImagemContainer>
+                            <S.HiddenInput
+                                type="file"
+                                accept="image/*"
+                                ref={inputRef}
+                                onChange={handleImagemChange}
+                            />
+                        </S.ImagemWrapper>
 
-                <S.inputGroup>
-                    <label htmlFor="nome_barbearia">Nome Da Barbearia</label>
-                    <S.Input
-                        type="text"
-                        id="nome_barbearia"
-                        name="nome_barbearia"
-                        value={formData.nome_barbearia}
-                        onChange={handleChange}
-                        required
-                    />
-                </S.inputGroup>
+                        <S.inputGroup>
+                            <label htmlFor="nome_proprietario">Nome do Responsável</label>
+                            <S.Input
+                                type="text"
+                                id="nome_proprietario"
+                                name="nome_proprietario"
+                                value={formData.nome_proprietario}
+                                onChange={handleChange}
+                                required
+                            />
+                        </S.inputGroup>
 
-                <S.inputGroup>
-                    <label htmlFor="telefone">Número Da Barbearia</label>
-                    <S.Input
-                        as={IMaskInput}
-                        mask="(00) 0 0000-0000"
-                        type="text"
-                        id="telefone"
-                        name="telefone"
-                        placeholder="telefone"
-                        value={formData.telefone}
-                        required
-                        onAccept={(value: string | undefined) =>
-                            setFormData((prev) => ({ ...prev, telefone: value || '' }))
-                        }
-                    />
-                </S.inputGroup>
+                        <S.inputGroup>
+                            <label htmlFor="nome_barbearia">Nome Da Barbearia</label>
+                            <S.Input
+                                type="text"
+                                id="nome_barbearia"
+                                name="nome_barbearia"
+                                value={formData.nome_barbearia}
+                                onChange={handleChange}
+                                required
+                            />
+                        </S.inputGroup>
 
-                <S.inputGroup>
-                    <label htmlFor="cpf">CPF</label>
-                    <S.Input
-                        as={IMaskInput}
-                        mask="000-000-000-00"
-                        type="text"
-                        id="cpf"
-                        name="cpf"
-                        placeholder="cpf"
-                        value={formData.cpf}
-                        required
-                        onAccept={(value: string | undefined) =>
-                            setFormData((prev) => ({ ...prev, cpf: value || '' }))
-                        }
-                    />
-                </S.inputGroup>
+                        <S.inputGroup>
+                            <label htmlFor="telefone">Número Da Barbearia</label>
+                            <S.Input
+                                as={IMaskInput}
+                                mask="(00) 0 0000-0000"
+                                type="text"
+                                id="telefone"
+                                name="telefone"
+                                placeholder="telefone"
+                                value={formData.telefone}
+                                required
+                                onAccept={(value: string | undefined) =>
+                                    setFormData((prev) => ({ ...prev, telefone: value || '' }))
+                                }
+                            />
+                        </S.inputGroup>
 
-                <S.inputGroup>
-                    <label htmlFor="cnpj">CNPJ</label>
-                    <S.Input
-                        as={IMaskInput}
-                        mask="00.000.000/0000-00"
-                        type="text"
-                        id="cnpj"
-                        name="cnpj"
-                        placeholder="cnpj"
-                        value={formData.cnpj}
-                        required
-                        onAccept={(value: string | undefined) =>
-                            setFormData((prev) => ({ ...prev, cnpj: value || '' }))
-                        }
-                    />
-                </S.inputGroup>
+                        <S.inputGroup>
+                            <label htmlFor="cpf">CPF</label>
+                            <S.Input
+                                as={IMaskInput}
+                                mask="000-000-000-00"
+                                type="text"
+                                id="cpf"
+                                name="cpf"
+                                placeholder="cpf"
+                                value={formData.cpf}
+                                required
+                                onAccept={(value: string | undefined) =>
+                                    setFormData((prev) => ({ ...prev, cpf: value || '' }))
+                                }
+                            />
+                        </S.inputGroup>
 
-                <S.inputGroup>
-                    <label htmlFor="descricao">Descrição da Barbearia</label>
-                    <S.TextArea
-                        id="descricao"
-                        name="descricao"
-                        value={formData.descricao}
-                        onChange={handleChange}
-                        required
-                    />
-                </S.inputGroup>
+                        <S.inputGroup>
+                            <label htmlFor="cnpj">CNPJ</label>
+                            <S.Input
+                                as={IMaskInput}
+                                mask="00.000.000/0000-00"
+                                type="text"
+                                id="cnpj"
+                                name="cnpj"
+                                placeholder="cnpj"
+                                value={formData.cnpj}
+                                required
+                                onAccept={(value: string | undefined) =>
+                                    setFormData((prev) => ({ ...prev, cnpj: value || '' }))
+                                }
+                            />
+                        </S.inputGroup>
 
-                <S.Button type="submit">Salvar alterações</S.Button>
-            </S.Form>
+                        <S.inputGroup>
+                            <label htmlFor="descricao">Descrição da Barbearia</label>
+                            <S.TextArea
+                                id="descricao"
+                                name="descricao"
+                                value={formData.descricao}
+                                onChange={handleChange}
+                                required
+                            />
+                        </S.inputGroup>
+
+                        <S.Button type="submit">Salvar alterações</S.Button>
+                    </S.Form>
+                </>
+            )}
         </S.Container>
     )
 }
