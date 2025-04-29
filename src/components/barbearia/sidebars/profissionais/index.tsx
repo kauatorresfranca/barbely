@@ -5,6 +5,7 @@ import { Funcionario } from '../../../../models/funcionario'
 import CriarProfissionalModal from '../../modals/profissional/profissional_criar'
 import EditarProfissionalModal from '../../modals/profissional/profissional_editar'
 import * as S from './styles'
+import api from '../../../../services/api'
 
 const Profissionais = () => {
     const [modalIsOpen, setModalIsOpen] = useState(false)
@@ -24,7 +25,7 @@ const Profissionais = () => {
         setHasError(false)
         try {
             const token = sessionStorage.getItem('access_token_barbearia')
-            const response = await authFetch('http://localhost:8000/api/funcionarios/', {
+            const response = await authFetch(`${api.baseURL}/funcionarios/`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -50,7 +51,7 @@ const Profissionais = () => {
 
         try {
             const token = sessionStorage.getItem('access_token_barbearia')
-            const response = await authFetch(`http://localhost:8000/api/funcionarios/${id}/`, {
+            const response = await authFetch(`${api.baseURL}/funcionarios/${id}/`, {
                 method: 'DELETE',
                 headers: {
                     Authorization: `Bearer ${token}`,

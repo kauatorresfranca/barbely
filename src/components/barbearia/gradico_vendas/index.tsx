@@ -10,6 +10,7 @@ import {
 } from 'recharts'
 import { colors } from '../../../../styles'
 import * as S from './styles'
+import api from '../../../services/api'
 
 interface GraficoVendasProps {
     inicio: string // Formato: YYYY-MM-DD
@@ -63,7 +64,7 @@ const GraficoVendas = ({ inicio, fim }: GraficoVendasProps) => {
 
             try {
                 const response = await fetch(
-                    `http://localhost:8000/api/barbearias/overview/?grafico=vendas&inicio=${inicio}&fim=${fim}`,
+                    `${api.baseURL}/barbearias/overview/?grafico=vendas&inicio=${inicio}&fim=${fim}`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,

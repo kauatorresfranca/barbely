@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import * as S from './styles'
+import api from '../../../../services/api'
 
 interface Cost {
     id: number
@@ -41,7 +42,7 @@ const Custos = () => {
                 return
             }
             try {
-                const response = await fetch('http://localhost:8000/api/custos/', {
+                const response = await fetch(`${api.baseURL}/custos/`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                         'Content-Type': 'application/json',
@@ -114,7 +115,7 @@ const Custos = () => {
         try {
             let response
             if (editingCostId) {
-                response = await fetch(`http://localhost:8000/api/custos/${editingCostId}/`, {
+                response = await fetch(`${api.baseURL}/custos/${editingCostId}/`, {
                     method: 'PUT',
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -123,7 +124,7 @@ const Custos = () => {
                     body: JSON.stringify(payload),
                 })
             } else {
-                response = await fetch('http://localhost:8000/api/custos/', {
+                response = await fetch(`${api.baseURL}/custos/`, {
                     method: 'POST',
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -191,7 +192,7 @@ const Custos = () => {
             return
         }
         try {
-            const response = await fetch(`http://localhost:8000/api/custos/${id}/`, {
+            const response = await fetch(`${api.baseURL}/custos/${id}/`, {
                 method: 'DELETE',
                 headers: {
                     Authorization: `Bearer ${token}`,

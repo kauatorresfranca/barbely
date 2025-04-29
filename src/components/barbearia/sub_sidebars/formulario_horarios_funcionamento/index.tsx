@@ -3,6 +3,7 @@ import { ClipLoader } from 'react-spinners' // Importe o ClipLoader
 import { authFetch } from '../../../../utils/authFetch'
 import { useBarbeariaAtual } from '../../../../hooks/useBarbeariaAtual'
 import * as S from './styles'
+import api from '../../../../services/api'
 
 // Interface para os dados de horário retornados pela API
 interface HorarioAPI {
@@ -54,18 +55,13 @@ const HorarioFuncionamentoForm = () => {
             setIsLoading(true)
             setHasError(false)
             try {
-                const response = await authFetch(
-                    `http://localhost:8000/api/horarios/?slug=${slug}`,
-                    {
-                        method: 'GET',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            Authorization: `Bearer ${sessionStorage.getItem(
-                                'access_token_barbearia',
-                            )}`,
-                        },
+                const response = await authFetch(`${api.baseURL}/horarios/?slug=${slug}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${sessionStorage.getItem('access_token_barbearia')}`,
                     },
-                )
+                })
 
                 if (response.ok) {
                     const data: HorarioAPI[] = await response.json()
@@ -145,7 +141,7 @@ const HorarioFuncionamentoForm = () => {
         }))
 
         try {
-            const response = await authFetch('http://localhost:8000/api/horarios/', {
+            const response = await authFetch(`${api.baseURL}/horarios/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

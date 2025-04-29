@@ -5,6 +5,7 @@ import { IMaskInput } from 'react-imask'
 import * as S from './styles'
 
 import logo from '../../../../assets/images/logo.png'
+import api from '../../../../services/api'
 
 const FormularioCadastroCliente = () => {
     const { slug } = useParams()
@@ -24,7 +25,7 @@ const FormularioCadastroCliente = () => {
 
     useEffect(() => {
         if (slug) {
-            fetch(`http://localhost:8000/api/barbearias/buscar-por-slug/${slug}/`)
+            fetch(`${api.baseURL}/barbearias/buscar-por-slug/${slug}/`)
                 .then((res) => res.json())
                 .then((data) => {
                     console.log('Resposta de /api/barbearias/buscar-por-slug/:', data) // Adicionar log
@@ -73,7 +74,7 @@ const FormularioCadastroCliente = () => {
         console.log('Payload enviado para /api/clientes/:', payload)
 
         try {
-            const response = await fetch('http://localhost:8000/api/clientes/', {
+            const response = await fetch(`${api.baseURL}/clientes/`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload),

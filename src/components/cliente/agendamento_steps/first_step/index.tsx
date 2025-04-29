@@ -7,6 +7,7 @@ import { Servico } from '../../../../models/servico'
 import * as S from './styles'
 import user from '../../../../assets/images/user.png'
 import { ClipLoader } from 'react-spinners'
+import api from '../../../../services/api'
 
 type Props = {
     setActiveTab: (
@@ -31,8 +32,8 @@ const FirstStep = ({ setActiveTab }: Props) => {
         const fetchData = async () => {
             try {
                 const [servicosRes, funcionariosRes] = await Promise.all([
-                    fetch(`http://localhost:8000/api/servicos/?barbearia_slug=${slug}`),
-                    fetch(`http://localhost:8000/api/funcionarios/?barbearia_slug=${slug}`),
+                    fetch(`${api.baseURL}/servicos/?barbearia_slug=${slug}`),
+                    fetch(`${api.baseURL}/funcionarios/?barbearia_slug=${slug}`),
                 ])
 
                 if (servicosRes.ok) {

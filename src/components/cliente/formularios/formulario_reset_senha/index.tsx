@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import * as S from './styles'
 import logo from '../../../../assets/images/logo.png'
+import api from '../../../../services/api'
 
 const FormularioResetSenha = () => {
     const [newPassword, setNewPassword] = useState('')
@@ -17,14 +18,11 @@ const FormularioResetSenha = () => {
         setMessage('')
 
         try {
-            const response = await fetch(
-                'http://localhost:8000/api/clientes/password/reset/confirm/',
-                {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ token, new_password: newPassword }),
-                },
-            )
+            const response = await fetch(`${api.baseURL}/clientes/password/reset/confirm/`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ token, new_password: newPassword }),
+            })
 
             const data = await response.json()
 

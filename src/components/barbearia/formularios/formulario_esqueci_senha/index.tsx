@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import * as S from './styles'
 import logo from '../../../../assets/images/logo.png'
+import api from '../../../../services/api'
 
 const FormularioEsqueciSenhaBarbearia = () => {
     const [email, setEmail] = useState('')
@@ -14,7 +15,7 @@ const FormularioEsqueciSenhaBarbearia = () => {
         setMessage('')
 
         try {
-            const response = await fetch('http://localhost:8000/api/barbearias/password/reset/', {
+            const response = await fetch(`${api.baseURL}/barbearias/password/reset/`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email }),

@@ -4,6 +4,7 @@ import { ClipLoader } from 'react-spinners' // Importe o ClipLoader
 import { authFetch } from '../../../../utils/authFetch'
 import { useBarbeariaAtual } from '../../../../hooks/useBarbeariaAtual'
 import * as S from './styles'
+import api from '../../../../services/api'
 
 const Localizacao = () => {
     const [form, setForm] = useState({
@@ -27,9 +28,7 @@ const Localizacao = () => {
             setIsLoading(true)
             setHasError(false)
             try {
-                const response = await fetch(
-                    `http://localhost:8000/api/endereco-barbearia-publico/${slug}/`,
-                )
+                const response = await fetch(`${api.baseURL}/endereco-barbearia-publico/${slug}/`)
 
                 if (response.ok) {
                     const data = await response.json()
@@ -104,7 +103,7 @@ const Localizacao = () => {
         }
 
         try {
-            const res = await authFetch('http://localhost:8000/api/endereco-barbearia/', {
+            const res = await authFetch(`${api.baseURL}/endereco-barbearia/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

@@ -13,6 +13,7 @@ import Financeiro from '../sidebars/financeiro/index'
 import Servicos from '../sidebars/servicos/index'
 import PerfilBarbearia from '../sidebars/perfil_barbearia/index'
 import Configuracoes from '../sidebars/configuracoes/index'
+import api from '../../../services/api'
 import { authFetch } from '../../../utils/authFetch'
 
 import * as S from './styles'
@@ -42,7 +43,7 @@ const Dash = () => {
         const fetchBarbearia = async () => {
             try {
                 const response = await authFetch(
-                    `http://localhost:8000/api/barbearias/buscar-por-slug/${slug}/`,
+                    `${api.baseURL}/barbearias/buscar-por-slug/${slug}/`,
                 )
                 const data = await response.json()
 
@@ -62,7 +63,7 @@ const Dash = () => {
     useEffect(() => {
         const fetchHorarios = async () => {
             try {
-                const response = await fetch(`http://localhost:8000/api/horarios/?slug=${slug}`)
+                const response = await fetch(`${api.baseURL}/horarios/?slug=${slug}`)
                 if (!response.ok) {
                     throw new Error('Erro ao buscar horários')
                 }

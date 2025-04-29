@@ -5,6 +5,7 @@ import { Servico } from '../../../../models/servico'
 import CriarServicoModal from '../../modals/servicos/servico_criar'
 import EditarServicoModal from '../../modals/servicos/servico_editar'
 import * as S from './styles'
+import api from '../../../../services/api'
 
 const Servicos = () => {
     const [modalIsOpen, setModalIsOpen] = useState(false)
@@ -24,7 +25,7 @@ const Servicos = () => {
         setHasError(false)
         try {
             const token = sessionStorage.getItem('access_token_barbearia')
-            const response = await authFetch('http://localhost:8000/api/servicos/', {
+            const response = await authFetch(`${api.baseURL}/servicos/`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -50,7 +51,7 @@ const Servicos = () => {
 
         try {
             const token = sessionStorage.getItem('access_token_barbearia')
-            const response = await authFetch(`http://localhost:8000/api/servicos/${id}/`, {
+            const response = await authFetch(`${api.baseURL}/servicos/${id}/`, {
                 method: 'DELETE',
                 headers: {
                     Authorization: `Bearer ${token}`,

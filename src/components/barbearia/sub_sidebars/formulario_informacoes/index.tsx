@@ -4,6 +4,7 @@ import { ClipLoader } from 'react-spinners' // Importe o ClipLoader
 import { authFetch } from '../../../../utils/authFetch'
 import { useBarbeariaAtual } from '../../../../hooks/useBarbeariaAtual'
 import * as S from './styles'
+import api from '../../../../services/api'
 
 const BarbeariaPerfilForm = () => {
     const barbearia = useBarbeariaAtual()
@@ -29,7 +30,7 @@ const BarbeariaPerfilForm = () => {
             setHasError(false)
             try {
                 const response = await authFetch(
-                    `http://localhost:8000/api/barbearias/buscar-por-slug/${slug}/`,
+                    `${api.baseURL}/barbearias/buscar-por-slug/${slug}/`,
                 )
                 if (response.ok) {
                     const data = await response.json()
@@ -100,7 +101,7 @@ const BarbeariaPerfilForm = () => {
         }
 
         try {
-            const response = await fetch('http://localhost:8000/api/barbearias/update/', {
+            const response = await fetch(`${api.baseURL}/barbearias/update/`, {
                 method: 'PUT',
                 headers: {
                     Authorization: `Bearer ${token}`,

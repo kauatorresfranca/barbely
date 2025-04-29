@@ -11,6 +11,7 @@ import * as S from './styles'
 import logo from '../../../assets/images/logo.png'
 import user from '../../../assets/images/user.png'
 import { ClipLoader } from 'react-spinners'
+import api from '../../../services/api'
 
 const PaginaBarbearia = () => {
     const navigate = useNavigate()
@@ -84,7 +85,7 @@ const PaginaBarbearia = () => {
         const fetchData = async () => {
             try {
                 const [servicosRes] = await Promise.all([
-                    fetch(`http://localhost:8000/api/servicos/?barbearia_slug=${slug}`),
+                    fetch(`${api.baseURL}/servicos/?barbearia_slug=${slug}`),
                 ])
 
                 if (servicosRes.ok) {
@@ -107,9 +108,7 @@ const PaginaBarbearia = () => {
     useEffect(() => {
         const fetchEndereco = async () => {
             try {
-                const response = await fetch(
-                    `http://localhost:8000/api/endereco-barbearia-publico/${slug}/`,
-                )
+                const response = await fetch(`${api.baseURL}/endereco-barbearia-publico/${slug}/`)
                 if (response.ok) {
                     const data = await response.json()
                     const enderecoFormatado = `${data.endereco}, ${data.numero} - ${data.bairro}, ${data.cidade} - ${data.estado}, ${data.cep}`
@@ -136,9 +135,7 @@ const PaginaBarbearia = () => {
     useEffect(() => {
         const fetchBarbearia = async () => {
             try {
-                const response = await fetch(
-                    `http://localhost:8000/api/barbearias/buscar-por-slug/${slug}/`,
-                )
+                const response = await fetch(`${api.baseURL}/barbearias/buscar-por-slug/${slug}/`)
                 if (response.ok) {
                     const data = await response.json()
                     setBarbearia(data)
@@ -161,7 +158,7 @@ const PaginaBarbearia = () => {
     useEffect(() => {
         const fetchHorarios = async () => {
             try {
-                const response = await fetch(`http://localhost:8000/api/horarios/?slug=${slug}`)
+                const response = await fetch(`${api.baseURL}/horarios/?slug=${slug}`)
                 if (response.ok) {
                     const data = await response.json()
                     console.log('Horários recebidos:', data) // Debug log to inspect the fetched data

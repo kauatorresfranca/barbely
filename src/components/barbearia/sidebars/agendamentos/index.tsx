@@ -8,6 +8,7 @@ import DetalhesModal from '../../modals/agendamentos/Detalhes'
 import StatusModal from '../../modals/agendamentos/status'
 import CriarAgendamentoModal from '../../modals/agendamentos/criar'
 import * as S from './styles'
+import api from '../../../../services/api'
 
 // Define types for data models
 type Funcionario = {
@@ -145,7 +146,7 @@ const AgendaGrafico = () => {
                 throw new Error('Você precisa estar logado para acessar os funcionários.')
             }
 
-            const res = await authFetch('http://localhost:8000/api/funcionarios/', {
+            const res = await authFetch(`${api.baseURL}/funcionarios/`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     'Content-Type': 'application/json',
@@ -177,7 +178,7 @@ const AgendaGrafico = () => {
                 throw new Error('Você precisa estar logado para acessar os serviços.')
             }
 
-            const res = await authFetch('http://localhost:8000/api/servicos/', {
+            const res = await authFetch(`${api.baseURL}/servicos/`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     'Content-Type': 'application/json',
@@ -209,15 +210,12 @@ const AgendaGrafico = () => {
                 throw new Error('Você precisa estar logado para acessar os agendamentos.')
             }
 
-            const res = await authFetch(
-                `http://localhost:8000/api/barbearia/agendamentos/?data=${data}`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        'Content-Type': 'application/json',
-                    },
+            const res = await authFetch(`${api.baseURL}/barbearia/agendamentos/?data=${data}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
                 },
-            )
+            })
 
             if (!res.ok) {
                 if (res.status === 401) {

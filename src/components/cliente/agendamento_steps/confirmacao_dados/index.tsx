@@ -5,6 +5,7 @@ import { AgendamentoData } from '../../../cliente/agendamento'
 import { authFetch } from '../../../../utils/authFetch'
 
 import * as S from './styles'
+import api from '../../../../services/api'
 
 type Props = {
     setActiveTab: (tab: string) => void
@@ -53,7 +54,7 @@ const ConfirmacaoStep = ({ setActiveTab, agendamentoData }: Props) => {
 
             console.log('Enviando payload para /api/agendamentos/criar/', payload)
 
-            const res = await authFetch('http://localhost:8000/api/agendamentos/criar/', {
+            const res = await authFetch(`${api.baseURL}/agendamentos/criar/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

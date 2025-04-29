@@ -6,6 +6,7 @@ import { authFetch } from '../../../../utils/authFetch'
 import ClienteDetail from '../../modals/cliente/cliente_detail'
 import ClienteEdit from '../../modals/cliente/editar'
 import * as S from './styles'
+import api from '../../../../services/api'
 
 const Clientes = () => {
     const [clientes, setClientes] = useState<Cliente[]>([])
@@ -40,7 +41,7 @@ const Clientes = () => {
             return
         }
 
-        authFetch(`http://localhost:8000/api/clientes/barbearia/${barbeariaId}/`, {
+        authFetch(`${api.baseURL}/clientes/barbearia/${barbeariaId}/`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
@@ -120,7 +121,7 @@ const Clientes = () => {
         }
 
         try {
-            const response = await authFetch(`http://localhost:8000/api/clientes/${cliente.id}/`, {
+            const response = await authFetch(`${api.baseURL}/clientes/${cliente.id}/`, {
                 method: 'DELETE',
                 headers: {
                     Authorization: `Bearer ${token}`,

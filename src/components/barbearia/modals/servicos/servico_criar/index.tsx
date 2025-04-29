@@ -1,3 +1,4 @@
+import api from '../../../../../services/api'
 import * as S from './styles'
 
 interface Props {
@@ -23,7 +24,7 @@ const CriarServicoModal = ({ closeModal, onSuccess }: Props) => {
         const token = sessionStorage.getItem('access_token_barbearia')
 
         try {
-            const response = await fetch('http://localhost:8000/api/servicos/', {
+            const response = await fetch(`${api.baseURL}/servicos/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

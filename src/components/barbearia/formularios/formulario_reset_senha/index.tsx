@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import * as S from './styles'
 import logo from '../../../../assets/images/logo.png'
+import api from '../../../../services/api'
 
 const FormularioResetSenhaBarbearia = () => {
     const [newPassword, setNewPassword] = useState('')
@@ -25,14 +26,11 @@ const FormularioResetSenhaBarbearia = () => {
         console.log('Enviando:', { token, new_password: newPassword })
 
         try {
-            const response = await fetch(
-                'http://localhost:8000/api/barbearias/password/reset/confirm/',
-                {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ token, new_password: newPassword }),
-                },
-            )
+            const response = await fetch(`${api.baseURL}/barbearias/password/reset/confirm/`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ token, new_password: newPassword }),
+            })
 
             const data = await response.json()
             console.log('Resposta do servidor:', data)

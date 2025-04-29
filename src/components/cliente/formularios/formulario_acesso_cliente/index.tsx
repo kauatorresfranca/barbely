@@ -4,6 +4,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import * as S from './styles'
 
 import logo from '../../../../assets/images/logo.png'
+import api from '../../../../services/api'
 
 const FormularioLoginCliente = () => {
     const [formData, setFormData] = useState({ email: '', senha: '' })
@@ -21,7 +22,7 @@ const FormularioLoginCliente = () => {
         setError('')
 
         try {
-            const response = await fetch('http://localhost:8000/api/clientes/login/', {
+            const response = await fetch(`${api.baseURL}/clientes/login/`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email: formData.email, senha: formData.senha }),
@@ -33,13 +34,10 @@ const FormularioLoginCliente = () => {
                 sessionStorage.setItem('access_token_cliente', data.access)
                 sessionStorage.setItem('refresh_token_cliente', data.refresh)
 
-                const clienteResponse = await fetch(
-                    `http://localhost:8000/api/clientes/${data.cliente_id}/`,
-                    {
-                        method: 'GET',
-                        headers: { Authorization: `Bearer ${data.access}` },
-                    },
-                )
+                const clienteResponse = await fetch(`${api.baseURL}/clientes/${data.cliente_id}/`, {
+                    method: 'GET',
+                    headers: { Authorization: `Bearer ${data.access}` },
+                })
 
                 const clienteData = await clienteResponse.json()
 

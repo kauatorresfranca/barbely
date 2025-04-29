@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import * as S from './styles'
 
 import logo from '../../../../assets/images/logo.png'
+import api from '../../../../services/api'
 
 const FormularioCadastro = () => {
     const [formData, setFormData] = useState({
@@ -56,7 +57,7 @@ const FormularioCadastro = () => {
         }
 
         try {
-            const response = await fetch('http://localhost:8000/api/barbearias/', {
+            const response = await fetch(`${api.baseURL}/barbearias/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

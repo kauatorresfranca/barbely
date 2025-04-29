@@ -5,6 +5,7 @@ import { Cliente } from '../../../../models/cliente'
 import { authFetch } from '../../../../utils/authFetch'
 import * as S from './styles'
 import { colors } from '../../../../../styles'
+import api from '../../../../services/api'
 
 const MinhaContaModal = ({
     onClose,
@@ -142,8 +143,8 @@ const MinhaContaModal = ({
         }
 
         try {
-            console.log('Enviando dados para:', `http://localhost:8000/api/clientes/${cliente.id}/`)
-            const response = await authFetch(`http://localhost:8000/api/clientes/${cliente.id}/`, {
+            console.log('Enviando dados para:', `${api.baseURL}/clientes/${cliente.id}/`)
+            const response = await authFetch(`${api.baseURL}/clientes/${cliente.id}/`, {
                 method: 'PATCH',
                 body: form,
             })

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import * as S from './styles' // Ajuste o caminho se necessário
 import logo from '../../../../assets/images/logo.png'
+import api from '../../../../services/api'
 
 const LoginBarbearia = () => {
     const [formData, setFormData] = useState({ email: '', senha: '' })
@@ -18,7 +19,7 @@ const LoginBarbearia = () => {
         setError('')
 
         try {
-            const response = await fetch('http://localhost:8000/api/barbearias/login/', {
+            const response = await fetch(`${api.baseURL}/barbearias/login/`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email: formData.email, password: formData.senha }),
@@ -32,7 +33,7 @@ const LoginBarbearia = () => {
                 sessionStorage.setItem('barbearia_token', data.barbearia_id)
 
                 const barbeariaResponse = await fetch(
-                    `http://localhost:8000/api/barbearias/${data.barbearia_id}/`,
+                    `${api.baseURL}/barbearias/${data.barbearia_id}/`,
                     {
                         method: 'GET',
                         headers: { Authorization: `Bearer ${data.access_token}` },

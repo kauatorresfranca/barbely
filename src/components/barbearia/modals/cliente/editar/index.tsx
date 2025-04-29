@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Cliente } from '../../../../../models/cliente'
 import { authFetch } from '../../../../../utils/authFetch'
 import * as S from './styles'
+import api from '../../../../../services/api'
 
 interface ClienteEditProps {
     cliente: Cliente | null
@@ -19,7 +20,7 @@ const ClienteEdit: React.FC<ClienteEditProps> = ({ cliente, closeModal }) => {
 
         const token = sessionStorage.getItem('access_token_barbearia')
         try {
-            await authFetch(`http://localhost:8000/api/clientes/${cliente.id}/`, {
+            await authFetch(`${api.baseURL}/clientes/${cliente.id}/`, {
                 method: 'PUT',
                 headers: {
                     Authorization: `Bearer ${token}`,

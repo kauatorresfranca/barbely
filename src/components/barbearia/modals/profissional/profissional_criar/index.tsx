@@ -1,6 +1,7 @@
 import { useState } from 'react'
 
 import * as S from './styles'
+import api from '../../../../../services/api'
 
 interface Props {
     closeModal: () => void
@@ -24,7 +25,7 @@ const CriarProfissionalModal = ({ closeModal, onSuccess }: Props) => {
         try {
             const token = sessionStorage.getItem('access_token_barbearia')
             console.log('Token enviado:', token)
-            const response = await fetch('http://localhost:8000/api/funcionarios/', {
+            const response = await fetch(`${api.baseURL}/funcionarios/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

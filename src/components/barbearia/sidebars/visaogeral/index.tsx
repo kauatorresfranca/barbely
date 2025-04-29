@@ -3,6 +3,7 @@ import { format } from 'date-fns'
 import GraficoVendas from '../../gradico_vendas'
 import * as S from './styles'
 import { ClipLoader } from 'react-spinners' // Importe o ClipLoader
+import api from '../../../../services/api'
 
 // Custom hook to animate counting up
 const useCountUp = (endValue: number, duration: number = 500) => {
@@ -103,7 +104,7 @@ const Overview = () => {
         const token = sessionStorage.getItem('access_token_barbearia')
         try {
             const response = await fetch(
-                `http://localhost:8000/api/barbearias/overview/?inicio=${inicio}&fim=${fim}`,
+                `${api.baseURL}http://localhost:8000/api/barbearias/overview/?inicio=${inicio}&fim=${fim}`,
                 {
                     headers: { Authorization: `Bearer ${token}` },
                 },

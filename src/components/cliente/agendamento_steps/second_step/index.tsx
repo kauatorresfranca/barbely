@@ -8,6 +8,7 @@ import { Servico } from '../../../../models/servico'
 
 import * as S from './styles'
 import { authFetch } from '../../../../utils/authFetch'
+import api from '../../../../services/api'
 
 type Props = {
     setActiveTab: (
@@ -108,7 +109,7 @@ const HorariosStep = ({ setActiveTab, servico, funcionario }: Props) => {
                     diaSemana,
                 )
 
-                const url = new URL('http://localhost:8000/api/agendamentos/horarios-disponiveis/')
+                const url = new URL(`${api.baseURL}/agendamentos/horarios-disponiveis/`)
                 url.searchParams.append('servico', String(servico.id))
                 url.searchParams.append('data', dataFormatada)
                 if (funcionario?.id != null) {
