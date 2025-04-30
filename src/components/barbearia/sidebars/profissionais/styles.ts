@@ -31,12 +31,13 @@ export const ServiceHeader = styled.div`
         height: 42px;
         width: 140px;
         font-weight: bold;
-        color: ${colors.branco};
-        background: ${colors.cinzaClaro};
-        border: 1px solid ${colors.cinzaTransparent};
+        color: ${colors.cinzaEscuro};
+        background: linear-gradient(45deg, ${colors.corPrimaria}, ${colors.corPrimaria}AA);
+        border: none;
         border-radius: 10px;
         cursor: pointer;
         transition: transform 0.3s ease;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 
         &:hover {
             transform: scale(1.03);
@@ -72,7 +73,7 @@ export const ListItem = styled.li`
     align-items: center;
     height: 58px;
     padding: 20px;
-    background-color: ${colors.cinzaClaro};
+    background: linear-gradient(-45deg, ${colors.cinzaClaro}, ${colors.cinzaClaro}AA);
     margin-bottom: 8px;
     border-radius: 4px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);

@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { colors } from '../../../../../styles'
+import { breakpoints, colors } from '../../../../../styles'
 
 export const Container = styled.div`
     .subtitle {
@@ -13,6 +13,10 @@ export const Container = styled.div`
 export const Financeiro = styled.div`
     display: flex;
     gap: 40px;
+
+    @media (max-width: ${breakpoints.tablet}) {
+        flex-direction: column;
+    }
 `
 
 export const SiderBarPerfil = styled.div`
@@ -63,5 +67,9 @@ export const Tab = styled.div`
             right: 8px;
             color: ${colors.corPrimaria};
         }
+    }
+
+    @media (max-width: ${breakpoints.tablet}) {
+        width: 100%;
     }
 `

@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { colors } from '../../../../../styles'
+import { breakpoints, colors } from '../../../../../styles'
 
 export const Container = styled.div`
     width: 680px;
@@ -7,6 +7,10 @@ export const Container = styled.div`
     padding: 20px;
     border-radius: 8px;
     color: #fff;
+
+    @media (max-width: ${breakpoints.tablet}) {
+        width: 100%;
+    }
 `
 
 export const PlanosGrid = styled.div`

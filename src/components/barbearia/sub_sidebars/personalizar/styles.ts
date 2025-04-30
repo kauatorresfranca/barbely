@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { colors } from '../../../../../styles'
+import { breakpoints, colors } from '../../../../../styles'
 
 export const Container = styled.div`
     display: flex;
@@ -10,4 +10,8 @@ export const Container = styled.div`
     gap: 20px;
     border-radius: 10px;
     background-color: ${colors.cinzaClaro};
+
+    @media (max-width: ${breakpoints.tablet}) {
+        width: 100%;
+    }
 `

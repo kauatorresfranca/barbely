@@ -21,11 +21,12 @@ export const Filtro = styled.div`
         width: 140px;
         font-weight: bold;
         color: ${colors.branco};
-        background: linear-gradient(45deg, ${colors.corPrimaria}, ${colors.corPrimaria}AA);
+        background-color: ${colors.cinzaClaro};
         border: none;
         border-radius: 10px;
         cursor: pointer;
         transition: transform 0.3s ease;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 
         &:hover {
             transform: scale(1.03);
@@ -53,12 +54,13 @@ export const CriarAgendamento = styled.button`
     height: 42px;
     width: 140px;
     font-weight: bold;
-    color: ${colors.branco};
-    background: ${colors.cinzaClaro};
-    border: 1px solid ${colors.cinzaTransparent};
+    color: ${colors.cinzaEscuro};
+    background: linear-gradient(45deg, ${colors.corPrimaria}, ${colors.corPrimaria}AA);
+    border: none;
     border-radius: 10px;
     cursor: pointer;
     transition: transform 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 
     &:hover {
         transform: scale(1.03);

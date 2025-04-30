@@ -19,6 +19,7 @@ import { authFetch } from '../../../utils/authFetch'
 import * as S from './styles'
 
 import logo from '../../../assets/images/logo.png'
+import user from '../../../assets/images/user.png'
 
 // Definindo a interface para o tipo do horário
 interface Horario {
@@ -168,10 +169,7 @@ const Dash = () => {
                     <img id="logo_barberly" src={logo} alt="Barberly" />
                 </S.BarberProfile>
                 <S.Profile>
-                    <img
-                        src={preview || 'https://via.placeholder.com/150x150'}
-                        alt="logo da barbearia"
-                    />
+                    <img src={preview || user} alt="logo da barbearia" />
                     <div>
                         <h3>{barbearia?.nome_barbearia}</h3>
                         <S.Activity>

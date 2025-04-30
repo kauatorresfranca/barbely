@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { formatInTimeZone, toZonedTime } from 'date-fns-tz'
 import { addDays, subDays, isSameDay } from 'date-fns'
-import { ClipLoader } from 'react-spinners'
 import { authFetch } from '../../../../utils/authFetch'
 import { Agendamento } from '../../../cliente/modals/meus_agendamentos'
 import DetalhesModal from '../../modals/agendamentos/Detalhes'
@@ -56,7 +55,7 @@ const AgendaGrafico = () => {
     const [funcionarios, setFuncionarios] = useState<Funcionario[]>([])
     const [servicos, setServicos] = useState<Servico[]>([])
     const [isLoading, setIsLoading] = useState<boolean>(true)
-    const [hasError, setHasError] = useState<boolean>(false)
+    const [, setHasError] = useState<boolean>(false)
     const [modalIsOpen, setModalIsOpen] = useState<boolean>(false)
     const [statusModalIsOpen, setStatusModalIsOpen] = useState<boolean>(false)
     const [createModalIsOpen, setCreateModalIsOpen] = useState<boolean>(false)
@@ -285,7 +284,7 @@ const AgendaGrafico = () => {
                 status: 'CONFIRMADO',
             }
 
-            const res = await authFetch('http://localhost:8000/api/barbearia/agendamentos/criar/', {
+            const res = await authFetch(`${api.baseURL}/barbearia/agendamentos/criar/`, {
                 method: 'POST',
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -335,17 +334,14 @@ const AgendaGrafico = () => {
                 throw new Error('Você precisa estar logado para atualizar o status.')
             }
 
-            const res = await authFetch(
-                `http://localhost:8000/api/agendamentos/${agendamentoId}/`,
-                {
-                    method: 'PATCH',
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ status: novoStatus }),
+            const res = await authFetch(`${api.baseURL}/agendamentos/${agendamentoId}/`, {
+                method: 'PATCH',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
                 },
-            )
+                body: JSON.stringify({ status: novoStatus }),
+            })
 
             if (!res.ok) {
                 const erroData = await res.json()
@@ -373,15 +369,11 @@ const AgendaGrafico = () => {
             setIsLoading(true)
             setHasError(false)
             try {
-                const [funcionariosSuccess, servicosSuccess, agendamentosSuccess] =
-                    await Promise.all([
-                        buscarFuncionarios(),
-                        buscarServicos(),
-                        buscarAgendamentos(dataSelecionada),
-                    ])
-                if (!funcionariosSuccess || !servicosSuccess || !agendamentosSuccess) {
-                    setHasError(true)
-                }
+                await Promise.all([
+                    buscarFuncionarios(),
+                    buscarServicos(),
+                    buscarAgendamentos(dataSelecionada),
+                ])
             } catch (err: unknown) {
                 const error = err as Error
                 console.error('Erro ao carregar dados:', error)
@@ -411,25 +403,6 @@ const AgendaGrafico = () => {
     const handleRedirectToLogin = (): void => {
         const slug = sessionStorage.getItem('barbearia_slug') || 'default-slug'
         window.location.href = `/barbearia/${slug}/login`
-    }
-
-    const hasValidData = funcionarios.length > 0 && servicos.length > 0
-
-    if (isLoading || hasError || !hasValidData) {
-        return (
-            <S.Container>
-                <div
-                    style={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        height: '100vh',
-                    }}
-                >
-                    <ClipLoader color="#00c1fe" size={32} speedMultiplier={1} />
-                </div>
-            </S.Container>
-        )
     }
 
     return (
@@ -463,105 +436,152 @@ const AgendaGrafico = () => {
                     </S.DateNavigator>
                     <button onClick={() => buscarAgendamentos(dataSelecionada)}>Atualizar</button>
                 </S.Filtro>
-                <S.CriarAgendamento onClick={openCreateModal}>Criar Agendamento</S.CriarAgendamento>
+                <S.CriarAgendamento
+                    onClick={openCreateModal}
+                    disabled={funcionarios.length === 0 || servicos.length === 0}
+                >
+                    Criar Agendamento
+                </S.CriarAgendamento>
             </S.MeusAgendamentosHeader>
             <S.HorariosContainer>
-                <S.FuncionariosHeader>
-                    {funcionarios.map((funcionario) => (
-                        <S.FuncionarioTitle key={funcionario.id}>
-                            {funcionario.nome}
-                        </S.FuncionarioTitle>
-                    ))}
-                </S.FuncionariosHeader>
-                <S.TimelinesContainer>
-                    <S.Horarios>
-                        {horas.map((hora) => {
-                            const [h, m] = hora.split(':').map(Number)
-                            const minutosDesde8h = (h - 8) * 60 + m
-                            const top = minutosDesde8h * alturaPorMinuto
-
-                            return (
-                                <S.Hora key={hora} style={{ top: `${top}px` }}>
-                                    {hora}
-                                </S.Hora>
-                            )
-                        })}
-                    </S.Horarios>
-                    <S.Timelines>
-                        {funcionarios.map((funcionario) => (
-                            <S.Timeline
-                                key={funcionario.id}
-                                style={{ height: `${alturaTimeline}px` }}
-                            >
-                                <S.AgendamentosArea>
-                                    {horas.map((hora) => {
-                                        const [h, m] = hora.split(':').map(Number)
-                                        const minutosDesde8h = (h - 8) * 60 + m
-                                        const top = minutosDesde8h * alturaPorMinuto
-
-                                        return (
-                                            <S.LinhaHora
-                                                key={`linha-${hora}-${funcionario.id}`}
-                                                top={top}
-                                            />
-                                        )
-                                    })}
-                                    {agendamentos
-                                        .filter(
-                                            (agendamento) =>
-                                                agendamento.funcionario === funcionario.id,
-                                        )
-                                        .map((agendamento) => {
-                                            const [h, m] = agendamento.hora_inicio
-                                                .split(':')
-                                                .map(Number)
+                {isLoading ? (
+                    <S.LoadingContainer>
+                        <S.Message>Carregando agendamentos...</S.Message>
+                    </S.LoadingContainer>
+                ) : (
+                    <>
+                        {funcionarios.length === 0 ? (
+                            <S.Message>
+                                Nenhum funcionário cadastrado. Adicione funcionários para visualizar
+                                a agenda.
+                            </S.Message>
+                        ) : (
+                            <>
+                                <S.FuncionariosHeader>
+                                    {funcionarios.map((funcionario) => (
+                                        <S.FuncionarioTitle key={funcionario.id}>
+                                            {funcionario.nome}
+                                        </S.FuncionarioTitle>
+                                    ))}
+                                </S.FuncionariosHeader>
+                                <S.TimelinesContainer>
+                                    <S.Horarios>
+                                        {horas.map((hora) => {
+                                            const [h, m] = hora.split(':').map(Number)
                                             const minutosDesde8h = (h - 8) * 60 + m
                                             const top = minutosDesde8h * alturaPorMinuto
 
                                             return (
-                                                <S.AgendamentoBlock
-                                                    key={agendamento.id}
-                                                    style={{ top: `${top}px` }}
-                                                >
-                                                    <S.AgendamentoInfo
-                                                        hora={agendamento.hora_inicio}
-                                                        status={agendamento.status}
-                                                    >
-                                                        <p className="status">
-                                                            {formatarStatus(agendamento.status)}
-                                                        </p>
-                                                        <div>
-                                                            <p className="cliente">
-                                                                {agendamento.cliente_nome}
-                                                            </p>
-                                                            <p className="servico">
-                                                                {agendamento.servico_nome} -{' '}
-                                                                {agendamento.servico_duracao} min
-                                                            </p>
-                                                        </div>
-                                                    </S.AgendamentoInfo>
-                                                    <div style={{ display: 'flex', gap: '8px' }}>
-                                                        <S.Button
-                                                            onClick={() => openModal(agendamento)}
-                                                        >
-                                                            Detalhes
-                                                        </S.Button>
-                                                        <S.Button
-                                                            onClick={() =>
-                                                                openStatusModal(agendamento)
-                                                            }
-                                                        >
-                                                            Alterar Status
-                                                        </S.Button>
-                                                    </div>
-                                                </S.AgendamentoBlock>
+                                                <S.Hora key={hora} style={{ top: `${top}px` }}>
+                                                    {hora}
+                                                </S.Hora>
                                             )
                                         })}
-                                </S.AgendamentosArea>
-                            </S.Timeline>
-                        ))}
-                    </S.Timelines>
-                </S.TimelinesContainer>
+                                    </S.Horarios>
+                                    <S.Timelines>
+                                        {funcionarios.map((funcionario) => (
+                                            <S.Timeline
+                                                key={funcionario.id}
+                                                style={{ height: `${alturaTimeline}px` }}
+                                            >
+                                                <S.AgendamentosArea>
+                                                    {horas.map((hora) => {
+                                                        const [h, m] = hora.split(':').map(Number)
+                                                        const minutosDesde8h = (h - 8) * 60 + m
+                                                        const top = minutosDesde8h * alturaPorMinuto
+
+                                                        return (
+                                                            <S.LinhaHora
+                                                                key={`linha-${hora}-${funcionario.id}`}
+                                                                top={top}
+                                                            />
+                                                        )
+                                                    })}
+                                                    {agendamentos
+                                                        .filter(
+                                                            (agendamento) =>
+                                                                agendamento.funcionario ===
+                                                                funcionario.id,
+                                                        )
+                                                        .map((agendamento) => {
+                                                            const [h, m] = agendamento.hora_inicio
+                                                                .split(':')
+                                                                .map(Number)
+                                                            const minutosDesde8h = (h - 8) * 60 + m
+                                                            const top =
+                                                                minutosDesde8h * alturaPorMinuto
+
+                                                            return (
+                                                                <S.AgendamentoBlock
+                                                                    key={agendamento.id}
+                                                                    style={{ top: `${top}px` }}
+                                                                >
+                                                                    <S.AgendamentoInfo
+                                                                        hora={
+                                                                            agendamento.hora_inicio
+                                                                        }
+                                                                        status={agendamento.status}
+                                                                    >
+                                                                        <p className="status">
+                                                                            {formatarStatus(
+                                                                                agendamento.status,
+                                                                            )}
+                                                                        </p>
+                                                                        <div>
+                                                                            <p className="cliente">
+                                                                                {
+                                                                                    agendamento.cliente_nome
+                                                                                }
+                                                                            </p>
+                                                                            <p className="servico">
+                                                                                {
+                                                                                    agendamento.servico_nome
+                                                                                }{' '}
+                                                                                -{' '}
+                                                                                {
+                                                                                    agendamento.servico_duracao
+                                                                                }{' '}
+                                                                                min
+                                                                            </p>
+                                                                        </div>
+                                                                    </S.AgendamentoInfo>
+                                                                    <div
+                                                                        style={{
+                                                                            display: 'flex',
+                                                                            gap: '8px',
+                                                                        }}
+                                                                    >
+                                                                        <S.Button
+                                                                            onClick={() =>
+                                                                                openModal(
+                                                                                    agendamento,
+                                                                                )
+                                                                            }
+                                                                        >
+                                                                            Detalhes
+                                                                        </S.Button>
+                                                                        <S.Button
+                                                                            onClick={() =>
+                                                                                openStatusModal(
+                                                                                    agendamento,
+                                                                                )
+                                                                            }
+                                                                        >
+                                                                            Alterar Status
+                                                                        </S.Button>
+                                                                    </div>
+                                                                </S.AgendamentoBlock>
+                                                            )
+                                                        })}
+                                                </S.AgendamentosArea>
+                                            </S.Timeline>
+                                        ))}
+                                    </S.Timelines>
+                                </S.TimelinesContainer>
+                            </>
+                        )}
+                    </>
+                )}
             </S.HorariosContainer>
 
             {/* Modals */}

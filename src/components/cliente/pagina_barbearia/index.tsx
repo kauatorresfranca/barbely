@@ -273,7 +273,11 @@ const PaginaBarbearia = () => {
                                 <h3>
                                     <i className="ri-information-line"></i> Sobre Nós
                                 </h3>
-                                <p>{barbearia.descricao}</p>
+                                <p>
+                                    {barbearia.descricao.length > 0
+                                        ? barbearia.descricao
+                                        : `Descrição da Barbearia`}
+                                </p>
                             </S.AboutUs>
                             <S.Hours>
                                 <h3>

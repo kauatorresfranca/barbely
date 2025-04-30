@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { ClipLoader } from 'react-spinners'
 import { authFetch } from '../../../../utils/authFetch'
 import { Servico } from '../../../../models/servico'
 import CriarServicoModal from '../../modals/servicos/servico_criar'
@@ -13,27 +12,43 @@ const Servicos = () => {
     const [servicos, setServicos] = useState<Servico[]>([])
     const [isLoading, setIsLoading] = useState(true)
     const [hasError, setHasError] = useState(false)
+    const [selectedServico, setSelectedServico] = useState<Servico | null>(null)
 
     const openModal = () => setModalIsOpen(true)
     const closeModal = () => setModalIsOpen(false)
 
-    const openEditModal = () => setEditModalIsOpen(true)
-    const closeEditModal = () => setEditModalIsOpen(false)
+    const openEditModal = (servico: Servico) => {
+        setSelectedServico(servico)
+        setEditModalIsOpen(true)
+    }
+    const closeEditModal = () => {
+        setSelectedServico(null)
+        setEditModalIsOpen(false)
+    }
 
     const fetchServicos = async () => {
         setIsLoading(true)
         setHasError(false)
         try {
             const token = sessionStorage.getItem('access_token_barbearia')
+            if (!token) {
+                throw new Error('Você precisa estar logado para acessar os serviços.')
+            }
+
             const response = await authFetch(`${api.baseURL}/servicos/`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
                 },
             })
+
             if (response.ok) {
                 const data = await response.json()
                 setServicos(data)
             } else {
+                if (response.status === 401) {
+                    throw new Error('Sessão expirada. Por favor, faça login novamente.')
+                }
                 console.error('Erro ao buscar serviços')
                 setHasError(true)
             }
@@ -51,6 +66,10 @@ const Servicos = () => {
 
         try {
             const token = sessionStorage.getItem('access_token_barbearia')
+            if (!token) {
+                throw new Error('Você precisa estar logado para deletar serviços.')
+            }
+
             const response = await authFetch(`${api.baseURL}/servicos/${id}/`, {
                 method: 'DELETE',
                 headers: {
@@ -66,6 +85,11 @@ const Servicos = () => {
         } catch (error) {
             console.error('Erro:', error)
         }
+    }
+
+    const handleRedirectToLogin = () => {
+        const slug = sessionStorage.getItem('barbearia_slug') || 'default-slug'
+        window.location.href = `/barbearia/${slug}/login`
     }
 
     useEffect(() => {
@@ -84,14 +108,23 @@ const Servicos = () => {
                     <button onClick={openModal}>+ Novo Serviço</button>
                 </S.ServiceHeader>
 
+                {hasError && (
+                    <S.Message>
+                        Erro ao carregar os serviços.{' '}
+                        <span
+                            style={{ color: '#3399ff', cursor: 'pointer' }}
+                            onClick={handleRedirectToLogin}
+                        >
+                            Fazer login
+                        </span>{' '}
+                        ou tente novamente.
+                    </S.Message>
+                )}
+
                 {isLoading ? (
                     <S.LoadingContainer>
-                        <ClipLoader color="#00c1fe" size={32} speedMultiplier={1} />
+                        <S.Message>Carregando serviços...</S.Message>
                     </S.LoadingContainer>
-                ) : hasError ? (
-                    <S.Message>Erro ao carregar os serviços. Tente novamente.</S.Message>
-                ) : servicos.length === 0 ? (
-                    <S.Message>Você ainda não tem serviços cadastrados.</S.Message>
                 ) : (
                     <>
                         <S.Head>
@@ -109,7 +142,7 @@ const Servicos = () => {
                                     <S.IconsGroup>
                                         <i
                                             className="ri-edit-2-line edit"
-                                            onClick={openEditModal}
+                                            onClick={() => openEditModal(servico)}
                                         ></i>
                                         <i
                                             className="ri-delete-bin-line delete"
@@ -125,7 +158,9 @@ const Servicos = () => {
             </S.Container>
 
             {modalIsOpen && <CriarServicoModal closeModal={closeModal} onSuccess={fetchServicos} />}
-            {editModalIsOpen && <EditarServicoModal closeModal={closeEditModal} />}
+            {editModalIsOpen && selectedServico && (
+                <EditarServicoModal closeModal={closeEditModal} />
+            )}
         </>
     )
 }

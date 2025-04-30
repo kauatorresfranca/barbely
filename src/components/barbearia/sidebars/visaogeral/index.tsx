@@ -203,25 +203,27 @@ const Overview = () => {
                 </S.DateRange>
                 {showDateInputs && (
                     <S.DateInputsWrapper ref={dateInputsRef}>
-                        <S.InputGroup>
-                            <label>Início</label>
-                            <input
-                                type="date"
-                                value={inicio}
-                                onChange={(e) => setInicio(e.target.value)}
-                                max={fim}
-                            />
-                        </S.InputGroup>
-                        <S.InputGroup>
-                            <label>Fim</label>
-                            <input
-                                type="date"
-                                value={fim}
-                                onChange={(e) => setFim(e.target.value)}
-                                min={inicio}
-                                max={hojeISO}
-                            />
-                        </S.InputGroup>
+                        <S.InputsGroup>
+                            <S.InputGroup>
+                                <label>Início</label>
+                                <input
+                                    type="date"
+                                    value={inicio}
+                                    onChange={(e) => setInicio(e.target.value)}
+                                    max={fim}
+                                />
+                            </S.InputGroup>
+                            <S.InputGroup>
+                                <label>Fim</label>
+                                <input
+                                    type="date"
+                                    value={fim}
+                                    onChange={(e) => setFim(e.target.value)}
+                                    min={inicio}
+                                    max={hojeISO}
+                                />
+                            </S.InputGroup>
+                        </S.InputsGroup>
                         <button onClick={handleCustomDateChange}>Filtrar</button>
                     </S.DateInputsWrapper>
                 )}

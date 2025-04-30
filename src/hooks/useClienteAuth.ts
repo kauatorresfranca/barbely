@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Cliente } from '../models/cliente'
 import { authFetch } from '../utils/authFetch'
+import api from '../services/api'
 
 export const useCliente = () => {
     const [cliente, setCliente] = useState<Cliente | null>(null)
@@ -15,7 +16,7 @@ export const useCliente = () => {
                 return
             }
 
-            const response = await authFetch('http://localhost:8000/api/clientes/user-info/', {
+            const response = await authFetch(`${api.baseURL}/clientes/user-info/`, {
                 method: 'GET',
                 headers: {
                     Authorization: `Bearer ${token}`,

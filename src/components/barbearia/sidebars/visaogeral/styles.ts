@@ -49,6 +49,8 @@ export const Filtro = styled.div`
     }
 
     @media (max-width: ${breakpoints.tablet}) {
+        gap: 8px;
+
         select {
             width: 160px;
             font-size: 12px;
@@ -84,13 +86,13 @@ export const DateInputsWrapper = styled.div`
     position: absolute;
     top: 50px;
     left: 170px;
+    display: flex;
     z-index: 10;
     background: ${colors.cinzaClaro};
     border: 1px solid ${colors.cinzaTransparent};
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     padding: 12px 12px 20px 12px;
-    display: flex;
     gap: 8px;
     align-items: flex-end;
 
@@ -109,11 +111,31 @@ export const DateInputsWrapper = styled.div`
             opacity: 0.9;
         }
     }
+
+    @media (max-width: ${breakpoints.tablet}) {
+        flex-direction: column;
+        left: 0;
+        right: 0;
+        padding: 12px 12px 12px 12px;
+
+        button {
+            width: 100%;
+        }
+    }
 `
 
 export const InputsContainer = styled.div`
     display: flex;
     width: 30%;
+`
+
+export const InputsGroup = styled.div`
+    display: flex;
+    gap: 8px;
+
+    @media (max-width: ${breakpoints.tablet}) {
+        width: 100%;
+    }
 `
 
 export const InputGroup = styled.div`
@@ -150,6 +172,14 @@ export const InputGroup = styled.div`
 
         &::-webkit-calendar-picker-indicator {
             filter: invert(1); // Makes the calendar icon white
+        }
+    }
+
+    @media (max-width: ${breakpoints.tablet}) {
+        width: 100%;
+
+        input[type='date'] {
+            width: 100%;
         }
     }
 `
