@@ -2,12 +2,13 @@ import { useEffect, useRef, useState } from 'react'
 import { IMaskInput } from 'react-imask'
 import { ClipLoader } from 'react-spinners'
 import { authFetch } from '../../../../utils/authFetch'
-import { useBarbeariaAtual } from '../../../../hooks/useBarbeariaAtual'
+import { useBarbeariaAtual, useSetBarbeariaAtual } from '../../../../hooks/useBarbeariaAtual'
 import * as S from './styles'
 import api from '../../../../services/api'
 
 const BarbeariaPerfilForm = () => {
     const barbearia = useBarbeariaAtual()
+    const setBarbeariaAtual = useSetBarbeariaAtual()
     const slug = barbearia?.slug
     const [preview, setPreview] = useState<string | null>(null)
     const [formData, setFormData] = useState({
@@ -49,8 +50,7 @@ const BarbeariaPerfilForm = () => {
                         descricao: data.descricao || '',
                     }))
                     if (data.imagem) {
-                        const isFullUrl = data.imagem.startsWith('http')
-                        setPreview(isFullUrl ? data.imagem : `${api.baseURL}${data.imagem}`)
+                        setPreview(data.imagem)
                     }
                 } else {
                     console.error('Erro ao buscar barbearia')
@@ -87,6 +87,10 @@ const BarbeariaPerfilForm = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         const token = sessionStorage.getItem('access_token_barbearia')
+        if (!barbearia || !barbearia.id) {
+            alert('ID da barbearia não encontrado.')
+            return
+        }
         const form = new FormData()
 
         form.append('nome_proprietario', formData.nome_proprietario)
@@ -101,15 +105,22 @@ const BarbeariaPerfilForm = () => {
         }
 
         try {
-            const response = await fetch(`${api.baseURL}/barbearias/update/`, {
-                method: 'PUT',
+            const response = await fetch(`${api.baseURL}/barbearias/${barbearia.id}/`, {
+                method: 'PATCH',
                 headers: {
                     Authorization: `Bearer ${token}`,
+                    // Removido Content-Type para permitir multipart/form-data automático
                 },
                 body: form,
             })
 
             if (response.ok) {
+                const updatedResponse = await authFetch(
+                    `${api.baseURL}/barbearias/buscar-por-slug/${slug}/`,
+                )
+                const updatedData = await updatedResponse.json()
+                setBarbeariaAtual(updatedData)
+                setPreview(updatedData.imagem)
                 alert('Dados enviados com sucesso!')
             } else {
                 const errorData = await response.json()

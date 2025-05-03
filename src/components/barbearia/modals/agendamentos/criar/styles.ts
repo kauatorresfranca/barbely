@@ -24,6 +24,7 @@ export const Modal = styled.div`
     animation: slideIn 0.4s ease-out;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
     border: 1px solid rgba(255, 255, 255, 0.1);
+    overflow-y: scroll;
 
     h2 {
         margin-bottom: 1.5rem;

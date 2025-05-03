@@ -47,10 +47,10 @@ const Dash = () => {
                     `${api.baseURL}/barbearias/buscar-por-slug/${slug}/`,
                 )
                 const data = await response.json()
-
+                console.log('dados do buscar por slug:', data)
                 if (data.imagem) {
-                    const isFullUrl = data.imagem.startsWith('http')
-                    setPreview(isFullUrl ? data.imagem : `http://localhost:8000${data.imagem}`)
+                    // A URL da imagem já será uma URL completa da Cloudinary
+                    setPreview(data.imagem)
                 }
             } catch (error) {
                 console.error('Erro ao buscar barbearia:', error)
