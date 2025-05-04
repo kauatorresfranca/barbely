@@ -141,8 +141,9 @@ const PaginaBarbearia = () => {
                     setBarbearia(data)
 
                     if (data.imagem) {
-                        const isFullUrl = data.imagem.startsWith('http')
-                        setPreview(isFullUrl ? data.imagem : `http://localhost:8000${data.imagem}`)
+                        const isFullUrl =
+                            data.imagem.startsWith('http') || data.imagem.startsWith('https')
+                        setPreview(isFullUrl ? data.imagem : `${api.baseURL}${data.imagem}`)
                     }
                 } else {
                     console.error('Erro ao buscar barbearia:', response.status, response.statusText)
@@ -161,7 +162,7 @@ const PaginaBarbearia = () => {
                 const response = await fetch(`${api.baseURL}/horarios/?slug=${slug}`)
                 if (response.ok) {
                     const data = await response.json()
-                    console.log('Horários recebidos:', data) // Debug log to inspect the fetched data
+                    console.log('Horários recebidos:', data)
                     setHorarios(data)
                 } else {
                     console.error('Erro ao buscar horários:', response.status, response.statusText)
@@ -195,9 +196,9 @@ const PaginaBarbearia = () => {
     }
 
     const userImageSrc = cliente?.fotoPerfil
-        ? cliente.fotoPerfil.startsWith('http')
+        ? cliente.fotoPerfil.startsWith('http') || cliente.fotoPerfil.startsWith('https')
             ? cliente.fotoPerfil
-            : `http://localhost:8000${cliente.fotoPerfil}`
+            : `${api.baseURL}${cliente.fotoPerfil}`
         : user
 
     return (

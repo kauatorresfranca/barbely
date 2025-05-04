@@ -1,9 +1,11 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { FaUserCircle } from 'react-icons/fa'
 import { Cliente } from '../../../../../models/cliente'
 import { authFetch } from '../../../../../utils/authFetch'
 import * as S from './styles'
 import api from '../../../../../services/api'
 import { IMaskInput } from 'react-imask'
+import { colors } from '../../../../../../styles'
 
 interface ClienteEditProps {
     cliente: Cliente | null
@@ -16,12 +18,23 @@ const ClienteEdit: React.FC<ClienteEditProps> = ({ cliente, closeModal }) => {
     const [email, setEmail] = useState(cliente?.user?.email || '')
     const [isEditing, setIsEditing] = useState(false)
     const [errorMessage, setErrorMessage] = useState<string | null>(null)
+    const [preview, setPreview] = useState<string | null>(null)
+
+    useEffect(() => {
+        if (cliente?.fotoPerfil) {
+            const fotoPerfil = cliente.fotoPerfil
+            const isFullUrl = fotoPerfil.startsWith('http') || fotoPerfil.startsWith('https')
+            const imageUrl = isFullUrl ? fotoPerfil : `${api.baseURL}${fotoPerfil}`
+            setPreview(imageUrl)
+        } else {
+            setPreview(null)
+        }
+    }, [cliente])
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         if (!cliente || !cliente.barbearia) return
 
-        // Validar formato do telefone
         const telefoneRegex = /^\(\d{2}\) \d{5}-\d{4}$/
         if (!telefoneRegex.test(telefone)) {
             setErrorMessage('O telefone deve estar no formato (XX) XXXXX-XXXX.')
@@ -89,7 +102,23 @@ const ClienteEdit: React.FC<ClienteEditProps> = ({ cliente, closeModal }) => {
         <S.Overlay onClick={handleOverlayClick}>
             <S.Modal>
                 <S.CloseButton onClick={closeModal}>×</S.CloseButton>
-                <h2>Editar Cliente</h2>
+                <S.ProfileHeader>
+                    <S.ImageWrapper aria-label="Foto de perfil do cliente">
+                        {preview ? (
+                            <S.ProfileImage
+                                src={preview}
+                                alt="Foto de Perfil"
+                                onError={() => {
+                                    console.error('Erro ao carregar imagem:', preview)
+                                    setPreview(null)
+                                }}
+                            />
+                        ) : (
+                            <FaUserCircle size={80} color={colors.texto} />
+                        )}
+                    </S.ImageWrapper>
+                    <S.UserName>{cliente?.user?.nome || 'Usuário'}</S.UserName>
+                </S.ProfileHeader>
                 {cliente ? (
                     <>
                         {isEditing ? (
@@ -138,9 +167,17 @@ const ClienteEdit: React.FC<ClienteEditProps> = ({ cliente, closeModal }) => {
                             </form>
                         ) : (
                             <>
-                                <p>Nome: {cliente.user.nome}</p>
-                                <p>Telefone: {cliente.user.telefone}</p>
-                                <p>Email: {cliente.user.email}</p>
+                                <S.InfoClientList>
+                                    <p>
+                                        <strong>Nome:</strong> {cliente.user.nome}
+                                    </p>
+                                    <p>
+                                        <strong>Email:</strong> {cliente.user.email}
+                                    </p>
+                                    <p>
+                                        <strong>Telefone:</strong> {cliente.user.telefone}
+                                    </p>
+                                </S.InfoClientList>
                                 <S.ModalButton onClick={Editar}>Editar Cliente</S.ModalButton>
                             </>
                         )}

@@ -36,6 +36,10 @@ export const Modal = styled.div`
     position: relative;
     animation: slideUp 0.3s ease-out;
 
+    h2 {
+        text-align: center;
+    }
+
     @media (max-width: ${breakpoints.tablet}) {
         max-width: 100%;
         height: 100%;
@@ -148,5 +152,55 @@ export const inputGroup = styled.div`
         font-size: 14px;
         font-weight: 500;
         color: ${colors.texto};
+    }
+`
+
+export const ProfileHeader = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 24px;
+`
+
+export const ImageWrapper = styled.div`
+    position: relative;
+    cursor: pointer;
+    transition: opacity 0.2s;
+
+    &:hover {
+        opacity: 0.8;
+    }
+`
+
+export const ProfileImage = styled.img`
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 12px;
+    border: 2px solid ${colors.corPrimaria};
+`
+
+export const UserName = styled.h2`
+    font-size: 24px;
+    font-weight: bold;
+    color: ${colors.branco};
+    margin: 0;
+    text-align: center;
+`
+
+export const InfoClientList = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    strong {
+        color: ${colors.corPrimaria};
+    }
+
+    p {
+        display: flex;
+        gap: 12px;
+        font-weight: 400;
     }
 `

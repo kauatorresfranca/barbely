@@ -40,10 +40,12 @@ const MinhaContaModal = ({
             modalRef.current.focus()
         }
         if (cliente?.fotoPerfil) {
-            const isFullUrl = cliente.fotoPerfil.startsWith('http')
-            setPreview(
-                isFullUrl ? cliente.fotoPerfil : `http://localhost:8000${cliente.fotoPerfil}`,
-            )
+            const fotoPerfil = cliente.fotoPerfil
+            const isFullUrl = fotoPerfil.startsWith('http') || fotoPerfil.startsWith('https')
+            const imageUrl = isFullUrl ? fotoPerfil : `${api.baseURL}${fotoPerfil}`
+            setPreview(imageUrl)
+        } else {
+            setPreview(null)
         }
         return () => {
             document.removeEventListener('keydown', () => {})
@@ -51,7 +53,7 @@ const MinhaContaModal = ({
     }, [onClose, cliente])
 
     const handleImageClick = () => {
-        if (!isEditing) return // Impedir alteração da foto fora do modo de edição
+        if (!isEditing) return
         if (fileInputRef.current) {
             fileInputRef.current.click()
         }
@@ -87,14 +89,14 @@ const MinhaContaModal = ({
                 telefone: cliente?.user?.telefone || '',
                 imagem: null,
             })
-            const isFullUrl = cliente?.fotoPerfil?.startsWith('http')
-            setPreview(
-                cliente?.fotoPerfil
-                    ? isFullUrl
-                        ? cliente.fotoPerfil
-                        : `http://localhost:8000${cliente.fotoPerfil}`
-                    : null,
-            )
+            const fotoPerfil = cliente?.fotoPerfil
+            if (fotoPerfil) {
+                const isFullUrl = fotoPerfil.startsWith('http') || fotoPerfil.startsWith('https')
+                const imageUrl = isFullUrl ? fotoPerfil : `${api.baseURL}${fotoPerfil}`
+                setPreview(imageUrl)
+            } else {
+                setPreview(null)
+            }
         }
     }
 
@@ -154,6 +156,15 @@ const MinhaContaModal = ({
                 if (!updatedCliente.fotoPerfil) {
                     console.warn('fotoPerfil retornou null após upload.')
                 }
+                const fotoPerfil = updatedCliente.fotoPerfil
+                if (fotoPerfil) {
+                    const isFullUrl =
+                        fotoPerfil.startsWith('http') || fotoPerfil.startsWith('https')
+                    const imageUrl = isFullUrl ? fotoPerfil : `${api.baseURL}${fotoPerfil}`
+                    setPreview(imageUrl)
+                } else {
+                    setPreview(null)
+                }
                 updateCliente(updatedCliente)
                 setIsEditing(false)
                 onClose()
@@ -168,13 +179,7 @@ const MinhaContaModal = ({
         }
     }
 
-    const imageSrc =
-        preview ||
-        (cliente?.fotoPerfil
-            ? cliente.fotoPerfil.startsWith('http')
-                ? cliente.fotoPerfil
-                : `http://localhost:8000${cliente.fotoPerfil}`
-            : null)
+    const imageSrc = preview || null
     console.log('imageSrc:', imageSrc)
 
     return (
@@ -189,7 +194,10 @@ const MinhaContaModal = ({
                             <S.ProfileImage
                                 src={imageSrc}
                                 alt="Foto de Perfil"
-                                onError={() => console.error('Erro ao carregar imagem:', imageSrc)}
+                                onError={() => {
+                                    console.error('Erro ao carregar imagem:', imageSrc)
+                                    setPreview(null)
+                                }}
                             />
                         ) : (
                             <FaUserCircle size={80} color={colors.texto} />
