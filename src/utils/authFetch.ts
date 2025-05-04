@@ -1,9 +1,14 @@
-import api from '../services/api' // Importe o baseURL
+import api from '../services/api'
 
 export async function authFetch(url: string, options: RequestInit = {}): Promise<Response> {
     // Identify client requests
     const isClienteRequest =
-        (url.includes('/api/clientes/') && !url.includes('/api/clientes/barbearia/')) ||
+        (url.includes('/api/clientes/') &&
+            !url.includes('/api/clientes/barbearia/') &&
+            !(
+                ['PUT', 'DELETE'].includes(options.method || '') &&
+                url.match(/\/api\/clientes\/\d+\/$/)
+            )) ||
         url.includes('/api/agendamentos/horarios-disponiveis/') ||
         url.includes('/api/agendamentos/criar/')
 
@@ -14,7 +19,7 @@ export async function authFetch(url: string, options: RequestInit = {}): Promise
     const refreshToken = sessionStorage.getItem(refreshKey)
 
     console.log(
-        `authFetch: URL=${url}, tokenKey=${tokenKey}, accessToken=${
+        `authFetch: URL=${url}, method=${options.method}, tokenKey=${tokenKey}, accessToken=${
             accessToken ? '[presente]' : 'null'
         }`,
     )

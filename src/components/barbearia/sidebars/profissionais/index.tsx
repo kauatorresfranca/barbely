@@ -10,7 +10,8 @@ import api from '../../../../services/api'
 const Profissionais = () => {
     const [modalIsOpen, setModalIsOpen] = useState(false)
     const [editModalIsOpen, setEditModalIsOpen] = useState(false)
-    const [funcionarios, setFuncionarios] = useState<Funcionario[]>([])
+    const [profissionais, setProfissionais] = useState<Funcionario[]>([])
+    const [profissionalSelecionado, setProfissionalSelecionado] = useState<Funcionario | null>(null)
     const [isLoading, setIsLoading] = useState(true)
     const [hasError, setHasError] = useState(false)
 
@@ -32,7 +33,7 @@ const Profissionais = () => {
             })
             if (response.ok) {
                 const data = await response.json()
-                setFuncionarios(data)
+                setProfissionais(data)
             } else {
                 console.error('Erro ao buscar profissionais')
                 setHasError(true)
@@ -59,7 +60,7 @@ const Profissionais = () => {
             })
 
             if (response.ok) {
-                setFuncionarios((prev) => prev.filter((f) => f.id !== id))
+                setProfissionais((prev) => prev.filter((f) => f.id !== id))
             } else {
                 console.error('Erro ao deletar profissional')
             }
@@ -89,7 +90,7 @@ const Profissionais = () => {
                     </S.LoadingContainer>
                 ) : hasError ? (
                     <S.Message>Erro ao carregar os profissionais. Tente novamente.</S.Message>
-                ) : funcionarios.length === 0 ? (
+                ) : profissionais.length === 0 ? (
                     <S.Message>Você ainda não tem profissionais cadastrados.</S.Message>
                 ) : (
                     <>
@@ -98,23 +99,26 @@ const Profissionais = () => {
                             <p>Ações</p>
                         </S.Head>
                         <S.List>
-                            {funcionarios.map((func) => (
-                                <S.ListItem key={func.id}>
-                                    <p>{func.nome}</p>
+                            {profissionais.map((profissional) => (
+                                <S.ListItem key={profissional.id}>
+                                    <p>{profissional.nome}</p>
                                     <S.IconsGroup>
                                         <i
                                             className="ri-edit-2-line edit"
-                                            onClick={openEditModal}
+                                            onClick={() => {
+                                                openEditModal()
+                                                setProfissionalSelecionado(profissional)
+                                            }}
                                         ></i>
                                         <i
                                             className="ri-delete-bin-line delete"
-                                            onClick={() => handleDelete(func.id)}
+                                            onClick={() => handleDelete(profissional.id)}
                                         ></i>
                                     </S.IconsGroup>
                                 </S.ListItem>
                             ))}
                         </S.List>
-                        <p className="profissionais_length">{funcionarios.length} Profissionais</p>
+                        <p className="profissionais_length">{profissionais.length} Profissionais</p>
                     </>
                 )}
             </S.Container>
@@ -122,7 +126,12 @@ const Profissionais = () => {
             {modalIsOpen && (
                 <CriarProfissionalModal closeModal={closeModal} onSuccess={fetchFuncionarios} />
             )}
-            {editModalIsOpen && <EditarProfissionalModal closeModal={closeEditModal} />}
+            {editModalIsOpen && (
+                <EditarProfissionalModal
+                    closeModal={closeEditModal}
+                    profissional={profissionalSelecionado}
+                />
+            )}
         </>
     )
 }

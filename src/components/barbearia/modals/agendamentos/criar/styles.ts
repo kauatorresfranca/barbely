@@ -68,7 +68,6 @@ export const CloseButton = styled.button`
 export const ModalContent = styled.div`
     display: flex;
     flex-direction: column;
-    background: rgba(255, 255, 255, 0.05);
     border-radius: 10px;
 `
 
@@ -91,12 +90,11 @@ export const InfoLabel = styled.span`
 
 export const Input = styled.input`
     width: 100%;
-    height: 52px;
-    padding: 12px;
-    margin-top: 8px;
-    border: 1px solid transparent;
-    border-radius: 3px;
-    background-color: #181b20;
+    padding: 10px;
+    padding-left: 8px;
+    border: 1px solid ${colors.cinzaTransparent};
+    border-radius: 4px;
+    background: ${colors.cinzaEscuro};
     transition: border 0.4s ease-in-out;
 
     &:hover {
@@ -121,12 +119,11 @@ export const Input = styled.input`
 
 export const Select = styled.select`
     width: 100%;
-    height: 52px;
-    padding: 12px;
-    margin-top: 8px;
-    border: 1px solid transparent;
-    border-radius: 3px;
-    background-color: #181b20;
+    padding: 10px;
+    padding-left: 8px;
+    border: 1px solid ${colors.cinzaTransparent};
+    border-radius: 4px;
+    background: ${colors.cinzaEscuro};
     transition: border 0.4s ease-in-out;
 
     &:hover {
@@ -137,7 +134,6 @@ export const Select = styled.select`
         border: 1px solid ${colors.corPrimaria};
         outline: none;
     }
-
     &::placeholder {
         color: ${colors.cinzaClaro};
         font-weight: bold;

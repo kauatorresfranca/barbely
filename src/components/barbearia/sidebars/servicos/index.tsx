@@ -159,7 +159,7 @@ const Servicos = () => {
 
             {modalIsOpen && <CriarServicoModal closeModal={closeModal} onSuccess={fetchServicos} />}
             {editModalIsOpen && selectedServico && (
-                <EditarServicoModal closeModal={closeEditModal} />
+                <EditarServicoModal closeModal={closeEditModal} servico={selectedServico} />
             )}
         </>
     )

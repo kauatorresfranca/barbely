@@ -248,10 +248,10 @@ const MinhaContaModal = ({
                             </S.InputGroup>
                             {error && <S.ErrorMessage>{error}</S.ErrorMessage>}
                             <S.ButtonGroup>
-                                <S.ModalButton type="submit">Salvar</S.ModalButton>
                                 <S.CancelButton type="button" onClick={handleEditToggle}>
                                     Cancelar
                                 </S.CancelButton>
+                                <S.ModalButton type="submit">Salvar</S.ModalButton>
                             </S.ButtonGroup>
                         </S.Form>
                     ) : (

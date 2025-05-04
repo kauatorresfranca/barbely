@@ -1,55 +1,75 @@
 import styled from 'styled-components'
-import { colors } from '../../../../../../styles'
+import { breakpoints, colors } from '../../../../../../styles'
 
 export const Overlay = styled.div`
     position: fixed;
     top: 0;
     left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.6);
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: center;
     z-index: 1000;
-`
-
-export const Modal = styled.div`
-    background-color: ${colors.cinzaClaro};
-    padding: 2rem;
-    border-radius: 8px;
-    width: 500px;
-    max-width: 90%;
-    position: relative;
-    animation: fadeIn 0.3s ease-in-out;
-
-    h2 {
-        margin-bottom: 12px;
-        text-align: center;
-    }
+    animation: fadeIn 0.3s ease-in;
 
     @keyframes fadeIn {
         from {
             opacity: 0;
-            transform: translateY(-20px);
         }
         to {
             opacity: 1;
-            transform: translateY(0);
         }
     }
+`
 
-    .confimar {
-        width: 100%;
-        height: 48px;
-        margin-top: 16px;
-        border: none;
-        border-radius: 3px;
-        background-color: ${colors.corPrimaria};
-        color: ${colors.cinzaClaro};
-        font-weight: bold;
-        font-size: 16px;
-        cursor: pointer;
+export const Modal = styled.div`
+    background: linear-gradient(135deg, ${colors.cinzaClaro}, ${colors.cinzaEscuro});
+    border-radius: 12px;
+    padding: 24px;
+    width: 100%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    position: relative;
+    animation: slideUp 0.3s ease-out;
+
+    @media (max-width: ${breakpoints.tablet}) {
+        max-width: 100%;
+        height: 100%;
+        border-radius: 0;
+    }
+
+    @keyframes slideUp {
+        from {
+            transform: translateY(50px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+`
+
+export const ModalButton = styled.button`
+    background: ${colors.corPrimaria};
+    color: ${colors.branco};
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 16px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    width: 100%;
+    text-align: center;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     }
 `
 
@@ -64,6 +84,31 @@ export const CloseButton = styled.button`
     color: #fff;
 `
 
+export const CancelButton = styled.button`
+    background: ${colors.cinzaEscuro};
+    color: ${colors.branco};
+    border: 1px solid ${colors.cinzaTransparent};
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 16px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    width: 100%;
+    text-align: center;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+`
+
+export const ButtonGroup = styled.div`
+    display: flex;
+    width: 100%;
+    gap: 12px;
+`
+
 export const inputGroup = styled.div`
     display: flex;
     flex-direction: column;
@@ -73,11 +118,11 @@ export const inputGroup = styled.div`
 
     input {
         width: 100%;
-        height: 48px;
+        padding: 10px;
         padding-left: 8px;
-        border: 1px solid transparent;
-        border-radius: 3px;
-        background-color: #181b20;
+        border: 1px solid ${colors.cinzaTransparent};
+        border-radius: 4px;
+        background: ${colors.cinzaEscuro};
         transition: border 0.4s ease-in-out;
 
         &:hover {
@@ -87,11 +132,6 @@ export const inputGroup = styled.div`
         &:focus {
             border: 1px solid ${colors.corPrimaria};
             outline: none;
-        }
-
-        &::placeholder {
-            color: ${colors.cinzaClaro};
-            font-weight: bold;
         }
     }
 

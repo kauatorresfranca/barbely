@@ -3,6 +3,7 @@ import { Cliente } from '../../../../../models/cliente'
 import { authFetch } from '../../../../../utils/authFetch'
 import * as S from './styles'
 import api from '../../../../../services/api'
+import { IMaskInput } from 'react-imask'
 
 interface ClienteEditProps {
     cliente: Cliente | null
@@ -12,30 +13,56 @@ interface ClienteEditProps {
 const ClienteEdit: React.FC<ClienteEditProps> = ({ cliente, closeModal }) => {
     const [nome, setNome] = useState(cliente?.user?.nome || '')
     const [telefone, setTelefone] = useState(cliente?.user?.telefone || '')
+    const [email, setEmail] = useState(cliente?.user?.email || '')
     const [isEditing, setIsEditing] = useState(false)
+    const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-        if (!cliente) return
+        if (!cliente || !cliente.barbearia) return
 
-        const token = sessionStorage.getItem('access_token_barbearia')
+        // Validar formato do telefone
+        const telefoneRegex = /^\(\d{2}\) \d{5}-\d{4}$/
+        if (!telefoneRegex.test(telefone)) {
+            setErrorMessage('O telefone deve estar no formato (XX) XXXXX-XXXX.')
+            return
+        }
+
         try {
-            await authFetch(`${api.baseURL}/clientes/${cliente.id}/`, {
+            const response = await authFetch(`${api.baseURL}/clientes/${cliente.id}/`, {
                 method: 'PUT',
                 headers: {
-                    Authorization: `Bearer ${token}`,
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
                     user: {
                         nome,
                         telefone,
+                        email,
                     },
+                    barbearia: cliente.barbearia,
                 }),
             })
+            if (!response.ok) {
+                const errorText = await response.text()
+                if (errorText.includes('cliente user with this email already exists')) {
+                    setErrorMessage('Este email já está em uso. Por favor, escolha outro.')
+                } else {
+                    throw new Error(`Erro na requisição: ${errorText}`)
+                }
+                return
+            }
+            setErrorMessage(null)
             closeModal()
-        } catch (err) {
-            console.error('Erro ao atualizar cliente:', err)
+        } catch (err: any) {
+            console.error('Erro ao atualizar cliente:', {
+                message: err.message,
+                response: err.response ? await err.response.text() : 'No response',
+                status: err.response?.status,
+            })
+            if (!errorMessage) {
+                setErrorMessage('Ocorreu um erro ao atualizar o cliente. Tente novamente.')
+            }
         }
     }
 
@@ -45,47 +72,79 @@ const ClienteEdit: React.FC<ClienteEditProps> = ({ cliente, closeModal }) => {
         }
     }
 
+    function Editar() {
+        setIsEditing(true)
+        setErrorMessage(null)
+    }
+
+    function cancelarEdicao() {
+        setNome(cliente?.user?.nome || '')
+        setTelefone(cliente?.user?.telefone || '')
+        setEmail(cliente?.user?.email || '')
+        setIsEditing(false)
+        setErrorMessage(null)
+    }
+
     return (
         <S.Overlay onClick={handleOverlayClick}>
             <S.Modal>
                 <S.CloseButton onClick={closeModal}>×</S.CloseButton>
                 <h2>Editar Cliente</h2>
                 {cliente ? (
-                    <form onSubmit={handleSubmit}>
-                        <label>
-                            Nome:
-                            <input
-                                type="text"
-                                value={nome}
-                                onChange={(e) => setNome(e.target.value)}
-                            />
-                        </label>
-                        <label>
-                            Telefone:
-                            <input
-                                type="text"
-                                value={telefone}
-                                onChange={(e) => setTelefone(e.target.value)}
-                            />
-                        </label>
-                        <S.ButtonContainer>
-                            {isEditing ? (
-                                <>
-                                    <S.CancelButton
-                                        type="button"
-                                        onClick={() => setIsEditing(false)}
-                                    >
+                    <>
+                        {isEditing ? (
+                            <form onSubmit={handleSubmit}>
+                                {errorMessage && <p>{errorMessage}</p>}
+                                <S.inputGroup>
+                                    <label htmlFor="nome_cliente">Nome do Cliente</label>
+                                    <input
+                                        type="text"
+                                        id="nome_cliente"
+                                        value={nome}
+                                        onChange={(e) => setNome(e.target.value)}
+                                        placeholder="Nome do Cliente"
+                                        required
+                                    />
+                                </S.inputGroup>
+                                <S.inputGroup>
+                                    <label htmlFor="telefone_cliente">Telefone</label>
+                                    <IMaskInput
+                                        mask="(00) 00000-0000"
+                                        type="text"
+                                        id="telefone_cliente"
+                                        value={telefone}
+                                        onChange={(e) => setTelefone(e.target.value)}
+                                        placeholder="(00) 00000-0000"
+                                        required
+                                    />
+                                </S.inputGroup>
+                                <S.inputGroup>
+                                    <label htmlFor="email_cliente">Email</label>
+                                    <input
+                                        type="email"
+                                        id="email_cliente"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        placeholder="Email"
+                                        required
+                                    />
+                                </S.inputGroup>
+                                <S.ButtonGroup>
+                                    <S.CancelButton onClick={cancelarEdicao}>
                                         Cancelar
                                     </S.CancelButton>
-                                    <S.Button type="submit">Salvar</S.Button>
-                                </>
-                            ) : (
-                                <S.ButtonEdit onClick={() => setIsEditing(true)}>
-                                    Editar Cliente
-                                </S.ButtonEdit>
-                            )}
-                        </S.ButtonContainer>
-                    </form>
+                                    <S.ModalButton type="submit">Salvar</S.ModalButton>
+                                </S.ButtonGroup>
+                            </form>
+                        ) : (
+                            <>
+                                <p>Nome: {cliente.user.nome}</p>
+                                <p>Telefone: {cliente.user.telefone}</p>
+                                <p>Email: {cliente.user.email}</p>
+                                <S.ModalButton onClick={Editar}>Editar Cliente</S.ModalButton>
+                            </>
+                        )}
+                    </>
                 ) : (
                     <p>Nenhum cliente selecionado.</p>
                 )}

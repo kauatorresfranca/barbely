@@ -28,6 +28,27 @@ export const Modal = styled.div`
         text-align: center;
     }
 
+    form {
+        display: flex;
+        flex-direction: column;
+    }
+
+    label {
+        display: flex;
+        flex-direction: column;
+        font-weight: 500;
+        color: ${colors.texto};
+
+        input {
+            margin-top: 4px;
+            padding: 8px;
+            background-color: transparent;
+            border: 1px solid ${colors.cinzaTransparent};
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+    }
+
     @keyframes fadeIn {
         from {
             opacity: 0;
@@ -53,14 +74,46 @@ export const CloseButton = styled.button`
 
 export const Button = styled.button`
     padding: 8px 16px;
+    width: 50%;
     border: none;
     border-radius: 4px;
     background-color: ${colors.corPrimaria};
     color: white;
     cursor: pointer;
-    margin-top: 16px;
+    font-size: 1rem;
 
     &:hover {
         background-color: #0056b3;
     }
+`
+
+export const ButtonContainer = styled.div`
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 16px;
+`
+
+export const CancelButton = styled(Button)`
+    background-color: ${colors.vermelho};
+    width: 50%;
+
+    &:hover {
+        background-color: ${colors.cinzaEscuro};
+    }
+`
+
+export const ButtonEdit = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 40px;
+    border: none;
+    border-radius: 3px;
+    background-color: ${colors.corPrimaria};
+    color: ${colors.cinzaClaro};
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
 `

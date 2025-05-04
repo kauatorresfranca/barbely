@@ -534,6 +534,7 @@ const AgendaGrafico = () => {
                                                                                 }
                                                                             </p>
                                                                             <p className="servico">
+                                                                                <i className="ri-pix-fill"></i>{' '}
                                                                                 {
                                                                                     agendamento.servico_nome
                                                                                 }{' '}
@@ -541,7 +542,7 @@ const AgendaGrafico = () => {
                                                                                 {
                                                                                     agendamento.servico_duracao
                                                                                 }{' '}
-                                                                                min
+                                                                                min{' '}
                                                                             </p>
                                                                         </div>
                                                                     </S.AgendamentoInfo>
