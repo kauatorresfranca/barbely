@@ -6,7 +6,7 @@ export const Container = styled.div`
     background: ${colors.cinzaClaro};
     padding: 20px;
     border-radius: 8px;
-    color: #fff;
+    color: ${colors.cinzaEscuro}; /* Ajustei para preto, já que o texto é preto na sua paleta */
 
     @media (max-width: ${breakpoints.tablet}) {
         width: 100%;
@@ -16,6 +16,10 @@ export const Container = styled.div`
 export const PlanosGrid = styled.div`
     display: flex;
     gap: 24px;
+
+    @media (max-width: ${breakpoints.tablet}) {
+        flex-direction: column;
+    }
 `
 
 export const PlanoCard = styled.div<{ atual: boolean }>`
@@ -36,6 +40,12 @@ export const PlanoCard = styled.div<{ atual: boolean }>`
         font-weight: bold;
         color: ${colors.corPrimaria};
         margin-bottom: 16px;
+        span {
+            font-size: 14px;
+            font-weight: normal;
+            color: ${colors.texto};
+            margin-left: 5px;
+        }
     }
     ul {
         list-style: none;

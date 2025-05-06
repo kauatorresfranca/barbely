@@ -29,7 +29,7 @@ export const ButtonContainer = styled.div`
 export const ToggleFormButton = styled.button`
     padding: 8px;
     height: 40px;
-    background: ${colors.corPrimariaEscura};
+    background: linear-gradient(45deg, ${colors.corPrimaria}, ${colors.corPrimaria}AA);
     color: ${colors.branco};
     border: none;
     border-radius: 4px;
@@ -150,10 +150,11 @@ export const Input = styled.input`
 
 export const Select = styled.select`
     border: none;
-    height: 52px;
+    height: 42px;
     padding: 12px;
-    border-radius: 4px;
-    background: ${colors.texto}33;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    background: ${colors.cinzaEscuro};
     color: ${colors.branco};
     font-size: 14px;
     cursor: pointer;
@@ -258,17 +259,13 @@ export const ActionButtons = styled.div`
 
 export const EditButton = styled.button`
     padding: 6px 12px;
-    background: ${colors.corPrimariaEscura};
+    background: ${colors.corPrimaria};
     color: ${colors.branco};
     border: none;
     border-radius: 4px;
     cursor: pointer;
     font-size: 14px;
     transition: background 0.3s;
-
-    &:hover {
-        background: #1976d2;
-    }
 `
 
 export const DeleteButton = styled.button`

@@ -3,15 +3,40 @@ import * as S from './styles'
 const Planos = () => {
     const planos = [
         {
-            nome: 'Gratuito',
-            preco: 'R$ 0,00',
-            recursos: ['Até 5 agendamentos/mês', 'Suporte básico', 'Relatórios simples'],
+            nome: 'Básico',
+            preco: 'R$ 49,90/mês',
+            precoAnual: 'R$ 479,90/ano',
+            recursos: [
+                'Até 2 funcionários',
+                'Até 50 agendamentos/mês',
+                'Suporte básico via e-mail',
+            ],
             atual: true,
         },
         {
-            nome: 'Premium',
+            nome: 'Profissional',
             preco: 'R$ 99,90/mês',
-            recursos: ['Agendamentos ilimitados', 'Suporte prioritário', 'Relatórios avançados'],
+            precoAnual: 'R$ 959,90/ano',
+            recursos: [
+                'Até 5 funcionários',
+                'Até 150 agendamentos/mês',
+                'Relatórios básicos',
+                'Integração com PIX e cartão',
+                'Suporte via chat',
+            ],
+            atual: false,
+        },
+        {
+            nome: 'Premium',
+            preco: 'R$ 199,90/mês',
+            precoAnual: 'R$ 1.919,90/ano',
+            recursos: [
+                'Funcionários ilimitados',
+                'Agendamentos ilimitados',
+                'Relatórios avançados',
+                'Personalização de marca',
+                'Suporte prioritário (chat e telefone)',
+            ],
             atual: false,
         },
     ]
@@ -26,7 +51,12 @@ const Planos = () => {
                 {planos.map((plano, index) => (
                     <S.PlanoCard key={index} atual={plano.atual}>
                         <h3>{plano.nome}</h3>
-                        <p className="preco">{plano.preco}</p>
+                        <p className="preco">
+                            {plano.preco}{' '}
+                            <span style={{ fontSize: '14px', fontWeight: 'normal' }}>
+                                (ou {plano.precoAnual})
+                            </span>
+                        </p>
                         <ul>
                             {plano.recursos.map((recurso, i) => (
                                 <li key={i}>{recurso}</li>

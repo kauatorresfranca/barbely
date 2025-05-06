@@ -142,7 +142,7 @@ const ClienteEdit: React.FC<ClienteEditProps> = ({ cliente, closeModal }) => {
                                         type="text"
                                         id="telefone_cliente"
                                         value={telefone}
-                                        onChange={(e) => setTelefone(e.target.value)}
+                                        onAccept={(value) => setTelefone(value)}
                                         placeholder="(00) 00000-0000"
                                         required
                                     />

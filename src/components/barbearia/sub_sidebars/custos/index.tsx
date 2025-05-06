@@ -331,9 +331,7 @@ const Custos = () => {
                     </S.Select>
                 </S.FilterGroup>
                 <S.ButtonContainer>
-                    <S.ToggleFormButton onClick={handleToggleForm}>
-                        Adicionar Custo
-                    </S.ToggleFormButton>
+                    <S.ToggleFormButton onClick={handleToggleForm}>+ Novo Custo</S.ToggleFormButton>
                 </S.ButtonContainer>
             </S.HeaderCostGroup>
             {isLoading ? (
