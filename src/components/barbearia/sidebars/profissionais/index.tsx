@@ -4,14 +4,17 @@ import { authFetch } from '../../../../utils/authFetch'
 import { Funcionario } from '../../../../models/funcionario'
 import CriarProfissionalModal from '../../modals/profissional/profissional_criar'
 import EditarProfissionalModal from '../../modals/profissional/profissional_editar'
+import DeleteConfirmationModal from '../../modals/confirmar_delecao/index'
 import * as S from './styles'
 import api from '../../../../services/api'
 
 const Profissionais = () => {
     const [modalIsOpen, setModalIsOpen] = useState(false)
     const [editModalIsOpen, setEditModalIsOpen] = useState(false)
+    const [deleteModalIsOpen, setDeleteModalIsOpen] = useState(false)
     const [profissionais, setProfissionais] = useState<Funcionario[]>([])
     const [profissionalSelecionado, setProfissionalSelecionado] = useState<Funcionario | null>(null)
+    const [profissionalToDelete, setProfissionalToDelete] = useState<Funcionario | null>(null)
     const [isLoading, setIsLoading] = useState(true)
     const [hasError, setHasError] = useState(false)
 
@@ -20,6 +23,16 @@ const Profissionais = () => {
 
     const openEditModal = () => setEditModalIsOpen(true)
     const closeEditModal = () => setEditModalIsOpen(false)
+
+    const openDeleteModal = (profissional: Funcionario) => {
+        setProfissionalToDelete(profissional)
+        setDeleteModalIsOpen(true)
+    }
+
+    const closeDeleteModal = () => {
+        setProfissionalToDelete(null)
+        setDeleteModalIsOpen(false)
+    }
 
     const fetchFuncionarios = async () => {
         setIsLoading(true)
@@ -46,21 +59,24 @@ const Profissionais = () => {
         }
     }
 
-    const handleDelete = async (id: number) => {
-        const confirm = window.confirm('Deseja realmente deletar este profissional?')
-        if (!confirm) return
+    const handleDelete = async () => {
+        if (!profissionalToDelete) return
 
         try {
             const token = sessionStorage.getItem('access_token_barbearia')
-            const response = await authFetch(`${api.baseURL}/funcionarios/${id}/`, {
-                method: 'DELETE',
-                headers: {
-                    Authorization: `Bearer ${token}`,
+            const response = await authFetch(
+                `${api.baseURL}/funcionarios/${profissionalToDelete.id}/`,
+                {
+                    method: 'DELETE',
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
                 },
-            })
+            )
 
             if (response.ok) {
-                setProfissionais((prev) => prev.filter((f) => f.id !== id))
+                setProfissionais((prev) => prev.filter((f) => f.id !== profissionalToDelete.id))
+                closeDeleteModal()
             } else {
                 console.error('Erro ao deletar profissional')
             }
@@ -112,7 +128,7 @@ const Profissionais = () => {
                                         ></i>
                                         <i
                                             className="ri-delete-bin-line delete"
-                                            onClick={() => handleDelete(profissional.id)}
+                                            onClick={() => openDeleteModal(profissional)}
                                         ></i>
                                     </S.IconsGroup>
                                 </S.ListItem>
@@ -130,6 +146,14 @@ const Profissionais = () => {
                 <EditarProfissionalModal
                     closeModal={closeEditModal}
                     profissional={profissionalSelecionado}
+                />
+            )}
+            {deleteModalIsOpen && profissionalToDelete && (
+                <DeleteConfirmationModal
+                    isOpen={deleteModalIsOpen}
+                    itemName={`o profissional ${profissionalToDelete.nome}`}
+                    onConfirm={handleDelete}
+                    onClose={closeDeleteModal}
                 />
             )}
         </>

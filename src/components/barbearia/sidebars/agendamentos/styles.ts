@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { colors } from '../../../../../styles'
+import { breakpoints, colors } from '../../../../../styles'
 
 export const Container = styled.div`
     .subtitle {
@@ -7,6 +7,12 @@ export const Container = styled.div`
         margin-bottom: 16px;
         color: ${colors.texto};
         font-size: 14px;
+    }
+
+    @media (max-width: ${breakpoints.tablet}) {
+        .subtitle {
+            font-size: 12px;
+        }
     }
 `
 
@@ -73,6 +79,7 @@ export const DateNavigator = styled.div`
     background: ${colors.cinzaEscuro};
     border-radius: 8px;
     padding: 4px;
+    gap: 8px;
 `
 
 export const ArrowButton = styled.button`
@@ -82,6 +89,17 @@ export const ArrowButton = styled.button`
     font-size: 18px;
     cursor: pointer;
     transition: background-color 0.3s;
+    padding: 8px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+
+    &:hover {
+        background: ${colors.cinzaClaro}80;
+    }
 `
 
 export const DateDisplay = styled.div`
@@ -91,6 +109,13 @@ export const DateDisplay = styled.div`
     font-size: 16px;
     min-width: 120px;
     text-align: center;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+
+    &:hover {
+        background: ${colors.cinzaClaro}80;
+    }
 `
 
 export const HorariosContainer = styled.div`
@@ -103,7 +128,7 @@ export const HorariosContainer = styled.div`
 export const FuncionariosHeader = styled.div`
     display: flex;
     gap: 10px;
-    margin-left: 70px; /* Alinhar com a tabela, compensando o espaço dos horários */
+    margin-left: 70px;
 `
 
 export const FuncionarioTitle = styled.div`
@@ -263,7 +288,7 @@ export const LoadingContainer = styled.div`
     justify-content: center;
     align-items: center;
     padding: 2rem;
-    min-height: 200px; /* Ajuste conforme necessário */
+    min-height: 200px;
 `
 
 export const Message = styled.p`
@@ -272,4 +297,83 @@ export const Message = styled.p`
     color: #666;
     font-size: 1.1rem;
     font-weight: 500;
+`
+
+// Wrapper para o DateDisplay e o DatePicker
+export const DateWrapper = styled.div`
+    position: relative;
+    display: inline-block;
+`
+
+// Estilização do calendário
+export const CalendarContainer = styled.div`
+    .custom-calendar {
+        position: absolute;
+        top: 60px;
+        left: -45px;
+        z-index: 1000;
+        background: ${colors.cinzaClaro};
+        border: 1px solid ${colors.cinzaTransparent};
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        padding: 10px;
+        font-family: 'Arial', sans-serif;
+
+        .react-datepicker__header {
+            background: ${colors.cinzaEscuro};
+            border-bottom: none;
+            padding: 10px;
+            border-radius: 8px 8px 0 0;
+            position: relative; /* Para posicionar as setas em relação ao header */
+        }
+
+        .react-datepicker__current-month {
+            color: ${colors.branco};
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .react-datepicker__day-name,
+        .react-datepicker__day {
+            color: ${colors.branco};
+            width: 36px;
+            line-height: 36px;
+            margin: 4px;
+        }
+
+        .react-datepicker__day--selected,
+        .react-datepicker__day--keyboard-selected {
+            background: ${colors.corPrimaria};
+            color: ${colors.branco};
+            border-radius: 50%;
+        }
+
+        .react-datepicker__day:hover {
+            background: ${colors.cinzaEscuro};
+            border-radius: 50%;
+        }
+
+        .react-datepicker__navigation {
+            top: 12px; /* Ajusta a posição vertical das setas */
+            width: 40px; /* Reduz o tamanho da área clicável das setas */
+            height: 24px;
+            background-color: transparent;
+            box-shadow: none;
+            margin-top: 6px;
+        }
+
+        .react-datepicker__navigation-icon {
+            width: 24px;
+            height: 24px;
+        }
+
+        .react-datepicker__navigation-icon::before {
+            width: 8px; /* Reduz o tamanho do ícone da seta */
+            height: 8px;
+        }
+
+        .react-datepicker__triangle {
+            display: none;
+        }
+    }
 `

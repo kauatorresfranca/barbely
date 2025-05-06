@@ -177,6 +177,14 @@ const ClienteEdit: React.FC<ClienteEditProps> = ({ cliente, closeModal }) => {
                                     <p>
                                         <strong>Telefone:</strong> {cliente.user.telefone}
                                     </p>
+                                    <p>
+                                        <strong>Cliente desde:</strong>{' '}
+                                        {cliente.user.date_joined
+                                            ? new Date(cliente.user.date_joined).toLocaleDateString(
+                                                  'pt-BR',
+                                              )
+                                            : 'Não informado'}
+                                    </p>
                                 </S.InfoClientList>
                                 <S.ModalButton onClick={Editar}>Editar Cliente</S.ModalButton>
                             </>

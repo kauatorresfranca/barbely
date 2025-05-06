@@ -10,6 +10,12 @@ export const Container = styled.div`
         color: ${colors.texto};
         font-size: 14px;
     }
+
+    @media (max-width: ${breakpoints.tablet}) {
+        .subtitle {
+            font-size: 12px;
+        }
+    }
 `
 
 export const Header = styled.div`
@@ -190,7 +196,7 @@ export const FirstLine = styled.div`
 
     @media (max-width: ${breakpoints.tablet}) {
         display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
+        grid-template-columns: 1fr 1fr;
     }
 `
 

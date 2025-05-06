@@ -3,16 +3,19 @@ import { authFetch } from '../../../../utils/authFetch'
 import { Servico } from '../../../../models/servico'
 import CriarServicoModal from '../../modals/servicos/servico_criar'
 import EditarServicoModal from '../../modals/servicos/servico_editar'
+import DeleteConfirmationModal from '../../modals/confirmar_delecao/index'
 import * as S from './styles'
 import api from '../../../../services/api'
 
 const Servicos = () => {
     const [modalIsOpen, setModalIsOpen] = useState(false)
     const [editModalIsOpen, setEditModalIsOpen] = useState(false)
+    const [deleteModalIsOpen, setDeleteModalIsOpen] = useState(false)
     const [servicos, setServicos] = useState<Servico[]>([])
     const [isLoading, setIsLoading] = useState(true)
     const [hasError, setHasError] = useState(false)
     const [selectedServico, setSelectedServico] = useState<Servico | null>(null)
+    const [servicoToDelete, setServicoToDelete] = useState<Servico | null>(null)
 
     const openModal = () => setModalIsOpen(true)
     const closeModal = () => setModalIsOpen(false)
@@ -24,6 +27,16 @@ const Servicos = () => {
     const closeEditModal = () => {
         setSelectedServico(null)
         setEditModalIsOpen(false)
+    }
+
+    const openDeleteModal = (servico: Servico) => {
+        setServicoToDelete(servico)
+        setDeleteModalIsOpen(true)
+    }
+
+    const closeDeleteModal = () => {
+        setServicoToDelete(null)
+        setDeleteModalIsOpen(false)
     }
 
     const fetchServicos = async () => {
@@ -60,9 +73,8 @@ const Servicos = () => {
         }
     }
 
-    const handleDelete = async (id: number) => {
-        const confirm = window.confirm('Deseja realmente deletar este serviço?')
-        if (!confirm) return
+    const handleDelete = async () => {
+        if (!servicoToDelete) return
 
         try {
             const token = sessionStorage.getItem('access_token_barbearia')
@@ -70,7 +82,7 @@ const Servicos = () => {
                 throw new Error('Você precisa estar logado para deletar serviços.')
             }
 
-            const response = await authFetch(`${api.baseURL}/servicos/${id}/`, {
+            const response = await authFetch(`${api.baseURL}/servicos/${servicoToDelete.id}/`, {
                 method: 'DELETE',
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -78,7 +90,8 @@ const Servicos = () => {
             })
 
             if (response.ok) {
-                setServicos((prev) => prev.filter((s) => s.id !== id))
+                setServicos((prev) => prev.filter((s) => s.id !== servicoToDelete.id))
+                closeDeleteModal()
             } else {
                 console.error('Erro ao deletar serviço')
             }
@@ -146,7 +159,7 @@ const Servicos = () => {
                                         ></i>
                                         <i
                                             className="ri-delete-bin-line delete"
-                                            onClick={() => handleDelete(servico.id)}
+                                            onClick={() => openDeleteModal(servico)}
                                         ></i>
                                     </S.IconsGroup>
                                 </S.ListItem>
@@ -160,6 +173,14 @@ const Servicos = () => {
             {modalIsOpen && <CriarServicoModal closeModal={closeModal} onSuccess={fetchServicos} />}
             {editModalIsOpen && selectedServico && (
                 <EditarServicoModal closeModal={closeEditModal} servico={selectedServico} />
+            )}
+            {deleteModalIsOpen && servicoToDelete && (
+                <DeleteConfirmationModal
+                    isOpen={deleteModalIsOpen}
+                    itemName={`o serviço ${servicoToDelete.nome}`}
+                    onConfirm={handleDelete}
+                    onClose={closeDeleteModal}
+                />
             )}
         </>
     )

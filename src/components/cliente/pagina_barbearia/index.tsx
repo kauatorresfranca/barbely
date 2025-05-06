@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useCallback } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Barbearia } from '../../../models/Barbearia'
 import { Servico } from '../../../models/servico'
@@ -174,6 +174,50 @@ const PaginaBarbearia = () => {
 
         if (slug) fetchHorarios()
     }, [slug])
+
+    const refreshToken = useCallback(async () => {
+        const refreshToken = sessionStorage.getItem('refresh_token_cliente')
+        if (refreshToken) {
+            try {
+                const response = await fetch(`${api.baseURL}/token/refresh/`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ refresh: refreshToken }),
+                })
+                const data = await response.json()
+                if (response.ok) {
+                    sessionStorage.setItem('access_token_cliente', data.access)
+                    window.dispatchEvent(new Event('storage'))
+                    console.log('Token renovado com sucesso.')
+                } else {
+                    console.error('Falha ao renovar token:', data)
+                    navigate('/clientes/login')
+                }
+            } catch (error) {
+                console.error('Erro ao renovar token:', error)
+                navigate('/clientes/login')
+            }
+        }
+    }, [navigate])
+
+    useEffect(() => {
+        // Só verifica e renova o token se o cliente estiver autenticado
+        if (cliente) {
+            const checkToken = () => {
+                const accessToken = sessionStorage.getItem('access_token_cliente')
+                if (accessToken) {
+                    const expiryTime = 4 * 60 * 1000 // 4 minutos antes da expiração
+                    const interval = setInterval(() => {
+                        refreshToken()
+                    }, expiryTime)
+                    return () => clearInterval(interval)
+                } else {
+                    navigate('/clientes/login')
+                }
+            }
+            checkToken()
+        }
+    }, [navigate, refreshToken, cliente])
 
     function ToAgendamento() {
         if (cliente) {

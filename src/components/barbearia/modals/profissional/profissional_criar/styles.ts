@@ -15,7 +15,7 @@ export const Overlay = styled.div`
 `
 
 export const Modal = styled.div`
-    background-color: ${colors.cinzaClaro};
+    background: linear-gradient(135deg, ${colors.cinzaClaro}, ${colors.cinzaEscuro});
     padding: 2rem;
     border-radius: 8px;
     width: 500px;
@@ -59,16 +59,22 @@ export const Form = styled.form`
     width: 100%;
 
     button {
-        width: 100%;
-        height: 48px;
-        margin-top: 16px;
+        background: ${colors.corPrimaria};
+        color: ${colors.branco};
         border: none;
-        border-radius: 3px;
-        background-color: ${colors.corPrimaria};
-        color: ${colors.cinzaClaro};
+        padding: 12px 24px;
+        border-radius: 8px;
         font-weight: bold;
-        font-size: 16px;
         cursor: pointer;
+        margin-top: 16px;
+        transition: transform 0.2s, box-shadow 0.2s;
+        width: 100%;
+        text-align: center;
+
+        &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
     }
 `
 
@@ -81,11 +87,11 @@ export const inputGroup = styled.div`
 
     input {
         width: 100%;
-        height: 48px;
+        padding: 10px;
         padding-left: 8px;
-        border: 1px solid transparent;
-        border-radius: 3px;
-        background-color: #181b20;
+        border: 1px solid ${colors.cinzaTransparent};
+        border-radius: 4px;
+        background: ${colors.cinzaEscuro};
         transition: border 0.4s ease-in-out;
 
         &:hover {
@@ -95,11 +101,6 @@ export const inputGroup = styled.div`
         &:focus {
             border: 1px solid ${colors.corPrimaria};
             outline: none;
-        }
-
-        &::placeholder {
-            color: ${colors.cinzaClaro};
-            font-weight: bold;
         }
     }
 
@@ -115,6 +116,6 @@ export const inputGroup = styled.div`
         margin-bottom: 8px;
         font-size: 14px;
         font-weight: 500;
-        color: ${colors.texto};
+        color: ${colors.corPrimaria};
     }
 `

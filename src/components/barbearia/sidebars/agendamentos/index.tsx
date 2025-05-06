@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { formatInTimeZone, toZonedTime } from 'date-fns-tz'
 import { addDays, subDays, isSameDay } from 'date-fns'
+import { ptBR } from 'date-fns/locale' // Importa o locale pt-BR
 import { authFetch } from '../../../../utils/authFetch'
 import { Agendamento } from '../../../cliente/modals/meus_agendamentos'
 import DetalhesModal from '../../modals/agendamentos/Detalhes'
@@ -8,6 +9,8 @@ import StatusModal from '../../modals/agendamentos/status'
 import CriarAgendamentoModal from '../../modals/agendamentos/criar'
 import * as S from './styles'
 import api from '../../../../services/api'
+import DatePicker from 'react-datepicker'
+import 'react-datepicker/dist/react-datepicker.css'
 
 // Define types for data models
 type Funcionario = {
@@ -62,6 +65,10 @@ const AgendaGrafico = () => {
     const [selectedAgendamento, setSelectedAgendamento] = useState<Agendamento | null>(null)
     const [error, setError] = useState<string | null>(null)
     const [criandoAgendamento, setCriandoAgendamento] = useState<boolean>(false)
+    const [isCalendarOpen, setIsCalendarOpen] = useState<boolean>(false)
+
+    const calendarRef = useRef<HTMLDivElement>(null)
+    const dateDisplayRef = useRef<HTMLDivElement>(null)
 
     const [novoAgendamento, setNovoAgendamento] = useState<NovoAgendamento>({
         cliente_email: '',
@@ -99,6 +106,34 @@ const AgendaGrafico = () => {
         const novaData = direcao === 'anterior' ? subDays(dataAtual, 1) : addDays(dataAtual, 1)
         setDataSelecionada(formatInTimeZone(novaData, fusoHorario, 'yyyy-MM-dd'))
     }
+
+    const handleDateChange = (date: Date | null): void => {
+        if (date) {
+            setDataSelecionada(formatInTimeZone(date, fusoHorario, 'yyyy-MM-dd'))
+            setIsCalendarOpen(false)
+        }
+    }
+
+    const toggleCalendar = (): void => {
+        setIsCalendarOpen(!isCalendarOpen)
+    }
+
+    // Fechar o calendário ao clicar fora
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (
+                calendarRef.current &&
+                !calendarRef.current.contains(event.target as Node) &&
+                dateDisplayRef.current &&
+                !dateDisplayRef.current.contains(event.target as Node)
+            ) {
+                setIsCalendarOpen(false)
+            }
+        }
+
+        document.addEventListener('mousedown', handleClickOutside)
+        return () => document.removeEventListener('mousedown', handleClickOutside)
+    }, [])
 
     const openModal = (agendamento: Agendamento): void => {
         setSelectedAgendamento(agendamento)
@@ -429,12 +464,30 @@ const AgendaGrafico = () => {
                         <S.ArrowButton className="voltarDia" onClick={() => mudarDia('anterior')}>
                             <i className="ri-arrow-left-double-line"></i>
                         </S.ArrowButton>
-                        <S.DateDisplay>{formatarData(dataSelecionada)}</S.DateDisplay>
+                        <S.DateWrapper>
+                            <S.DateDisplay
+                                onClick={toggleCalendar}
+                                ref={dateDisplayRef}
+                                className="date-display"
+                            >
+                                {formatarData(dataSelecionada)}
+                            </S.DateDisplay>
+                            {isCalendarOpen && (
+                                <S.CalendarContainer ref={calendarRef}>
+                                    <DatePicker
+                                        selected={toZonedTime(dataSelecionada, fusoHorario)}
+                                        onChange={handleDateChange}
+                                        inline
+                                        calendarClassName="custom-calendar"
+                                        locale={ptBR} // Adiciona o locale pt-BR
+                                    />
+                                </S.CalendarContainer>
+                            )}
+                        </S.DateWrapper>
                         <S.ArrowButton className="avançarDia" onClick={() => mudarDia('proximo')}>
                             <i className="ri-arrow-right-double-line"></i>
                         </S.ArrowButton>
                     </S.DateNavigator>
-                    <button onClick={() => buscarAgendamentos(dataSelecionada)}>Atualizar</button>
                 </S.Filtro>
                 <S.CriarAgendamento
                     onClick={openCreateModal}

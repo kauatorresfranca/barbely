@@ -85,7 +85,9 @@ const EditarProfissionalModal = ({ closeModal, profissional }: Props) => {
                             </form>
                         ) : (
                             <>
-                                <p>Nome: {profissional.nome}</p>
+                                <p>
+                                    <strong>Nome:</strong> {profissional.nome}
+                                </p>
                                 <S.ModalButton onClick={Editar}>Editar Profissional</S.ModalButton>
                             </>
                         )}

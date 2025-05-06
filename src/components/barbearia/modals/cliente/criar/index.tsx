@@ -44,8 +44,8 @@ const ClienteNew: React.FC<ClienteEditProps> = ({ closeModal }) => {
             return
         }
 
-        // Obter o barbearia_id do sessionStorage (autenticado como barbearia)
-        const barbeariaId = sessionStorage.getItem('barbearia_id')
+        // Obter o barbearia_token do sessionStorage (autenticado como barbearia)
+        const barbeariaId = sessionStorage.getItem('barbearia_token')
         if (!barbeariaId) {
             setErrorMessage('Barbearia não autenticada.')
             return

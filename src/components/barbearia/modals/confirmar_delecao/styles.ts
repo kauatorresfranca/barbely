@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { breakpoints, colors } from '../../../../../../styles'
+import { breakpoints, colors } from '../../../../../styles'
 
 export const Overlay = styled.div`
     position: fixed;
@@ -38,10 +38,13 @@ export const Modal = styled.div`
 
     h2 {
         text-align: center;
+        color: ${colors.branco};
     }
 
-    strong {
-        color: ${colors.corPrimaria};
+    p {
+        color: ${colors.texto};
+        margin: 16px 0;
+        text-align: center;
     }
 
     @media (max-width: ${breakpoints.tablet}) {
@@ -60,25 +63,6 @@ export const Modal = styled.div`
     }
 `
 
-export const ModalButton = styled.button`
-    background: ${colors.corPrimaria};
-    color: ${colors.branco};
-    border: none;
-    padding: 12px 24px;
-    border-radius: 8px;
-    font-weight: bold;
-    cursor: pointer;
-    margin-top: 16px;
-    transition: transform 0.2s, box-shadow 0.2s;
-    width: 100%;
-    text-align: center;
-
-    &:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    }
-`
-
 export const CloseButton = styled.button`
     position: absolute;
     top: 8px;
@@ -87,7 +71,35 @@ export const CloseButton = styled.button`
     background: transparent;
     border: none;
     cursor: pointer;
-    color: #fff;
+    color: ${colors.branco};
+`
+
+export const ButtonGroup = styled.div`
+    display: flex;
+    width: 100%;
+    gap: 12px;
+`
+
+export const ModalButton = styled.button`
+    background: ${colors.corPrimaria};
+    color: ${colors.branco};
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    width: 100%;
+    text-align: center;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    &.delete {
+        background: #ff4d4f;
+    }
 `
 
 export const CancelButton = styled.button`
@@ -98,7 +110,6 @@ export const CancelButton = styled.button`
     border-radius: 8px;
     font-weight: bold;
     cursor: pointer;
-    margin-top: 16px;
     transition: transform 0.2s, box-shadow 0.2s;
     width: 100%;
     text-align: center;
@@ -106,53 +117,5 @@ export const CancelButton = styled.button`
     &:hover {
         transform: translateY(-2px);
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    }
-`
-
-export const ButtonGroup = styled.div`
-    display: flex;
-    width: 100%;
-    gap: 12px;
-`
-
-export const inputGroup = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: start;
-    position: relative;
-    width: 100%;
-
-    input {
-        width: 100%;
-        padding: 10px;
-        padding-left: 8px;
-        border: 1px solid ${colors.cinzaTransparent};
-        border-radius: 4px;
-        background: ${colors.cinzaEscuro};
-        transition: border 0.4s ease-in-out;
-
-        &:hover {
-            border: 1px solid ${colors.branco};
-        }
-
-        &:focus {
-            border: 1px solid ${colors.corPrimaria};
-            outline: none;
-        }
-    }
-
-    .input-wrapper {
-        position: relative;
-        width: 100%;
-        display: flex;
-        align-items: center;
-    }
-
-    label {
-        margin-top: 8px;
-        margin-bottom: 8px;
-        font-size: 14px;
-        font-weight: 500;
-        color: ${colors.texto};
     }
 `

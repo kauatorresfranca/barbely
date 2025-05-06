@@ -19,6 +19,12 @@ export const Container = styled.div`
         text-align: center;
         color: ${colors.texto};
     }
+
+    @media (max-width: ${breakpoints.tablet}) {
+        .subtitle {
+            font-size: 12px;
+        }
+    }
 `
 
 export const Head = styled.div`

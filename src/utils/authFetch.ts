@@ -1,14 +1,14 @@
 import api from '../services/api'
 
 export async function authFetch(url: string, options: RequestInit = {}): Promise<Response> {
-    // Identify client requests
     const isClienteRequest =
         (url.includes('/api/clientes/') &&
             !url.includes('/api/clientes/barbearia/') &&
             !(
                 ['PUT', 'DELETE'].includes(options.method || '') &&
                 url.match(/\/api\/clientes\/\d+\/$/)
-            )) ||
+            ) &&
+            !(options.method === 'POST' && url.match(/\/api\/clientes\/$/))) ||
         url.includes('/api/agendamentos/horarios-disponiveis/') ||
         url.includes('/api/agendamentos/criar/')
 
@@ -24,20 +24,16 @@ export async function authFetch(url: string, options: RequestInit = {}): Promise
         }`,
     )
 
-    // Construa a URL completa usando o baseURL
     const fullUrl = url.startsWith('http')
         ? url
         : `${api.baseURL}${url.startsWith('/') ? url : `/${url}`}`
 
-    // Skip token check for horarios-disponiveis (allow unauthenticated)
     if (url.includes('/api/agendamentos/horarios-disponiveis/') && !accessToken) {
         return fetch(fullUrl, options)
     }
 
     if (!accessToken) {
         console.error(`Token de acesso (${tokenKey}) não encontrado.`)
-        const slug = sessionStorage.getItem('barbearia_slug') || 'default-slug'
-        window.location.href = isClienteRequest ? '/clientes/login' : `/barbearia/${slug}/login`
         throw new Error('Token de acesso não encontrado.')
     }
 
@@ -79,9 +75,7 @@ export async function authFetch(url: string, options: RequestInit = {}): Promise
             response = await fetch(fullUrl, { ...options, headers: retryHeaders })
         } else {
             console.error('Erro ao renovar token:', await refreshResponse.text())
-            const slug = sessionStorage.getItem('barbearia_slug') || 'default-slug'
-            window.location.href = isClienteRequest ? '/clientes/login' : `/barbearia/${slug}/login`
-            throw new Error('Erro ao renovar token.')
+            throw new Error('Falha ao renovar token.')
         }
     }
 

@@ -36,10 +36,16 @@ export const Modal = styled.div`
     position: relative;
     animation: slideUp 0.3s ease-out;
 
+    h2 {
+        text-align: center;
+    }
+
+    strong {
+        color: ${colors.corPrimaria};
+    }
+
     @media (max-width: ${breakpoints.tablet}) {
-        max-width: 100%;
-        height: 100%;
-        border-radius: 0;
+        width: 90%;
     }
 
     @keyframes slideUp {

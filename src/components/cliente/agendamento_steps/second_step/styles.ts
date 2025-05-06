@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import { colors } from '../../../../../styles'
-import 'react-day-picker/dist/style.css'
+import 'react-datepicker/dist/react-datepicker.css'
 
 interface TurnoItemProps {
     selected: boolean
@@ -12,105 +12,6 @@ interface HorarioItemProps {
 }
 
 export const Container = styled.div`
-    .rdp-root {
-        --rdp-accent-color: ${colors.texto};
-        --rdp-accent-background-color: ${colors.corPrimaria}1A;
-        --rdp-today-color: ${colors.corPrimaria};
-        --rdp-selected-border: 2px solid ${colors.corPrimaria};
-        display: flex;
-        justify-content: center;
-        width: 100%;
-    }
-
-    .rdp {
-        font-family: inherit;
-        display: flex;
-        width: 100%;
-        background-color: ${colors.cinzaEscuro};
-        color: white;
-        border-radius: 12px;
-    }
-
-    .rdp-months {
-        width: 100%;
-        display: flex;
-        justify-content: center;
-    }
-
-    .rdp-month {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        width: 1000px;
-        max-width: none !important;
-        flex: 1;
-        min-width: 0;
-        background-color: ${colors.cinzaEscuro};
-        color: white;
-        padding: 0 14px;
-        border-radius: 10px;
-    }
-
-    .rdp-nav_button {
-        color: ${colors.corPrimaria};
-        background: transparent;
-        border: none;
-        border-radius: 4px;
-        transition: all 0.2s ease;
-    }
-
-    .rdp-nav_button svg {
-        stroke: ${colors.corPrimaria};
-        width: 20px;
-        height: 20px;
-    }
-
-    .rdp-nav_button:hover {
-        background-color: ${colors.corPrimaria};
-    }
-
-    .rdp-nav_button:hover svg {
-        stroke: white;
-    }
-
-    .rdp-caption_label {
-        color: white;
-        font-weight: bold;
-    }
-
-    .rdp-day {
-        color: white;
-        border-radius: 8px;
-        transition: all 0.2s ease;
-    }
-
-    .rdp-day:hover {
-        background-color: ${colors.corPrimaria};
-        color: white;
-    }
-
-    .rdp-day_selected:not(.rdp-day_outside) {
-        background-color: ${colors.corPrimaria};
-        color: white;
-        font-weight: bold;
-    }
-
-    .rdp-day_today {
-        font-weight: bold;
-        border: 1px solid ${colors.corPrimaria};
-    }
-
-    .rdp-day_disabled {
-        color: #666;
-        opacity: 0.5;
-    }
-
-    .rdp-day:focus,
-    .rdp-day:focus-visible {
-        outline: none;
-        background-color: ${colors.corPrimaria};
-    }
-
     h3 {
         font-weight: 500;
         margin: 8px 0;
@@ -147,6 +48,85 @@ export const DataPickWrapper = styled.div`
     width: 100%;
     display: flex;
     justify-content: center;
+`
+
+export const CalendarContainer = styled.div`
+    width: 100%;
+
+    .custom-calendar {
+        background: ${colors.cinzaEscuro};
+        width: 100%;
+        border: none;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        padding: 10px;
+        font-family: 'Arial', sans-serif;
+
+        .react-datepicker__header {
+            background: ${colors.cinzaEscuro};
+            border-bottom: none;
+            padding: 10px;
+            border-radius: 8px 8px 0 0;
+            position: relative;
+        }
+
+        .react-datepicker__month-container {
+            width: 100%;
+        }
+
+        .react-datepicker__current-month {
+            color: ${colors.branco};
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .react-datepicker__day-name,
+        .react-datepicker__day {
+            color: ${colors.branco};
+            width: 48px;
+            line-height: 36px;
+            margin: 4px;
+        }
+
+        .react-datepicker__day--selected,
+        .react-datepicker__day--keyboard-selected {
+            background: ${colors.corPrimaria};
+            width: 48px;
+            color: ${colors.branco};
+            border-radius: 50%;
+        }
+
+        .react-datepicker__day:hover {
+            background: ${colors.cinzaEscuro};
+            border-radius: 50%;
+        }
+
+        .react-datepicker__navigation {
+            top: 12px;
+            width: 24px;
+            height: 24px;
+        }
+
+        .react-datepicker__navigation-icon {
+            width: 24px;
+            height: 24px;
+        }
+
+        .react-datepicker__navigation-icon::before {
+            border-color: ${colors.branco};
+            width: 8px;
+            height: 8px;
+        }
+
+        .react-datepicker__triangle {
+            display: none;
+        }
+
+        .react-datepicker__day--disabled {
+            color: #666;
+            opacity: 0.5;
+        }
+    }
 `
 
 export const Horario = styled.div`

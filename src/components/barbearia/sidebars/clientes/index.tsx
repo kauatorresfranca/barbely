@@ -4,9 +4,10 @@ import { ClipLoader } from 'react-spinners'
 import { Cliente } from '../../../../models/cliente'
 import { authFetch } from '../../../../utils/authFetch'
 import ClienteEdit from '../../modals/cliente/editar'
+import ClienteNew from '../../modals/cliente/criar'
+import DeleteConfirmationModal from '../../modals/confirmar_delecao/index'
 import * as S from './styles'
 import api from '../../../../services/api'
-import ClienteNew from '../../modals/cliente/criar'
 
 const Clientes = () => {
     const [clientes, setClientes] = useState<Cliente[]>([])
@@ -17,7 +18,9 @@ const Clientes = () => {
     const [errorMessage, setErrorMessage] = useState<string | null>(null)
     const [modalEditIsOpen, setModalEditIsOpen] = useState<boolean>(false)
     const [modalCriarIsOpen, setModalCriarIsOpen] = useState<boolean>(false)
+    const [modalDeleteIsOpen, setModalDeleteIsOpen] = useState<boolean>(false)
     const [selectedCliente, setSelectedCliente] = useState<Cliente | null>(null)
+    const [clienteToDelete, setClienteToDelete] = useState<Cliente | null>(null)
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -108,17 +111,24 @@ const Clientes = () => {
         setModalEditIsOpen(false)
     }
 
-    const handleDeleteCliente = async (cliente: Cliente) => {
-        const confirmDelete = window.confirm(
-            `Tem certeza que deseja deletar o cliente ${cliente.user?.nome || 'desconhecido'}?`,
-        )
-        if (!confirmDelete) return
+    const handleOpenDeleteModal = (cliente: Cliente) => {
+        setClienteToDelete(cliente)
+        setModalDeleteIsOpen(true)
+    }
+
+    const handleCloseDeleteModal = () => {
+        setClienteToDelete(null)
+        setModalDeleteIsOpen(false)
+    }
+
+    const handleDeleteCliente = async () => {
+        if (!clienteToDelete) return
 
         try {
             console.log(
-                `Tentando deletar cliente ID: ${cliente.id}, Barbearia: ${cliente.barbearia}`,
+                `Tentando deletar cliente ID: ${clienteToDelete.id}, Barbearia: ${clienteToDelete.barbearia}`,
             )
-            const response = await authFetch(`${api.baseURL}/clientes/${cliente.id}/`, {
+            const response = await authFetch(`${api.baseURL}/clientes/${clienteToDelete.id}/`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
@@ -137,9 +147,10 @@ const Clientes = () => {
                 )
             }
 
-            setClientes((prev) => prev.filter((c) => c.id !== cliente.id))
-            setFilteredClientes((prev) => prev.filter((c) => c.id !== cliente.id))
+            setClientes((prev) => prev.filter((c) => c.id !== clienteToDelete.id))
+            setFilteredClientes((prev) => prev.filter((c) => c.id !== clienteToDelete.id))
             setErrorMessage(null)
+            handleCloseDeleteModal()
         } catch (err: unknown) {
             console.error('Erro ao deletar cliente:', err)
             const errorMessage = err instanceof Error ? err.message : 'Erro desconhecido'
@@ -204,7 +215,7 @@ const Clientes = () => {
                                     <i
                                         className="ri-delete-bin-line delete"
                                         title="Apagar Cliente"
-                                        onClick={() => handleDeleteCliente(cliente)}
+                                        onClick={() => handleOpenDeleteModal(cliente)}
                                     ></i>
                                 </S.IconGroup>
                             </S.ListItem>
@@ -221,6 +232,14 @@ const Clientes = () => {
             {modalCriarIsOpen && <ClienteNew closeModal={handleCloseModalCriar} />}
             {modalEditIsOpen && (
                 <ClienteEdit cliente={selectedCliente} closeModal={handleCloseModalEdit} />
+            )}
+            {modalDeleteIsOpen && clienteToDelete && (
+                <DeleteConfirmationModal
+                    isOpen={modalDeleteIsOpen}
+                    itemName={`o cliente ${clienteToDelete.user?.nome || 'desconhecido'}`}
+                    onConfirm={handleDeleteCliente}
+                    onClose={handleCloseDeleteModal}
+                />
             )}
             {!isLoading && !hasError && (
                 <p className="cliente_length">{filteredClientes.length} Clientes</p>

@@ -41,9 +41,7 @@ export const Modal = styled.div`
     }
 
     @media (max-width: ${breakpoints.tablet}) {
-        max-width: 100%;
-        height: 100%;
-        border-radius: 0;
+        width: 90%;
     }
 
     @keyframes slideUp {

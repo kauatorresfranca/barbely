@@ -46,7 +46,7 @@ export const SideBar = styled.div<SideBarProps>`
         left: 0;
         z-index: 999;
         width: 100%;
-        padding: 20px;
+        padding: 0px 40px;
         transform: ${(props) => (props.isOpen ? 'translateX(0)' : 'translateX(-100%)')};
         transition: transform 0.3s ease-in-out;
     }
@@ -227,6 +227,7 @@ export const Activity = styled.div`
     padding: 8px 0px;
     border-radius: 10px;
     background-color: ${colors.cinzaEscuro};
+    cursor: pointer;
 
     div {
         display: flex;
@@ -271,4 +272,100 @@ export const InputGroup = styled.div`
     width: 100%;
     margin-right: 8px;
     margin-bottom: 16px;
+`
+
+export const DropdownMenu = styled.ul`
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    top: 110px;
+    left: 0;
+    right: 0;
+    display: none;
+    background-color: ${colors.cinzaClaro};
+    border: 1px solid ${colors.cinzaTransparent};
+    border-radius: 8px;
+    width: 100%;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+
+    li {
+        list-style: none;
+        padding: 12px 20px;
+        cursor: pointer;
+        transition: background 0.3s;
+        color: ${colors.branco};
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        i {
+            font-size: 16px;
+        }
+
+        &:hover {
+            background-color: ${colors.cinzaEscuro};
+        }
+    }
+
+    &.active {
+        display: flex;
+    }
+`
+
+export const StatusContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    margin-top: 12px;
+    padding: 12px;
+
+    h4 {
+        font-size: 16px;
+        color: ${colors.branco};
+        font-weight: bold;
+        margin-bottom: 4px;
+    }
+
+    p {
+        font-size: 12px;
+        color: ${colors.texto};
+        margin-bottom: 8px;
+    }
+
+    @media (max-width: ${breakpoints.tablet}) {
+        h4 {
+            font-size: 14px;
+        }
+    }
+`
+
+export const StatusSelect = styled.select`
+    width: 100%;
+    padding: 8px;
+    border: 1px solid ${colors.cinzaTransparent};
+    border-radius: 8px;
+    background-color: ${colors.cinzaEscuro};
+    color: ${colors.branco};
+    font-size: 14px;
+    cursor: pointer;
+    appearance: none;
+    background-image: url('data:image/svg+xml;utf8,<svg fill="white" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+
+    &:hover {
+        border-color: ${colors.branco};
+    }
+
+    &:focus {
+        border-color: ${colors.corPrimaria};
+        outline: none;
+    }
+`
+
+export const LoadingContainer = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
 `

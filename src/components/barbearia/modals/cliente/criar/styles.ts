@@ -41,9 +41,7 @@ export const Modal = styled.div`
     }
 
     @media (max-width: ${breakpoints.tablet}) {
-        max-width: 100%;
-        height: 100%;
-        border-radius: 0;
+        width: 90%;
     }
 
     @keyframes slideUp {
@@ -70,18 +68,21 @@ export const CloseButton = styled.button`
 `
 
 export const Button = styled.button`
-    padding: 8px 16px;
-    width: 100%;
-    margin-top: 12px;
+    background: ${colors.corPrimaria};
+    color: ${colors.branco};
     border: none;
-    border-radius: 4px;
-    background-color: ${colors.corPrimaria};
-    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: bold;
     cursor: pointer;
-    font-size: 1rem;
+    margin-top: 16px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    width: 100%;
+    text-align: center;
 
     &:hover {
-        background-color: #0056b3;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     }
 `
 

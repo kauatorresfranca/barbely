@@ -8,6 +8,12 @@ export const Container = styled.div`
         color: ${colors.texto};
         font-size: 14px;
     }
+
+    @media (max-width: ${breakpoints.tablet}) {
+        .subtitle {
+            font-size: 12px;
+        }
+    }
 `
 
 export const Financeiro = styled.div`

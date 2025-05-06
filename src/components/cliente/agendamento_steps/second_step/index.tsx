@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { format } from 'date-fns'
-import { DayPicker } from 'react-day-picker'
+import DatePicker from 'react-datepicker'
 import { ptBR } from 'date-fns/locale'
+import 'react-datepicker/dist/react-datepicker.css'
 
 import { Funcionario } from '../../../../models/funcionario'
 import { Servico } from '../../../../models/servico'
@@ -75,14 +76,14 @@ const HorariosStep = ({ setActiveTab, servico, funcionario }: Props) => {
     }
 
     // Função para normalizar a data selecionada
-    const handleDaySelect = (date: Date | undefined) => {
+    const handleDateChange = (date: Date | null): void => {
         if (!date) {
             setDataSelecionada(undefined)
             return
         }
 
         const dataNormalizada = new Date(date.getFullYear(), date.getMonth(), date.getDate())
-        console.log('Data selecionada pelo DayPicker (original):', date.toString())
+        console.log('Data selecionada pelo DatePicker (original):', date.toString())
         console.log('Data selecionada (normalizada):', dataNormalizada.toString())
 
         setDataSelecionada(dataNormalizada)
@@ -172,13 +173,16 @@ const HorariosStep = ({ setActiveTab, servico, funcionario }: Props) => {
             <S.Data>
                 <h3>Escolha a data</h3>
                 <S.DataPickWrapper>
-                    <DayPicker
-                        mode="single"
-                        selected={dataSelecionada}
-                        onSelect={handleDaySelect}
-                        disabled={[{ before: hojeAjustado }]}
-                        locale={ptBR}
-                    />
+                    <S.CalendarContainer>
+                        <DatePicker
+                            selected={dataSelecionada}
+                            onChange={handleDateChange}
+                            inline
+                            calendarClassName="custom-calendar"
+                            locale={ptBR}
+                            minDate={hojeAjustado}
+                        />
+                    </S.CalendarContainer>
                 </S.DataPickWrapper>
             </S.Data>
             <S.Horario>

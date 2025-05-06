@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { colors } from '../../../../../../styles'
+import { breakpoints, colors } from '../../../../../../styles'
 
 export const Overlay = styled.div`
     position: fixed;
@@ -30,7 +30,7 @@ export const Modal = styled.div`
         margin-bottom: 1.5rem;
         text-align: center;
         color: ${colors.branco};
-        font-size: 1.8rem;
+        font-size: 18px;
         font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0.5px;
@@ -45,6 +45,10 @@ export const Modal = styled.div`
             opacity: 1;
             transform: translateY(0);
         }
+    }
+
+    @media (max-width: ${breakpoints.tablet}) {
+        width: 90%;
     }
 `
 
@@ -83,9 +87,7 @@ export const InfoItem = styled.div`
 export const InfoLabel = styled.span`
     font-size: 14px;
     font-weight: 500;
-    color: ${colors.branco}CC;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    color: ${colors.corPrimaria};
 `
 
 export const Input = styled.input`

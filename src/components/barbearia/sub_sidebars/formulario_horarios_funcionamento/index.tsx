@@ -10,6 +10,7 @@ interface HorarioAPI {
     dia_semana: number
     horario_abertura: string | null
     horario_fechamento: string | null
+    fechado: boolean
 }
 
 // Interface para o estado local de horários
@@ -68,10 +69,7 @@ const HorarioFuncionamentoForm = () => {
                         const horario = data.find((h) => h.dia_semana === index)
                         return {
                             dia,
-                            aberto:
-                                horario && horario.horario_abertura && horario.horario_fechamento
-                                    ? true
-                                    : false,
+                            aberto: horario ? !horario.fechado : false,
                             abre_as:
                                 horario && horario.horario_abertura
                                     ? horario.horario_abertura.slice(0, 5)
@@ -133,7 +131,6 @@ const HorarioFuncionamentoForm = () => {
 
         const dadosParaEnviar = horarios.map((h) => ({
             dia_semana: mapaDias[h.dia as keyof typeof mapaDias],
-            aberto: h.aberto,
             fechado: !h.aberto,
             horario_abertura: h.aberto ? h.abre_as : null,
             horario_fechamento: h.aberto ? h.fecha_as : null,

@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { colors } from '../../../../../styles'
+import { breakpoints, colors } from '../../../../../styles'
 
 export const Container = styled.div`
     position: relative;
@@ -18,6 +18,12 @@ export const Container = styled.div`
         bottom: 16px;
         text-align: center;
         color: ${colors.texto};
+    }
+
+    @media (max-width: ${breakpoints.tablet}) {
+        .subtitle {
+            font-size: 12px;
+        }
     }
 `
 
