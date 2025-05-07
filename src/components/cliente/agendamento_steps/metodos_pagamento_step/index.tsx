@@ -12,14 +12,14 @@ type Props = {
 
 type PaymentMethod = {
     id: string
-    nome: string
+    nome: 'Pix' | 'Cartão de Crédito' | 'Cartão de Débito' | 'Dinheiro'
 }
 
 const MetodoPagamentoStep = ({ setActiveTab, agendamentoData }: Props) => {
     const { slug } = useParams<{ slug: string }>()
-    const [metodoSelecionado, setMetodoSelecionado] = useState<string | null>(
-        agendamentoData.metodoPagamento || null,
-    )
+    const [metodoSelecionado, setMetodoSelecionado] = useState<
+        'Pix' | 'Cartão de Crédito' | 'Cartão de Débito' | 'Dinheiro' | null
+    >(agendamentoData.metodoPagamento || null)
     const [metodosDisponiveis, setMetodosDisponiveis] = useState<PaymentMethod[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
@@ -92,8 +92,8 @@ const MetodoPagamentoStep = ({ setActiveTab, agendamentoData }: Props) => {
                     {metodosDisponiveis.map((metodo) => (
                         <S.MetodoItem
                             key={metodo.id}
-                            onClick={() => setMetodoSelecionado(metodo.id)}
-                            $selected={metodoSelecionado === metodo.id}
+                            onClick={() => setMetodoSelecionado(metodo.nome)}
+                            $selected={metodoSelecionado === metodo.nome}
                             aria-label={`Selecionar ${metodo.nome}`}
                         >
                             <S.MetodoContent>

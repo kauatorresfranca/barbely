@@ -9,13 +9,19 @@ type DetalhesModalProps = {
 }
 
 // Função para formatar o método de pagamento
-const formatarMetodoPagamento = (metodo: string): string => {
-    switch (metodo.toUpperCase()) {
-        case 'PIX':
+const formatarMetodoPagamento = (metodo: string | null): string => {
+    if (!metodo) {
+        return 'Não especificado'
+    }
+
+    switch (metodo.toLowerCase()) {
+        case 'pix':
             return 'Pix'
-        case 'CARTÃO':
-            return 'Cartão'
-        case 'DINHEIRO':
+        case 'cartao_credito':
+            return 'Cartão de Crédito'
+        case 'cartao_debito':
+            return 'Cartão de Débito'
+        case 'dinheiro':
             return 'Dinheiro'
         default:
             return metodo.charAt(0).toUpperCase() + metodo.slice(1).toLowerCase()

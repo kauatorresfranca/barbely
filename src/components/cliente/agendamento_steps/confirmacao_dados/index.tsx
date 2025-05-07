@@ -20,20 +20,21 @@ const ConfirmacaoStep = ({ setActiveTab, agendamentoData }: Props) => {
           })
         : ''
 
-    // Mapeia o ID do método de pagamento para um nome legível
+    // Mapeia o nome do método de pagamento do frontend para o backend
+    const metodoPagamentoMap: { [key: string]: string } = {
+        Pix: 'pix',
+        'Cartão de Crédito': 'cartao_credito',
+        'Cartão de Débito': 'cartao_debito',
+        Dinheiro: 'dinheiro',
+    }
+
+    // Retorna o nome do método de pagamento para exibição
     const metodoPagamentoNome = () => {
-        switch (agendamentoData.metodoPagamento) {
-            case 'pix':
-                return 'Pix'
-            case 'cartao_credito':
-                return 'Cartão de Crédito'
-            case 'cartao_debito':
-                return 'Cartão de Débito'
-            case 'dinheiro':
-                return 'Dinheiro'
-            default:
-                return 'Não especificado'
+        const metodo = agendamentoData.metodoPagamento
+        if (!metodo || !metodoPagamentoMap[metodo]) {
+            return 'Não especificado'
         }
+        return metodo
     }
 
     const handleNext = async () => {
@@ -46,6 +47,14 @@ const ConfirmacaoStep = ({ setActiveTab, agendamentoData }: Props) => {
         }
 
         try {
+            // Validar metodo_pagamento
+            const metodoPagamento = agendamentoData.metodoPagamento
+            if (!metodoPagamento || !metodoPagamentoMap[metodoPagamento]) {
+                alert('Selecione um método de pagamento válido.')
+                setActiveTab('metodo_pagamento')
+                return
+            }
+
             const dataNormalizada = toZonedTime(agendamentoData.data, fusoHorario)
             const data = format(dataNormalizada, 'yyyy-MM-dd')
             const horario = agendamentoData.horario
@@ -64,7 +73,7 @@ const ConfirmacaoStep = ({ setActiveTab, agendamentoData }: Props) => {
                 funcionario: agendamentoData.funcionario?.id,
                 hora_inicio: horaFormatada,
                 servico: agendamentoData.servico.id,
-                metodo_pagamento: agendamentoData.metodoPagamento,
+                metodo_pagamento: metodoPagamentoMap[metodoPagamento], // Enviar valor mapeado
             }
 
             console.log('Enviando payload para /api/agendamentos/criar/', payload)

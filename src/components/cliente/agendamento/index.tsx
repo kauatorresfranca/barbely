@@ -18,7 +18,7 @@ export type AgendamentoData = {
     horario: string
     servico: Servico
     funcionario: Funcionario | null
-    metodoPagamento?: string
+    metodoPagamento: 'Pix' | 'Cartão de Crédito' | 'Cartão de Débito' | 'Dinheiro'
 }
 
 const Agendamento = ({ modalIsOpen, onClose }: Props) => {

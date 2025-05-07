@@ -34,7 +34,7 @@ type NovoAgendamento = {
 }
 
 const fusoHorario = 'America/Sao_Paulo'
-const hoje = formatInTimeZone(new Date(), fusoHorario, 'yyyy-MM-dd') // Corrigido o formato
+const hoje = formatInTimeZone(new Date(), fusoHorario, 'yyyy-MM-dd')
 
 const gerarHoras = (intervalo: number): string[] => {
     const horas: string[] = []
@@ -52,16 +52,18 @@ const gerarHoras = (intervalo: number): string[] => {
     return horas
 }
 
-const getIconePagamento = (metodo: string): string => {
+const getIconePagamento = (metodo: string | null): string => {
     switch (metodo) {
         case 'pix':
             return 'ri-pix-fill'
-        case 'Cartão':
+        case 'cartao_credito':
             return 'ri-bank-card-fill'
-        case 'cash':
+        case 'cartao_debito':
+            return 'ri-bank-card-fill'
+        case 'dinheiro':
             return 'ri-money-dollar-circle-fill'
         default:
-            return 'ri-pix-fill'
+            return 'ri-question-fill' // Ícone padrão para null ou valores inválidos
     }
 }
 
@@ -462,8 +464,7 @@ const AgendaGrafico = () => {
         <S.Container>
             <h2>Meus Agendamentos</h2>
             <p className="subtitle">
-                Visualize e acompanhe os horários marcados pelos seus clientes, com todos os
-                detalhes.
+                Visualize e acompanhe os horários marcados pelos clientes, com todos os detalhes.
             </p>
             {error && (
                 <S.ErrorMessage>
