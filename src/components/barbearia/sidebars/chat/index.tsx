@@ -1,16 +1,34 @@
 import { useState } from 'react'
 import * as S from './styles'
 
+interface Mensagem {
+    id: number
+    texto: string
+    remetente: 'suporte' | 'cliente'
+    hora: string
+}
+
+interface Usuario {
+    id: number
+    nome: string
+    ultimaMensagem: string
+    hora: string
+}
+
+interface MensagensPorUsuario {
+    [key: number]: Mensagem[]
+}
+
 const Chat = () => {
     // Usuários simulados
-    const [usuarios] = useState([
+    const [usuarios] = useState<Usuario[]>([
         { id: 1, nome: 'Suporte', ultimaMensagem: 'Claro! Como posso ajudar?', hora: '10:02' },
         { id: 2, nome: 'Cliente 1', ultimaMensagem: 'Oi, tudo bem?', hora: '09:45' },
         { id: 3, nome: 'Cliente 2', ultimaMensagem: 'Quero agendar um horário.', hora: '08:30' },
     ])
 
     // Mensagens simuladas por usuário
-    const [mensagensPorUsuario] = useState({
+    const [mensagensPorUsuario, setMensagensPorUsuario] = useState<MensagensPorUsuario>({
         1: [
             {
                 id: 1,
@@ -51,17 +69,17 @@ const Chat = () => {
     const [isUsuariosOpen, setIsUsuariosOpen] = useState(false)
 
     const handleEnviar = () => {
-        if (novaMensagem.trim() && usuarioAtivo) {
-            const novasMensagens = [
-                ...mensagensPorUsuario[usuarioAtivo],
-                {
-                    id: Date.now(),
-                    texto: novaMensagem,
-                    remetente: 'cliente',
-                    hora: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                },
-            ]
-            mensagensPorUsuario[usuarioAtivo] = novasMensagens
+        if (novaMensagem.trim() && usuarioAtivo !== null) {
+            const novaMensagemObj: Mensagem = {
+                id: Date.now(),
+                texto: novaMensagem,
+                remetente: 'cliente',
+                hora: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            }
+            setMensagensPorUsuario((prev) => ({
+                ...prev,
+                [usuarioAtivo]: [...prev[usuarioAtivo], novaMensagemObj],
+            }))
             setNovaMensagem('')
         }
     }
@@ -100,7 +118,7 @@ const Chat = () => {
                 </S.UsuariosContainer>
 
                 {/* Área de chat (direita) */}
-                {usuarioAtivo ? (
+                {usuarioAtivo !== null ? (
                     <S.ChatContainer>
                         <S.Header>
                             <S.BackButton onClick={toggleUsuarios}>
@@ -109,7 +127,7 @@ const Chat = () => {
                             <h2>{usuarios.find((u) => u.id === usuarioAtivo)?.nome}</h2>
                         </S.Header>
                         <S.MensagensContainer>
-                            {mensagensPorUsuario[usuarioAtivo].map((msg) => (
+                            {mensagensPorUsuario[usuarioAtivo].map((msg: Mensagem) => (
                                 <S.Mensagem key={msg.id} remetente={msg.remetente}>
                                     <S.Texto>{msg.texto}</S.Texto>
                                     <S.Hora>{msg.hora}</S.Hora>
