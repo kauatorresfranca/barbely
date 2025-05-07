@@ -21,6 +21,7 @@ import * as S from './styles'
 import logo from '../../../assets/images/logo.png'
 import user from '../../../assets/images/user.png'
 import { ClipLoader } from 'react-spinners'
+import Chat from '../sidebars/chat'
 
 // Definindo a interface para o tipo do horário
 interface Horario {
@@ -233,13 +234,15 @@ const Dash = () => {
             icon: 'ri-nurse-fill',
             component: <Profissionais />,
         },
+
+        { id: 'servicos', label: 'Serviços', icon: 'ri-scissors-fill', component: <Servicos /> },
         {
             id: 'financeiro',
             label: 'Financeiro',
             icon: 'ri-bank-card-fill',
             component: <Financeiro />,
         },
-        { id: 'servicos', label: 'Serviços', icon: 'ri-scissors-fill', component: <Servicos /> },
+        { id: 'Chat', label: 'Chat', icon: 'ri-chat-3-fill', component: <Chat /> },
         {
             id: 'perfil_da_barbearia',
             label: 'Perfil da Barbearia',
@@ -340,7 +343,7 @@ const Dash = () => {
                     </S.SidebarList>
                 </nav>
             </S.SideBar>
-            <S.Content>{tabs.find((tab) => tab.id === activeTab)?.component}</S.Content>
+            <S.Content>{tabs.find((tab) => tab.id === activeTab)?.component} </S.Content>
         </S.Container>
     )
 }

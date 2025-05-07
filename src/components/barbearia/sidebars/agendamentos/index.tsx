@@ -1,9 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
 import { formatInTimeZone, toZonedTime } from 'date-fns-tz'
 import { addDays, subDays, isSameDay } from 'date-fns'
-import { ptBR } from 'date-fns/locale' // Importa o locale pt-BR
+import { ptBR } from 'date-fns/locale'
 import { authFetch } from '../../../../utils/authFetch'
-import { Agendamento } from '../../../cliente/modals/meus_agendamentos'
 import DetalhesModal from '../../modals/agendamentos/Detalhes'
 import StatusModal from '../../modals/agendamentos/status'
 import CriarAgendamentoModal from '../../modals/agendamentos/criar'
@@ -11,8 +10,8 @@ import * as S from './styles'
 import api from '../../../../services/api'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
+import { Agendamento } from '../../../../models/Agendamento'
 
-// Define types for data models
 type Funcionario = {
     id: number
     nome: string
@@ -31,10 +30,11 @@ type NovoAgendamento = {
     servico: string
     data: string
     hora_inicio: string
+    metodo_pagamento: string
 }
 
 const fusoHorario = 'America/Sao_Paulo'
-const hoje = formatInTimeZone(new Date(), fusoHorario, 'yyyy-MM-dd')
+const hoje = formatInTimeZone(new Date(), fusoHorario, 'yyyy-MM-dd') // Corrigido o formato
 
 const gerarHoras = (intervalo: number): string[] => {
     const horas: string[] = []
@@ -50,6 +50,19 @@ const gerarHoras = (intervalo: number): string[] => {
     }
 
     return horas
+}
+
+const getIconePagamento = (metodo: string): string => {
+    switch (metodo) {
+        case 'pix':
+            return 'ri-pix-fill'
+        case 'Cartão':
+            return 'ri-bank-card-fill'
+        case 'cash':
+            return 'ri-money-dollar-circle-fill'
+        default:
+            return 'ri-pix-fill'
+    }
 }
 
 const AgendaGrafico = () => {
@@ -77,6 +90,7 @@ const AgendaGrafico = () => {
         servico: '',
         data: hoje,
         hora_inicio: '08:00',
+        metodo_pagamento: '',
     })
 
     const intervalo = 30
@@ -118,7 +132,6 @@ const AgendaGrafico = () => {
         setIsCalendarOpen(!isCalendarOpen)
     }
 
-    // Fechar o calendário ao clicar fora
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (
@@ -170,6 +183,7 @@ const AgendaGrafico = () => {
             servico: '',
             data: hoje,
             hora_inicio: '08:00',
+            metodo_pagamento: '',
         })
     }
 
@@ -291,6 +305,9 @@ const AgendaGrafico = () => {
         if (!novoAgendamento.hora_inicio) {
             return 'Selecione uma hora de início.'
         }
+        if (!novoAgendamento.metodo_pagamento) {
+            return 'Selecione um método de pagamento.'
+        }
         return null
     }
 
@@ -316,6 +333,7 @@ const AgendaGrafico = () => {
                 servico: parseInt(novoAgendamento.servico),
                 data: novoAgendamento.data,
                 hora_inicio: novoAgendamento.hora_inicio,
+                metodo_pagamento: novoAgendamento.metodo_pagamento,
                 status: 'CONFIRMADO',
             }
 
@@ -479,7 +497,7 @@ const AgendaGrafico = () => {
                                         onChange={handleDateChange}
                                         inline
                                         calendarClassName="custom-calendar"
-                                        locale={ptBR} // Adiciona o locale pt-BR
+                                        locale={ptBR}
                                     />
                                 </S.CalendarContainer>
                             )}
@@ -587,7 +605,11 @@ const AgendaGrafico = () => {
                                                                                 }
                                                                             </p>
                                                                             <p className="servico">
-                                                                                <i className="ri-pix-fill"></i>{' '}
+                                                                                <i
+                                                                                    className={getIconePagamento(
+                                                                                        agendamento.metodo_pagamento,
+                                                                                    )}
+                                                                                ></i>{' '}
                                                                                 {
                                                                                     agendamento.servico_nome
                                                                                 }{' '}
@@ -595,7 +617,7 @@ const AgendaGrafico = () => {
                                                                                 {
                                                                                     agendamento.servico_duracao
                                                                                 }{' '}
-                                                                                min{' '}
+                                                                                min
                                                                             </p>
                                                                         </div>
                                                                     </S.AgendamentoInfo>
@@ -638,7 +660,6 @@ const AgendaGrafico = () => {
                 )}
             </S.HorariosContainer>
 
-            {/* Modals */}
             <DetalhesModal
                 isOpen={modalIsOpen}
                 onClose={closeModal}

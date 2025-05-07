@@ -116,6 +116,11 @@ export const DateDisplay = styled.div`
     &:hover {
         background: ${colors.cinzaClaro}80;
     }
+
+    @media (max-width: ${breakpoints.tablet}) {
+        font-size: 14px;
+        min-width: 110px;
+    }
 `
 
 export const HorariosContainer = styled.div`
@@ -203,10 +208,10 @@ export const AgendamentoBlock = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 40px;
+    height: 42px;
     width: 95%;
     margin: 0 auto;
-    background: linear-gradient(45deg, ${colors.corPrimaria}, ${colors.corPrimaria}CC);
+    background: linear-gradient(45deg, ${colors.cinzaEscuro}, ${colors.cinzaEscuro}CC);
     border-radius: 10px;
     padding: 10px;
     font-size: 14px;
@@ -228,7 +233,7 @@ export const AgendamentoInfo = styled.div<{
     align-items: center;
 
     .cliente {
-        color: ${colors.branco};
+        color: ${colors.corPrimaria};
         font-weight: bold;
         margin-bottom: 2px;
         font-size: 15px;
@@ -253,7 +258,7 @@ export const AgendamentoInfo = styled.div<{
             status === 'CANCELADO'
                 ? `${colors.vermelho}`
                 : status === 'EXPIRADO'
-                ? '#cccccc'
+                ? `${colors.cinzaTransparent}`
                 : status === 'CONCLUIDO'
                 ? `${colors.verdeTransparent}`
                 : `${colors.cinzaClaro}`};
@@ -265,12 +270,12 @@ export const AgendamentoInfo = styled.div<{
 
 export const Button = styled.div`
     padding: 8px 14px;
-    background: ${colors.cinzaEscuro};
-    color: ${colors.branco};
+    background: linear-gradient(45deg, ${colors.corPrimaria}, ${colors.corPrimaria}AA);
+    color: ${colors.cinzaEscuro};
     border-radius: 8px;
     cursor: pointer;
     font-size: 13px;
-    font-weight: 500;
+    font-weight: 600;
     transition: all 0.3s ease;
     border: 1px solid ${colors.cinzaTransparent};
 

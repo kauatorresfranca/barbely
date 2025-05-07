@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
 import { IMaskInput } from 'react-imask'
 import { ClipLoader } from 'react-spinners'
-import { authFetch } from '../../../../utils/authFetch'
-import { useBarbeariaAtual, useSetBarbeariaAtual } from '../../../../hooks/useBarbeariaAtual'
+import { authFetch } from '../../../../../utils/authFetch'
+import { useBarbeariaAtual, useSetBarbeariaAtual } from '../../../../../hooks/useBarbeariaAtual'
 import * as S from './styles'
-import api from '../../../../services/api'
+import api from '../../../../../services/api'
 
 const BarbeariaPerfilForm = () => {
     const barbearia = useBarbeariaAtual()

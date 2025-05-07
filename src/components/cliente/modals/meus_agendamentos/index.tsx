@@ -6,21 +6,7 @@ import * as S from './styles'
 import { authFetch } from '../../../../utils/authFetch'
 import { ClipLoader } from 'react-spinners'
 import api from '../../../../services/api'
-
-// Tipo ajustado para o modelo do backend
-export type Agendamento = {
-    id: number
-    cliente: number
-    cliente_nome: string
-    funcionario: number
-    servico: number
-    servico_nome: string
-    servico_duracao: number
-    data: string
-    hora_inicio: string
-    status: 'CONFIRMADO' | 'CANCELADO' | 'EXPIRADO' | 'CONCLUIDO'
-    criado_em: string
-}
+import { Agendamento } from '../../../../models/Agendamento'
 
 interface MeusAgendamentosModalProps {
     onClose: () => void

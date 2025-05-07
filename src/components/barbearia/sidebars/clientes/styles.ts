@@ -89,7 +89,7 @@ export const SearchAndAdd = styled.div`
     @media (max-width: ${breakpoints.tablet}) {
         input {
             height: 42px;
-            width: 60%;
+            width: 55%;
         }
     }
 `

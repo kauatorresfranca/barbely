@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { QRCodeCanvas } from 'qrcode.react'
 
-import { Barbearia } from '../../../../models/Barbearia'
+import { Barbearia } from '../../../../../models/Barbearia'
 
 import * as S from './styles'
 

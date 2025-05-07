@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { breakpoints, colors } from '../../../../../styles'
+import { breakpoints, colors } from '../../../../../../styles'
 import { Link } from 'react-router-dom'
 
 export const Container = styled.div`

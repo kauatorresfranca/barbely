@@ -27,19 +27,10 @@ type Props = {
 
 const HorariosStep = ({ setActiveTab, servico, funcionario }: Props) => {
     const hoje = new Date()
-    console.log(
-        'Hoje (new Date):',
-        hoje.toString(),
-        'Fuso horário (horas):',
-        hoje.getTimezoneOffset() / -60,
-    )
-
-    // Normalizamos a data para meia-noite no fuso horário local
     const hojeAjustado = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate())
-    console.log('Hoje ajustado (meia-noite local):', hojeAjustado.toString())
 
     const [horariosDisponiveis, setHorariosDisponiveis] = useState<string[]>([])
-    const [dataSelecionada, setDataSelecionada] = useState<Date | undefined>(hojeAjustado)
+    const [dataSelecionada, setDataSelecionada] = useState<Date | null>(hojeAjustado)
     const [turnoSelecionado, setTurnoSelecionado] = useState<'manha' | 'tarde' | 'noite'>('manha')
     const [horarioSelecionado, setHorarioSelecionado] = useState<string | null>(null)
     const [error, setError] = useState<string | null>(null)
@@ -57,35 +48,24 @@ const HorariosStep = ({ setActiveTab, servico, funcionario }: Props) => {
         noite: horariosNoite,
     }
 
-    // Função para verificar se o horário está no passado
-    const isHorarioPassado = (horario: string) => {
+    const isHorarioPassado = (horario: string): boolean => {
         if (!dataSelecionada) return false
         const [hora, minuto] = horario.split(':').map(Number)
         const dataHorario = new Date(dataSelecionada)
         dataHorario.setHours(hora, minuto, 0, 0)
 
         const agora = new Date()
-        console.log(
-            'Comparando dataHorario:',
-            dataHorario.toString(),
-            'com agora:',
-            agora.toString(),
-        )
-
         return dataHorario < agora
     }
 
-    // Função para normalizar a data selecionada
     const handleDateChange = (date: Date | null): void => {
         if (!date) {
-            setDataSelecionada(undefined)
+            setDataSelecionada(null)
             return
         }
 
         const dataNormalizada = new Date(date.getFullYear(), date.getMonth(), date.getDate())
-        console.log('Data selecionada pelo DatePicker (original):', date.toString())
-        console.log('Data selecionada (normalizada):', dataNormalizada.toString())
-
+        console.log('Data selecionada:', dataNormalizada.toString())
         setDataSelecionada(dataNormalizada)
     }
 
@@ -101,14 +81,6 @@ const HorariosStep = ({ setActiveTab, servico, funcionario }: Props) => {
                     dataSelecionada.getDate(),
                 )
                 const dataFormatada = format(dataAjustada, 'yyyy-MM-dd')
-                const diaSemana = dataAjustada.getDay()
-
-                console.log(
-                    'Data selecionada (formatada para API):',
-                    dataFormatada,
-                    'Dia da semana:',
-                    diaSemana,
-                )
 
                 const url = new URL(`${api.baseURL}/agendamentos/horarios-disponiveis/`)
                 url.searchParams.append('servico', String(servico.id))
@@ -117,7 +89,7 @@ const HorariosStep = ({ setActiveTab, servico, funcionario }: Props) => {
                     url.searchParams.append('funcionario', String(funcionario.id))
                 }
 
-                console.log('URL enviada para a API:', url.toString())
+                console.log('Buscando horários para URL:', url.toString())
 
                 const response = await authFetch(url.toString(), {
                     headers: {
@@ -131,11 +103,11 @@ const HorariosStep = ({ setActiveTab, servico, funcionario }: Props) => {
                 }
 
                 const dataJson = await response.json()
-                console.log('Resposta da API /api/agendamentos/horarios-disponiveis/:', dataJson)
+                console.log('Horários disponíveis:', dataJson.horarios_disponiveis)
                 setHorariosDisponiveis(dataJson.horarios_disponiveis || [])
                 setError(null)
             } catch (error) {
-                console.error('Erro ao buscar horários disponíveis:', error)
+                console.error('Erro ao buscar horários:', error)
                 setError(error instanceof Error ? error.message : 'Erro ao buscar horários.')
             }
         }
@@ -144,6 +116,13 @@ const HorariosStep = ({ setActiveTab, servico, funcionario }: Props) => {
     }, [servico.id, funcionario?.id, dataSelecionada])
 
     const handleNext = () => {
+        console.log(
+            'handleNext chamado - dataSelecionada:',
+            dataSelecionada,
+            'horarioSelecionado:',
+            horarioSelecionado,
+        )
+
         if (!dataSelecionada || !horarioSelecionado) {
             alert('Selecione uma data e um horário antes de prosseguir.')
             return
@@ -155,7 +134,6 @@ const HorariosStep = ({ setActiveTab, servico, funcionario }: Props) => {
             dataSelecionada.getDate(),
         )
         const dataFormatada = format(dataAjustada, 'yyyy-MM-dd')
-        console.log('Data formatada para setActiveTab:', dataFormatada)
 
         const dadosEnviados = {
             data: dataFormatada,
@@ -165,7 +143,14 @@ const HorariosStep = ({ setActiveTab, servico, funcionario }: Props) => {
         }
         console.log('Dados enviados para setActiveTab:', dadosEnviados)
 
-        setActiveTab('dia', dadosEnviados)
+        setActiveTab('metodo_pagamento', dadosEnviados)
+    }
+
+    const handleHorarioClick = (horario: string) => {
+        if (!isHorarioPassado(horario)) {
+            setHorarioSelecionado(horario)
+            console.log('Horário selecionado:', horario)
+        }
     }
 
     return (
@@ -213,13 +198,11 @@ const HorariosStep = ({ setActiveTab, servico, funcionario }: Props) => {
                         <S.HorarioList>
                             {horariosPorTurno[turnoSelecionado].length > 0 ? (
                                 horariosPorTurno[turnoSelecionado].map((horario) => {
-                                    const isPassado = dataSelecionada && isHorarioPassado(horario)
+                                    const isPassado = isHorarioPassado(horario)
                                     return (
                                         <S.HorarioItem
                                             key={horario}
-                                            onClick={() =>
-                                                !isPassado && setHorarioSelecionado(horario)
-                                            }
+                                            onClick={() => handleHorarioClick(horario)}
                                             selected={horarioSelecionado === horario}
                                             disabled={isPassado}
                                         >

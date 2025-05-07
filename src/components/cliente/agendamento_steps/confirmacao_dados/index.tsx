@@ -1,9 +1,7 @@
 import { toZonedTime, format } from 'date-fns-tz'
 import { useNavigate } from 'react-router-dom'
-
 import { AgendamentoData } from '../../../cliente/agendamento'
 import { authFetch } from '../../../../utils/authFetch'
-
 import * as S from './styles'
 import api from '../../../../services/api'
 
@@ -21,6 +19,22 @@ const ConfirmacaoStep = ({ setActiveTab, agendamentoData }: Props) => {
               timeZone: fusoHorario,
           })
         : ''
+
+    // Mapeia o ID do método de pagamento para um nome legível
+    const metodoPagamentoNome = () => {
+        switch (agendamentoData.metodoPagamento) {
+            case 'pix':
+                return 'Pix'
+            case 'cartao_credito':
+                return 'Cartão de Crédito'
+            case 'cartao_debito':
+                return 'Cartão de Débito'
+            case 'dinheiro':
+                return 'Dinheiro'
+            default:
+                return 'Não especificado'
+        }
+    }
 
     const handleNext = async () => {
         const token = sessionStorage.getItem('access_token_cliente')
@@ -50,6 +64,7 @@ const ConfirmacaoStep = ({ setActiveTab, agendamentoData }: Props) => {
                 funcionario: agendamentoData.funcionario?.id,
                 hora_inicio: horaFormatada,
                 servico: agendamentoData.servico.id,
+                metodo_pagamento: agendamentoData.metodoPagamento,
             }
 
             console.log('Enviando payload para /api/agendamentos/criar/', payload)
@@ -84,7 +99,7 @@ const ConfirmacaoStep = ({ setActiveTab, agendamentoData }: Props) => {
     }
 
     const handleBack = () => {
-        setActiveTab('horarios')
+        setActiveTab('metodo_pagamento')
     }
 
     return (
@@ -106,6 +121,9 @@ const ConfirmacaoStep = ({ setActiveTab, agendamentoData }: Props) => {
                     {agendamentoData.funcionario
                         ? agendamentoData.funcionario.nome
                         : 'Sem preferência'}
+                </p>
+                <p>
+                    <strong>Método de Pagamento:</strong> {metodoPagamentoNome()}
                 </p>
             </S.Confirmacao>
             <S.Button className="back" onClick={handleBack}>

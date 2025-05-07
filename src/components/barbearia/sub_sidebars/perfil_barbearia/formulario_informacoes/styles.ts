@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { breakpoints, colors } from '../../../../../styles'
+import { breakpoints, colors } from '../../../../../../styles'
 
 export const Container = styled.div`
     width: 680px;

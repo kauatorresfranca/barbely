@@ -1,9 +1,9 @@
 import { useState } from 'react'
 
-import HorarioFuncionamentoForm from '../../sub_sidebars/formulario_horarios_funcionamento'
-import CompartilharBarbearia from '../../sub_sidebars/compartilhar_barbearia'
-import DadosBarbearia from '../../sub_sidebars/formulario_informacoes'
-import Localizacao from '../../sub_sidebars/formulario_endereco'
+import HorarioFuncionamentoForm from '../../sub_sidebars/perfil_barbearia/formulario_horarios_funcionamento'
+import CompartilharBarbearia from '../../sub_sidebars/perfil_barbearia/compartilhar_barbearia'
+import DadosBarbearia from '../../sub_sidebars/perfil_barbearia/formulario_informacoes'
+import Localizacao from '../../sub_sidebars/perfil_barbearia/formulario_endereco'
 
 import * as S from './styles'
 

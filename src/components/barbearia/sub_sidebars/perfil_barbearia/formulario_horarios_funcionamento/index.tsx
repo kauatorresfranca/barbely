@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
 import { ClipLoader } from 'react-spinners'
-import { authFetch } from '../../../../utils/authFetch'
-import { useBarbeariaAtual } from '../../../../hooks/useBarbeariaAtual'
+import { authFetch } from '../../../../../utils/authFetch'
+import { useBarbeariaAtual } from '../../../../../hooks/useBarbeariaAtual'
 import * as S from './styles'
-import api from '../../../../services/api'
+import api from '../../../../../services/api'
 
 // Interface para os dados de horário retornados pela API
 interface HorarioAPI {

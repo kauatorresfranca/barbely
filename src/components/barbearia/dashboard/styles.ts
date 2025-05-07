@@ -36,8 +36,8 @@ export const SideBar = styled.div<SideBarProps>`
     flex-direction: column;
     overflow-y: auto;
     height: 100vh;
-    width: 270px;
-    padding: 16px;
+    width: 280px;
+    padding: 40px 16px;
     border-right: 1px solid ${colors.cinzaTransparent};
 
     @media (max-width: 768px) {
@@ -46,7 +46,7 @@ export const SideBar = styled.div<SideBarProps>`
         left: 0;
         z-index: 999;
         width: 100%;
-        padding: 0px 40px;
+        padding: 24px 24px;
         transform: ${(props) => (props.isOpen ? 'translateX(0)' : 'translateX(-100%)')};
         transition: transform 0.3s ease-in-out;
     }

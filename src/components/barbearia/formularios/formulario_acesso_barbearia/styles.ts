@@ -91,6 +91,7 @@ export const inputGroup = styled.div`
         border-radius: 3px;
         background-color: #181b20;
         transition: border 0.4s ease-in-out;
+        font-size: 14px;
 
         &:hover {
             border: 1px solid ${colors.branco};

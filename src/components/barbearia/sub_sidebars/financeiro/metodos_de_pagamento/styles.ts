@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { breakpoints, colors } from '../../../../../styles'
+import { breakpoints, colors } from '../../../../../../styles'
 
 export const Container = styled.div`
     width: 680px;
@@ -87,4 +87,17 @@ export const Slider = styled.span`
     ${ToggleSwitch} input:checked + &:before {
         transform: translateX(26px);
     }
+`
+
+export const Button = styled.button`
+    background: ${colors.corPrimaria};
+    color: #000;
+    padding: 14px;
+    margin-top: 24px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
 `

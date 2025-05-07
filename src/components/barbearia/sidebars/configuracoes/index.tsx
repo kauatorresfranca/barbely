@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
-import Personalizar from '../../sub_sidebars/personalizar'
-import ConfiguracoesAgendamento from '../../sub_sidebars/configuracoes_agendamento'
+import Personalizar from '../../sub_sidebars/configuracao/personalizar'
+import ConfiguracoesAgendamento from '../../sub_sidebars/configuracao/configuracoes_agendamento'
 
 import * as S from './styles'
 

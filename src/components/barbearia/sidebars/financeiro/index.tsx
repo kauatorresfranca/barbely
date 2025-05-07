@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import Planos from '../../sub_sidebars/planos'
-import MetodosPagamentos from '../../sub_sidebars/metodos_de_pagamento'
-import Custos from '../../sub_sidebars/custos'
+import Planos from '../../sub_sidebars/financeiro/planos'
+import MetodosPagamentos from '../../sub_sidebars/financeiro/metodos_de_pagamento'
+import Custos from '../../sub_sidebars/financeiro/custos'
 
 import * as S from './styles'
 

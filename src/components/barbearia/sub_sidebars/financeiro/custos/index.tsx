@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import * as S from './styles'
-import api from '../../../../services/api'
+import api from '../../../../../services/api'
 
 interface Cost {
     id: number

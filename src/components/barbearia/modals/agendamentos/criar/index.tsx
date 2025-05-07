@@ -1,3 +1,4 @@
+import { Dispatch, SetStateAction } from 'react'
 import * as S from './styles'
 
 type Funcionario = {
@@ -18,13 +19,14 @@ type NovoAgendamento = {
     servico: string
     data: string
     hora_inicio: string
+    metodo_pagamento: string // Adicionado metodo_pagamento
 }
 
 type CriarAgendamentoModalProps = {
     isOpen: boolean
     onClose: () => void
     novoAgendamento: NovoAgendamento
-    setNovoAgendamento: (novoAgendamento: NovoAgendamento) => void
+    setNovoAgendamento: Dispatch<SetStateAction<NovoAgendamento>> // Corrigido o tipo
     funcionarios: Funcionario[]
     servicos: Servico[]
     horas: string[]
@@ -155,6 +157,24 @@ const CriarAgendamentoModal = ({
                                     {hora}
                                 </option>
                             ))}
+                        </S.Select>
+                    </S.InfoItem>
+                    <S.InfoItem>
+                        <S.InfoLabel>Método de Pagamento</S.InfoLabel>
+                        <S.Select
+                            value={novoAgendamento.metodo_pagamento}
+                            onChange={(e) =>
+                                setNovoAgendamento({
+                                    ...novoAgendamento,
+                                    metodo_pagamento: e.target.value,
+                                })
+                            }
+                            disabled={criandoAgendamento}
+                        >
+                            <option value="">Selecione o método de pagamento</option>
+                            <option value="PIX">PIX</option>
+                            <option value="Cartão">Cartão</option>
+                            <option value="Dinheiro">Dinheiro</option>
                         </S.Select>
                     </S.InfoItem>
                 </S.ModalContent>

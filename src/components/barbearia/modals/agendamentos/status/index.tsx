@@ -1,4 +1,4 @@
-import { Agendamento } from '../../../../cliente/modals/meus_agendamentos'
+import { Agendamento } from '../../../../../models/Agendamento'
 import * as S from './styles'
 
 type StatusModalProps = {
@@ -9,6 +9,20 @@ type StatusModalProps = {
     error: string | null
     onUpdate: (agendamentoId: number, novoStatus: Agendamento['status']) => void
     formatarStatus: (status: Agendamento['status']) => string
+}
+
+// Função para formatar o método de pagamento
+const formatarMetodoPagamento = (metodo: string): string => {
+    switch (metodo.toUpperCase()) {
+        case 'PIX':
+            return 'Pix'
+        case 'CARTÃO':
+            return 'Cartão'
+        case 'DINHEIRO':
+            return 'Dinheiro'
+        default:
+            return metodo.charAt(0).toUpperCase() + metodo.slice(1).toLowerCase()
+    }
 }
 
 const StatusModal = ({
@@ -36,6 +50,12 @@ const StatusModal = ({
                     <S.InfoItem>
                         <S.InfoLabel>Serviço</S.InfoLabel>
                         <S.InfoValue>{agendamento.servico_nome}</S.InfoValue>
+                    </S.InfoItem>
+                    <S.InfoItem>
+                        <S.InfoLabel>Método de Pagamento</S.InfoLabel>
+                        <S.InfoValue>
+                            {formatarMetodoPagamento(agendamento.metodo_pagamento)}
+                        </S.InfoValue>
                     </S.InfoItem>
                     <S.InfoItem>
                         <S.InfoLabel>Status Atual</S.InfoLabel>

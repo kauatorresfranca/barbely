@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react'
 import { Funcionario } from '../../../models/funcionario'
 import { Servico } from '../../../models/servico'
-import HorariosStep from '../agendamento_steps/second_step'
+import HorariosStep from '../agendamento_steps/horarios_step'
 import FirstStep from '../agendamento_steps/first_step'
 import ConfirmacaoStep from '../agendamento_steps/confirmacao_dados'
 import SucessoStep from '../agendamento_steps/sucesso_step'
+import MetodoPagamentoStep from '../agendamento_steps/metodos_pagamento_step'
 import * as S from './styles'
 
 type Props = {
@@ -17,6 +18,7 @@ export type AgendamentoData = {
     horario: string
     servico: Servico
     funcionario: Funcionario | null
+    metodoPagamento?: string
 }
 
 const Agendamento = ({ modalIsOpen, onClose }: Props) => {
@@ -35,11 +37,24 @@ const Agendamento = ({ modalIsOpen, onClose }: Props) => {
         if (tab === 'horarios') {
             return !!dataToCheck?.servico
         }
-        if (tab === 'dia') {
+        if (tab === 'metodo_pagamento') {
             return !!dataToCheck?.data && !!dataToCheck?.horario
         }
+        if (tab === 'dia') {
+            return (
+                !!dataToCheck?.data &&
+                !!dataToCheck?.horario &&
+                !!dataToCheck?.servico &&
+                !!dataToCheck?.metodoPagamento
+            )
+        }
         if (tab === 'sucesso') {
-            return !!dataToCheck?.data && !!dataToCheck?.horario && !!dataToCheck?.servico
+            return (
+                !!dataToCheck?.data &&
+                !!dataToCheck?.horario &&
+                !!dataToCheck?.servico &&
+                !!dataToCheck?.metodoPagamento
+            )
         }
         return false
     }
@@ -55,6 +70,12 @@ const Agendamento = ({ modalIsOpen, onClose }: Props) => {
             setAgendamentoData((prev) => ({ ...prev, ...data } as AgendamentoData))
         }
         setActiveTab(tab)
+    }
+
+    // Função para resetar o agendamento
+    const resetAgendamento = () => {
+        setActiveTab('servico')
+        setAgendamentoData(null)
     }
 
     if (!modalIsOpen) return null
@@ -73,7 +94,7 @@ const Agendamento = ({ modalIsOpen, onClose }: Props) => {
                     <>
                         <h2>Agende sua sessão</h2>
                         <S.Etapas>
-                            {['servico', 'horarios', 'dia'].map((id, index) => (
+                            {['servico', 'horarios', 'metodo_pagamento', 'dia'].map((id, index) => (
                                 <span
                                     key={index}
                                     onClick={() => canAccessTab(id) && setActiveTab(id)}
@@ -94,13 +115,21 @@ const Agendamento = ({ modalIsOpen, onClose }: Props) => {
                             funcionario={agendamentoData.funcionario}
                         />
                     )}
+                    {activeTab === 'metodo_pagamento' && agendamentoData && (
+                        <MetodoPagamentoStep
+                            setActiveTab={handleSetActiveTab}
+                            agendamentoData={agendamentoData}
+                        />
+                    )}
                     {activeTab === 'dia' && agendamentoData && (
                         <ConfirmacaoStep
                             setActiveTab={handleSetActiveTab}
                             agendamentoData={agendamentoData}
                         />
                     )}
-                    {activeTab === 'sucesso' && <SucessoStep onClose={onClose} />}
+                    {activeTab === 'sucesso' && (
+                        <SucessoStep onClose={onClose} resetAgendamento={resetAgendamento} />
+                    )}
                 </S.Step>
             </S.Modal>
         </S.Overlay>
