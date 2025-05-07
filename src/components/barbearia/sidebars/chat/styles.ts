@@ -1,78 +1,78 @@
 import styled from 'styled-components'
 import { breakpoints, colors } from '../../../../../styles'
 
+interface UsuariosContainerProps {
+    isOpen: boolean
+}
+
 export const Container = styled.div`
-    width: 100%;
+    display: flex;
+    flex-direction: column;
     height: 100%;
-    background: ${colors.cinzaClaro};
-    border-radius: 8px;
-    overflow: hidden;
+    background: ${colors.cinzaEscuro};
+    color: ${colors.branco};
 `
 
-export const Main = styled.div`
+export const Main = styled.main`
+    flex: 1;
     display: flex;
     height: 100%;
 `
 
-export const UsuariosContainer = styled.div<{ isOpen: boolean }>`
+export const UsuariosContainer = styled.div<UsuariosContainerProps>`
     width: 300px;
     background: ${colors.cinzaClaro};
     border-right: 1px solid ${colors.cinzaTransparent};
     display: flex;
     flex-direction: column;
+    transition: transform 0.3s ease;
 
     @media (max-width: ${breakpoints.tablet}) {
         position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        transform: ${(props) => (props.isOpen ? 'translateX(0)' : 'translateX(-100%)')};
-        transition: transform 0.3s ease;
         z-index: 10;
+        width: 100%;
+        transform: ${({ isOpen }) => (isOpen ? 'translateX(0)' : 'translateX(-100%)')};
     }
 `
 
 export const UsuariosHeader = styled.div`
-    background: ${colors.corPrimaria};
-    color: ${colors.branco};
-    padding: 12px 20px;
+    padding: 16px;
     border-bottom: 1px solid ${colors.cinzaTransparent};
 
     h2 {
         font-size: 18px;
-        font-weight: 500;
-        margin: 0;
+        font-weight: bold;
     }
 `
 
-export const UsuariosList = styled.div`
+export const UsuariosList = styled.ul`
     flex: 1;
     overflow-y: auto;
+    list-style: none;
+    padding: 0;
 `
 
-export const UsuarioItem = styled.div<{ active: boolean }>`
+export const UsuarioItem = styled.li<{ active: boolean }>`
     display: flex;
     align-items: center;
-    padding: 10px 20px;
-    border-bottom: 1px solid ${colors.cinzaTransparent};
-    background: ${(props) => (props.active ? colors.cinzaTransparent : 'transparent')};
+    padding: 12px 16px;
     cursor: pointer;
+    background: ${({ active }) => (active ? colors.corPrimaria : 'transparent')};
+    transition: background 0.2s;
 
     &:hover {
-        background: ${colors.cinzaClaro};
+        background: ${colors.corPrimaria}50;
     }
 `
 
 export const Avatar = styled.div`
     width: 40px;
     height: 40px;
+    border-radius: 50%;
     background: ${colors.corPrimaria};
-    color: ${colors.branco};
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 50%;
     font-size: 18px;
     font-weight: bold;
     margin-right: 12px;
@@ -82,53 +82,50 @@ export const UsuarioInfo = styled.div`
     flex: 1;
 `
 
-export const Nome = styled.div`
+export const Nome = styled.p`
     font-size: 16px;
-    font-weight: 500;
-    color: ${colors.cinzaEscuro};
+    font-weight: bold;
 `
 
-export const UltimaMensagem = styled.div`
-    font-size: 12px;
+export const UltimaMensagem = styled.p`
+    font-size: 14px;
     color: ${colors.texto};
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 `
 
+export const Hora = styled.span`
+    font-size: 12px;
+    color: ${colors.texto};
+`
+
 export const ChatContainer = styled.div`
     flex: 1;
     display: flex;
     flex-direction: column;
-
-    @media (max-width: ${breakpoints.tablet}) {
-        display: ${(props) => (props.isOpen ? 'none' : 'flex')};
-    }
 `
 
 export const Header = styled.div`
-    background: ${colors.corPrimaria};
-    color: ${colors.branco};
-    padding: 12px 20px;
+    padding: 16px;
     border-bottom: 1px solid ${colors.cinzaTransparent};
     display: flex;
     align-items: center;
 
     h2 {
         font-size: 18px;
-        font-weight: 500;
-        margin: 0;
+        font-weight: bold;
     }
 `
 
 export const BackButton = styled.button`
+    display: none;
     background: none;
     border: none;
+    font-size: 24px;
     color: ${colors.branco};
-    font-size: 18px;
-    margin-right: 12px;
     cursor: pointer;
-    display: none;
+    margin-right: 16px;
 
     @media (max-width: ${breakpoints.tablet}) {
         display: block;
@@ -138,82 +135,59 @@ export const BackButton = styled.button`
 export const MensagensContainer = styled.div`
     flex: 1;
     overflow-y: auto;
-    padding: 20px;
-    background: ${colors.branco};
-`
-
-export const Mensagem = styled.div<{ remetente: string }>`
+    padding: 16px;
     display: flex;
     flex-direction: column;
-    align-items: ${(props) => (props.remetente === 'cliente' ? 'flex-end' : 'flex-start')};
-    margin-bottom: 16px;
+    gap: 12px;
+`
+
+export const Mensagem = styled.div<{ remetente: 'suporte' | 'cliente' }>`
     max-width: 70%;
-    background: ${(props) =>
-        props.remetente === 'cliente' ? colors.corPrimaria : colors.cinzaEscuro};
-    color: ${colors.cinzaEscuro};
-    padding: 10px 15px;
+    align-self: ${({ remetente }) => (remetente === 'cliente' ? 'flex-end' : 'flex-start')};
+    background: ${({ remetente }) =>
+        remetente === 'cliente' ? colors.corPrimaria : colors.cinzaClaro};
+    padding: 12px;
     border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 `
 
 export const Texto = styled.p`
-    margin: 0;
     font-size: 14px;
-    word-wrap: break-word;
-`
-
-export const Hora = styled.span`
-    font-size: 12px;
-    color: ${colors.texto};
-    align-self: flex-end;
-    margin-top: 4px;
 `
 
 export const InputContainer = styled.div`
-    display: flex;
-    padding: 10px;
-    background: ${colors.branco};
+    padding: 16px;
     border-top: 1px solid ${colors.cinzaTransparent};
-
-    @media (max-width: ${breakpoints.tablet}) {
-        flex-direction: column;
-    }
+    display: flex;
+    gap: 8px;
 `
 
 export const Input = styled.input`
     flex: 1;
-    padding: 10px;
-    border: 1px solid ${colors.cinzaTransparent};
-    color: ${colors.cinzaEscuro};
-    border-radius: 4px;
-    margin-right: 10px;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background: ${colors.cinzaClaro};
+    color: ${colors.branco};
     font-size: 14px;
 
-    &:focus {
-        border-color: ${colors.corPrimaria};
-        outline: none;
-    }
-
-    @media (max-width: ${breakpoints.tablet}) {
-        margin-right: 0;
-        margin-bottom: 10px;
+    &::placeholder {
+        color: ${colors.texto};
     }
 `
 
 export const Botao = styled.button`
-    padding: 10px 20px;
+    padding: 12px 24px;
     background: ${colors.corPrimaria};
-    color: ${colors.cinzaEscuro};
+    color: ${colors.branco};
     border: none;
-    border-radius: 4px;
+    border-radius: 8px;
+    font-weight: bold;
     cursor: pointer;
-    font-size: 14px;
+    transition: background 0.2s;
 
     &:hover {
-        background: ${colors.corPrimariaEscura};
-    }
-
-    @media (max-width: ${breakpoints.tablet}) {
-        width: 100%;
+        background: ${colors.corPrimaria}cc;
     }
 `
 
@@ -224,5 +198,4 @@ export const EmptyChat = styled.div`
     justify-content: center;
     color: ${colors.texto};
     font-size: 16px;
-    background: ${colors.cinzaClaro};
 `

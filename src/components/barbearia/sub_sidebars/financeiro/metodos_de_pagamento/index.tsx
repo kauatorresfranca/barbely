@@ -64,9 +64,10 @@ const MetodosPagamento = () => {
                     cash: data.cash || false,
                 })
                 setError(null)
-            } catch (err) {
-                console.error('Erro ao carregar métodos de pagamento:', err)
-                setError(err.message || 'Falha ao carregar dados.')
+            } catch (err: unknown) {
+                const error = err as Error
+                console.error('Erro ao carregar métodos de pagamento:', error)
+                setError(error.message || 'Falha ao carregar dados.')
             } finally {
                 setLoading(false)
             }
@@ -119,10 +120,11 @@ const MetodosPagamento = () => {
             }
 
             setSuccess('Métodos de pagamento salvos com sucesso!')
-            console.log('enviando para o back end:', JSON.stringify(payload))
-        } catch (err) {
-            console.error('Erro ao salvar métodos de pagamento:', err)
-            setError(err.message || 'Erro ao salvar os dados.')
+            console.log('Enviando para o backend:', JSON.stringify(payload))
+        } catch (err: unknown) {
+            const error = err as Error
+            console.error('Erro ao salvar métodos de pagamento:', error)
+            setError(error.message || 'Erro ao salvar os dados.')
         } finally {
             setLoading(false)
         }
