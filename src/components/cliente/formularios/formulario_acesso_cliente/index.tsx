@@ -1,8 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-
 import * as S from './styles'
-
 import logo from '../../../../assets/images/logo.png'
 import api from '../../../../services/api'
 
@@ -48,7 +46,7 @@ const FormularioLoginCliente = () => {
                 window.dispatchEvent(new Event('storage'))
                 navigate(`/barbearia/${slug}`)
             } else {
-                setError(data.error || 'Erro ao fazer login.')
+                setError(data.detail || 'Erro ao fazer login.')
             }
         } catch {
             setError('Erro ao conectar com o servidor.')

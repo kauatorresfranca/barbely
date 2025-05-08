@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import * as S from './styles' // Ajuste o caminho se necessário
+import * as S from './styles'
 import logo from '../../../../assets/images/logo.png'
 import api from '../../../../services/api'
 
@@ -28,15 +28,15 @@ const LoginBarbearia = () => {
             const data = await response.json()
 
             if (response.ok && data.barbearia_id) {
-                sessionStorage.setItem('access_token_barbearia', data.access_token)
-                sessionStorage.setItem('refresh_token_barbearia', data.refresh_token)
+                sessionStorage.setItem('access_token_barbearia', data.access)
+                sessionStorage.setItem('refresh_token_barbearia', data.refresh)
                 sessionStorage.setItem('barbearia_token', data.barbearia_id)
 
                 const barbeariaResponse = await fetch(
                     `${api.baseURL}/barbearias/${data.barbearia_id}/`,
                     {
                         method: 'GET',
-                        headers: { Authorization: `Bearer ${data.access_token}` },
+                        headers: { Authorization: `Bearer ${data.access}` },
                     },
                 )
 

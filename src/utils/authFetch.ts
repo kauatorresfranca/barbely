@@ -15,7 +15,7 @@ export async function authFetch(url: string, options: RequestInit = {}): Promise
     const tokenKey = isClienteRequest ? 'access_token_cliente' : 'access_token_barbearia'
     const refreshKey = isClienteRequest ? 'refresh_token_cliente' : 'refresh_token_barbearia'
 
-    const accessToken = sessionStorage.getItem(tokenKey)
+    let accessToken = sessionStorage.getItem(tokenKey)
     const refreshToken = sessionStorage.getItem(refreshKey)
 
     console.log(
@@ -60,21 +60,34 @@ export async function authFetch(url: string, options: RequestInit = {}): Promise
 
         if (refreshResponse.ok) {
             const refreshData = await refreshResponse.json()
+            accessToken = refreshData.access // Atualizar o accessToken localmente
             sessionStorage.setItem(tokenKey, refreshData.access)
-            sessionStorage.setItem(refreshKey, refreshData.refresh || refreshToken)
+            if (refreshData.refresh) {
+                sessionStorage.setItem(refreshKey, refreshData.refresh)
+            }
+
+            console.log(`Novo accessToken gerado: ${accessToken}`) // Log para depuração
 
             const retryHeaders =
                 options.body instanceof FormData
-                    ? { Authorization: `Bearer ${refreshData.access}`, ...options.headers }
+                    ? { Authorization: `Bearer ${accessToken}`, ...options.headers }
                     : {
                           'Content-Type': 'application/json',
-                          Authorization: `Bearer ${refreshData.access}`,
+                          Authorization: `Bearer ${accessToken}`,
                           ...options.headers,
                       }
 
             response = await fetch(fullUrl, { ...options, headers: retryHeaders })
         } else {
             console.error('Erro ao renovar token:', await refreshResponse.text())
+            sessionStorage.removeItem(tokenKey)
+            sessionStorage.removeItem(refreshKey)
+            if (isClienteRequest) {
+                sessionStorage.removeItem('cliente')
+            } else {
+                sessionStorage.removeItem('barbearia')
+                sessionStorage.removeItem('barbearia_token')
+            }
             throw new Error('Falha ao renovar token.')
         }
     }

@@ -22,12 +22,14 @@ export const MetodoItem = styled.div<SelectableProps>`
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 16px;
+    height: 60px;
+    padding: 8px;
     border: 2px solid ${({ $selected }) => ($selected ? colors.corPrimaria : 'transparent')};
     border-radius: 8px;
     cursor: pointer;
     background-color: ${colors.cinzaEscuro};
     transition: all 0.2s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 
     &:hover {
         border-color: #fff;

@@ -27,7 +27,7 @@ type Props = {
 
 const HorariosStep = ({ setActiveTab, servico, funcionario }: Props) => {
     const hoje = new Date()
-    const hojeAjustado = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate())
+    const hojeAjustado = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate(), 0, 0, 0)
 
     const [horariosDisponiveis, setHorariosDisponiveis] = useState<string[]>([])
     const [dataSelecionada, setDataSelecionada] = useState<Date | null>(hojeAjustado)
@@ -63,9 +63,15 @@ const HorariosStep = ({ setActiveTab, servico, funcionario }: Props) => {
             setDataSelecionada(null)
             return
         }
-
-        const dataNormalizada = new Date(date.getFullYear(), date.getMonth(), date.getDate())
-        console.log('Data selecionada:', dataNormalizada.toString())
+        const dataNormalizada = new Date(
+            date.getFullYear(),
+            date.getMonth(),
+            date.getDate(),
+            0,
+            0,
+            0,
+        )
+        console.log('Data selecionada (UTC):', dataNormalizada.toISOString())
         setDataSelecionada(dataNormalizada)
     }
 
@@ -75,12 +81,7 @@ const HorariosStep = ({ setActiveTab, servico, funcionario }: Props) => {
 
             try {
                 const token = sessionStorage.getItem('access_token_cliente')
-                const dataAjustada = new Date(
-                    dataSelecionada.getFullYear(),
-                    dataSelecionada.getMonth(),
-                    dataSelecionada.getDate(),
-                )
-                const dataFormatada = format(dataAjustada, 'yyyy-MM-dd')
+                const dataFormatada = format(dataSelecionada, 'yyyy-MM-dd')
 
                 const url = new URL(`${api.baseURL}/agendamentos/horarios-disponiveis/`)
                 url.searchParams.append('servico', String(servico.id))

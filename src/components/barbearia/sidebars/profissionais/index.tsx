@@ -134,7 +134,11 @@ const Profissionais = () => {
                                 </S.ListItem>
                             ))}
                         </S.List>
-                        <p className="profissionais_length">{profissionais.length} Profissionais</p>
+                        <p className="profissionais_length">
+                            {profissionais.length > 1
+                                ? `${profissionais.length} Profissionais`
+                                : `${profissionais.length} Profissional`}{' '}
+                        </p>
                     </>
                 )}
             </S.Container>

@@ -242,7 +242,11 @@ const Clientes = () => {
                 />
             )}
             {!isLoading && !hasError && (
-                <p className="cliente_length">{filteredClientes.length} Clientes</p>
+                <p className="cliente_length">
+                    {filteredClientes.length > 1
+                        ? `${filteredClientes.length} Clientes`
+                        : `${filteredClientes.length} Cliente`}{' '}
+                </p>
             )}
         </S.Container>
     )

@@ -26,8 +26,8 @@ import Chat from '../sidebars/chat'
 // Definindo a interface para o tipo do horário
 interface Horario {
     dia_semana: number
-    horario_abertura: string
-    horario_fechamento: string
+    horario_abertura: string | null
+    horario_fechamento: string | null
     id?: number
     fechado?: boolean
 }
@@ -36,6 +36,8 @@ const Dash = () => {
     const barbearia = useBarbeariaAtual()
     const navigate = useNavigate()
     const slug = barbearia?.slug
+
+    console.log('Barbearia atual:', barbearia)
 
     // Restaurar activeTab do sessionStorage ou usar 'overview' como padrão
     const [activeTab, setActiveTab] = useState(() => {
@@ -56,21 +58,22 @@ const Dash = () => {
     // Função para buscar horários (reutilizável)
     const fetchHorarios = async () => {
         try {
-            const response = await fetch(`${api.baseURL}/horarios/?slug=${slug}`)
+            const token = sessionStorage.getItem('access_token_barbearia')
+            const response = await authFetch(`${api.baseURL}/horarios/?slug=${slug}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+                },
+            })
             if (!response.ok) {
                 throw new Error('Erro ao buscar horários')
             }
             const data = await response.json()
             console.log('Horários recebidos:', data)
             setHorarios(data)
-            const diaAtual = getDay(toZonedTime(new Date(), 'America/Sao_Paulo'))
-            const horarioAtual = data.find((h: Horario) => h.dia_semana === diaAtual)
-            if (horarioAtual?.fechado !== undefined) {
-                setManualStatus(horarioAtual.fechado ? 'closed' : 'open')
-            } else {
-                setManualStatus('auto')
-                console.warn('Horário do dia atual não encontrado.')
-            }
+            // Não sobrescrever o manualStatus aqui, apenas carregar os horários
+            // O manualStatus já é inicializado como 'auto', e o comportamento será determinado no isBarbeariaAberta
         } catch (error) {
             console.error('Erro ao buscar horários:', error)
             setErrorMessage('Erro ao buscar horários da barbearia.')
@@ -146,33 +149,66 @@ const Dash = () => {
     // Atualizar o status manual no backend
     const updateManualStatus = async (status: 'auto' | 'open' | 'closed') => {
         const diaAtual = getDay(toZonedTime(new Date(), 'America/Sao_Paulo'))
+        // Recarregar horários imediatamente antes da atualização
+        await fetchHorarios()
         const horario = horarios.find((h) => h.dia_semana === diaAtual)
-        if (horario && horario.id) {
-            try {
-                const fechado = status === 'closed'
-                const response = await authFetch(`${api.baseURL}/horarios/${horario.id}/`, {
-                    method: 'PATCH',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ fechado }),
-                })
-                if (!response.ok) {
-                    const errorText = await response.text()
-                    throw new Error(`Erro ao atualizar status: ${errorText}`)
-                }
-                setManualStatus(status)
-                setErrorMessage(null)
-                // Recarregar os horários após a atualização
-                await fetchHorarios()
-            } catch (error) {
-                console.error('Erro ao atualizar status:', error)
-                setErrorMessage('Erro ao atualizar o status da barbearia. Tente novamente.')
-                // Recarregar os horários para garantir que os IDs estejam atualizados
-                await fetchHorarios()
+        if (!horario || !horario.id) {
+            setErrorMessage('Horário do dia atual não encontrado ou ID inválido.')
+            return
+        }
+
+        try {
+            const token = sessionStorage.getItem('access_token_barbearia')
+            if (!token) {
+                setErrorMessage('Token de autenticação não encontrado. Faça login novamente.')
+                handleLogout()
+                return
             }
-        } else {
-            setErrorMessage('Horário do dia atual não encontrado.')
+
+            const fechado = status === 'closed' ? true : status === 'open' ? false : horario.fechado
+            // Se fechado for false, garantir que horario_abertura e horario_fechamento tenham valores válidos
+            const horarioAbertura = fechado ? null : horario.horario_abertura || '08:00:00'
+            const horarioFechamento = fechado ? null : horario.horario_fechamento || '18:00:00'
+
+            // Verificar se os valores ainda são null ou inválidos
+            if (!fechado && (!horarioAbertura || !horarioFechamento)) {
+                setErrorMessage(
+                    'Horários de abertura e fechamento não podem ser nulos quando o dia está aberto.',
+                )
+                return
+            }
+
+            const payload = {
+                fechado: Boolean(fechado),
+                horario_abertura: horarioAbertura,
+                horario_fechamento: horarioFechamento,
+            }
+            console.log(`Enviando PATCH para o horário com ID ${horario.id}, payload:`, payload)
+
+            const response = await authFetch(`${api.baseURL}/horarios/${horario.id}/`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify(payload),
+            })
+
+            if (!response.ok) {
+                const errorData = await response.json()
+                console.error('Erro na resposta do PATCH:', errorData)
+                throw new Error(`Erro ao atualizar status: ${JSON.stringify(errorData)}`)
+            }
+
+            setManualStatus(status)
+            setErrorMessage(null)
+            await fetchHorarios()
+        } catch (error) {
+            console.error('Erro ao atualizar status:', error)
+            setErrorMessage(
+                error.message || 'Erro ao atualizar o status da barbearia. Tente novamente.',
+            )
+            await fetchHorarios()
         }
     }
 
@@ -204,7 +240,6 @@ const Dash = () => {
             }
         }
 
-        // Alterado para 'click' em vez de 'mousedown'
         document.addEventListener('click', handleClickOutside)
         return () => document.removeEventListener('click', handleClickOutside)
     }, [])
@@ -234,7 +269,6 @@ const Dash = () => {
             icon: 'ri-nurse-fill',
             component: <Profissionais />,
         },
-
         { id: 'servicos', label: 'Serviços', icon: 'ri-scissors-fill', component: <Servicos /> },
         {
             id: 'financeiro',
@@ -343,7 +377,7 @@ const Dash = () => {
                     </S.SidebarList>
                 </nav>
             </S.SideBar>
-            <S.Content>{tabs.find((tab) => tab.id === activeTab)?.component} </S.Content>
+            <S.Content>{tabs.find((tab) => tab.id === activeTab)?.component}</S.Content>
         </S.Container>
     )
 }

@@ -66,7 +66,9 @@ const HorarioFuncionamentoForm = () => {
                 if (response.ok) {
                     const data: HorarioAPI[] = await response.json()
                     const horariosFormatados = diasDaSemana.map((dia, index) => {
-                        const horario = data.find((h) => h.dia_semana === index)
+                        // Ajustar o índice para alinhar com dia_semana (0 = Domingo, 1 = Segunda, ..., 6 = Sábado)
+                        const diaSemanaIndex = (index + 1) % 7 // Segunda-feira (index 0) -> 1, ..., Domingo (index 6) -> 0
+                        const horario = data.find((h) => h.dia_semana === diaSemanaIndex)
                         return {
                             dia,
                             aberto: horario ? !horario.fechado : false,

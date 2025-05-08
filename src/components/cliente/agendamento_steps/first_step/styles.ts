@@ -1,19 +1,17 @@
-import styled from 'styled-components';
-import { colors } from '../../../../../styles';
+import styled from 'styled-components'
+import { colors } from '../../../../../styles'
 
 export type SelectableProps = {
-    $selected: boolean;
-};
+    $selected: boolean
+}
 
 export const Container = styled.div`
     display: flex;
     flex-direction: column;
     gap: 12px;
-`;
-
-export const Employee = styled.div`
-
 `
+
+export const Employee = styled.div``
 
 export const EmployeeList = styled.div`
     display: grid;
@@ -21,7 +19,7 @@ export const EmployeeList = styled.div`
     justify-items: center;
     gap: 12px;
     margin-top: 12px;
-`;
+`
 
 export const EmployeeItem = styled.div<SelectableProps>`
     display: flex;
@@ -36,6 +34,7 @@ export const EmployeeItem = styled.div<SelectableProps>`
     background-color: ${colors.cinzaEscuro};
     transition: all 0.2s ease;
     text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 
     img {
         width: 35px;
@@ -55,18 +54,16 @@ export const EmployeeItem = styled.div<SelectableProps>`
         margin: 2px 0;
         color: ${colors.branco};
     }
-`;
-
-export const Service = styled.div`
-
 `
+
+export const Service = styled.div``
 
 export const ServicesList = styled.div`
     display: flex;
     flex-direction: column;
     gap: 12px;
     margin-top: 12px;
-`;
+`
 
 export const ServiceItem = styled.div<SelectableProps>`
     display: flex;
@@ -78,6 +75,7 @@ export const ServiceItem = styled.div<SelectableProps>`
     cursor: pointer;
     background-color: ${({ $selected }) => ($selected ? colors.cinzaEscuro : colors.cinzaEscuro)};
     transition: all 0.2s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 
     &:hover {
         border-color: #fff;
@@ -93,7 +91,7 @@ export const ServiceItem = styled.div<SelectableProps>`
         margin: 2px 0;
         color: ${colors.texto};
     }
-`;
+`
 
 export const Button = styled.button`
     padding: 12px;
@@ -115,4 +113,4 @@ export const Button = styled.button`
         background-color: #ccc;
         cursor: not-allowed;
     }
-`;
+`

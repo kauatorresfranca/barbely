@@ -131,6 +131,7 @@ export const Content = styled.div`
     flex: 1;
     overflow-y: auto;
     height: 100vh;
+    background-color: ${colors.cinzaEscuro}; /* Definindo fundo consistente para o conteúdo */
 
     @media (max-width: 768px) {
         padding-top: 60px;

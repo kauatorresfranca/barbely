@@ -233,7 +233,7 @@ export const AgendamentoInfo = styled.div<{
     align-items: center;
 
     .cliente {
-        color: ${colors.corPrimaria};
+        color: ${colors.branco};
         font-weight: bold;
         margin-bottom: 2px;
         font-size: 15px;
@@ -242,6 +242,14 @@ export const AgendamentoInfo = styled.div<{
     .servico {
         color: ${colors.branco}CC;
         font-size: 13px;
+
+        .pix {
+            color: #2de0ca;
+        }
+
+        .cash {
+            color: ${colors.verde};
+        }
     }
 
     .duracao {
@@ -272,6 +280,24 @@ export const Button = styled.div`
     padding: 8px 14px;
     background: linear-gradient(45deg, ${colors.corPrimaria}, ${colors.corPrimaria}AA);
     color: ${colors.cinzaEscuro};
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: 1px solid ${colors.cinzaTransparent};
+
+    &:hover {
+        background-color: ${colors.cinzaClaro};
+        border-color: ${colors.corPrimaria};
+        transform: translateY(-1px);
+    }
+`
+
+export const Select = styled.select`
+    padding: 8px 14px;
+    background: transparent;
+    color: ${colors.branco};
     border-radius: 8px;
     cursor: pointer;
     font-size: 13px;

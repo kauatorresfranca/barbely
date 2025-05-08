@@ -55,6 +55,24 @@ const ConfiguracoesAgendamento = () => {
                     60min).
                 </S.Description>
             </S.Section>
+            <S.Section>
+                <S.Subtitle>Prazo de cancelamento</S.Subtitle>
+                <S.InputGroup>
+                    <label htmlFor="prazo">Prazo (minutos)</label>
+                    <input
+                        type="number"
+                        id="prazo"
+                        value={intervaloAgendamento}
+                        onChange={(e) => setIntervaloAgendamento(Number(e.target.value))}
+                        min="15"
+                        max="60"
+                        step="5"
+                    />
+                </S.InputGroup>
+                <S.Description>
+                    Define o prazo mínimo de tempo que o cliente tem para cancelar um agendamento.
+                </S.Description>
+            </S.Section>
             <S.Button>Confirmar Alterações</S.Button>
         </S.Container>
     )

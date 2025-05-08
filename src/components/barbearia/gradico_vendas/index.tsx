@@ -7,10 +7,13 @@ import {
     Tooltip,
     ResponsiveContainer,
     CartesianGrid,
+    Legend,
 } from 'recharts'
 import { colors } from '../../../../styles'
 import * as S from './styles'
 import api from '../../../services/api'
+import { format } from 'date-fns'
+import { ptBR } from 'date-fns/locale'
 
 interface GraficoVendasProps {
     inicio: string // Formato: YYYY-MM-DD
@@ -32,7 +35,7 @@ const GraficoVendas = ({ inicio, fim }: GraficoVendasProps) => {
         const endDate = new Date(end)
         const dates: { display: string; raw: string }[] = []
 
-        for (let date = startDate; date <= endDate; date.setDate(date.getDate() + 1)) {
+        for (let date = new Date(startDate); date <= endDate; date.setDate(date.getDate() + 1)) {
             const displayDate = date.toLocaleDateString('pt-BR', {
                 day: '2-digit',
                 month: '2-digit',
@@ -73,29 +76,40 @@ const GraficoVendas = ({ inicio, fim }: GraficoVendasProps) => {
                     },
                 )
                 const result = await response.json()
-                console.log('Resposta de /api/barbearias/overview/?grafico=vendas:', result)
+                console.log('Resposta bruta da API:', result)
+                console.log('Status da resposta:', response.status)
 
                 if (response.ok) {
-                    // Gerar todos os dias no período
+                    if (!Array.isArray(result)) {
+                        console.error('Resposta da API não é um array:', result)
+                        throw new Error('Formato de dados inválido da API')
+                    }
+
                     const dateRange = generateDateRange(inicio, fim)
 
-                    // Mapear os dados retornados pela API (assumindo formato YYYY-MM-DD)
+                    // Mapear os dados retornados pela API (formato YYYY-MM-DD)
                     const vendasMap = new Map<string, number>()
                     result.forEach((item: { dia: string; valor: number }) => {
-                        const apiDate = item.dia // Formato: YYYY-MM-DD
-                        vendasMap.set(apiDate, item.valor)
+                        if (item.dia && typeof item.valor === 'number') {
+                            vendasMap.set(item.dia, item.valor)
+                        } else {
+                            console.warn('Item inválido ignorado:', item)
+                        }
                     })
 
-                    // Criar os dados do gráfico, preenchendo dias sem vendas com valor 0
+                    // Criar os dados do gráfico
                     const chartData: DataPoint[] = dateRange.map(({ display, raw }) => ({
                         dia: display,
                         valor: vendasMap.get(raw) || 0,
                     }))
 
+                    console.log('Dados processados para o gráfico:', chartData)
                     setData(chartData)
                 } else {
-                    console.error('Erro ao buscar dados de vendas:', result.error || result.detail)
-                    // Mesmo em caso de erro, gerar o gráfico com valores zerados
+                    console.error(
+                        'Erro na API:',
+                        result.error || result.detail || 'Resposta inválida',
+                    )
                     const dateRange = generateDateRange(inicio, fim)
                     const chartData: DataPoint[] = dateRange.map(({ display }) => ({
                         dia: display,
@@ -105,7 +119,6 @@ const GraficoVendas = ({ inicio, fim }: GraficoVendasProps) => {
                 }
             } catch (error) {
                 console.error('Erro ao buscar dados de vendas:', error)
-                // Em caso de erro de conexão, gerar o gráfico com valores zerados
                 const dateRange = generateDateRange(inicio, fim)
                 const chartData: DataPoint[] = dateRange.map(({ display }) => ({
                     dia: display,
@@ -120,9 +133,14 @@ const GraficoVendas = ({ inicio, fim }: GraficoVendasProps) => {
         fetchVendas()
     }, [inicio, fim])
 
+    // Título dinâmico com o período
+    const title = `Total de Vendas (${format(new Date(inicio), 'dd/MM/yyyy', {
+        locale: ptBR,
+    })} - ${format(new Date(fim), 'dd/MM/yyyy', { locale: ptBR })})`
+
     return (
         <S.Container>
-            <h2>Total de vendas</h2>
+            <h2>{title}</h2>
             {isLoading ? (
                 <p>Carregando gráfico...</p>
             ) : (
@@ -131,22 +149,46 @@ const GraficoVendas = ({ inicio, fim }: GraficoVendasProps) => {
                         <p>Nenhuma venda registrada no período selecionado.</p>
                     )}
                     <ResponsiveContainer width="100%" height={300}>
-                        <LineChart data={data}>
-                            <XAxis dataKey="dia" stroke={colors.branco} />
-                            <YAxis stroke={colors.branco} />
-                            <CartesianGrid strokeDasharray="3 3" stroke={colors.texto} />
-                            <Line
-                                type="monotone"
-                                dataKey="valor"
-                                stroke={colors.corPrimaria}
-                                strokeWidth={3}
-                                dot={{ r: 6, fill: colors.corPrimaria }}
+                        <LineChart
+                            data={data}
+                            margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
+                        >
+                            <CartesianGrid strokeDasharray="5 5" stroke={colors.cinzaClaro} />
+                            <XAxis
+                                dataKey="dia"
+                                stroke={colors.texto}
+                                tick={{ fontSize: 12 }}
+                                interval="preserveStartEnd"
+                            />
+                            <YAxis
+                                stroke={colors.texto}
+                                tick={{ fontSize: 12 }}
+                                tickFormatter={(value) => `R$ ${value.toFixed(2)}`}
                             />
                             <Tooltip
                                 contentStyle={{
                                     backgroundColor: colors.cinzaEscuro,
-                                    borderRadius: '5px',
+                                    borderRadius: '8px',
+                                    color: colors.branco,
                                 }}
+                                formatter={(value: number) => `R$ ${value.toFixed(2)}`}
+                            />
+                            <Legend
+                                wrapperStyle={{
+                                    color: colors.texto,
+                                    fontSize: '14px',
+                                    paddingTop: '10px',
+                                }}
+                            />
+                            <Line
+                                type="monotone"
+                                dataKey="valor"
+                                name={`Vendas (R$)`}
+                                stroke={colors.corPrimaria}
+                                strokeWidth={2}
+                                dot={false}
+                                activeDot={{ r: 6, fill: colors.corPrimaria, strokeWidth: 2 }}
+                                strokeDasharray="5 5"
                             />
                         </LineChart>
                     </ResponsiveContainer>

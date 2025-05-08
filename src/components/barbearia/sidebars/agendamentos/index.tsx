@@ -4,7 +4,6 @@ import { addDays, subDays, isSameDay } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { authFetch } from '../../../../utils/authFetch'
 import DetalhesModal from '../../modals/agendamentos/Detalhes'
-import StatusModal from '../../modals/agendamentos/status'
 import CriarAgendamentoModal from '../../modals/agendamentos/criar'
 import * as S from './styles'
 import api from '../../../../services/api'
@@ -55,13 +54,13 @@ const gerarHoras = (intervalo: number): string[] => {
 const getIconePagamento = (metodo: string | null): string => {
     switch (metodo) {
         case 'pix':
-            return 'ri-pix-fill'
+            return 'ri-pix-fill pix'
         case 'cartao_credito':
-            return 'ri-bank-card-fill'
+            return 'ri-bank-card-fill card'
         case 'cartao_debito':
-            return 'ri-bank-card-fill'
+            return 'ri-bank-card-fill card'
         case 'dinheiro':
-            return 'ri-money-dollar-circle-fill'
+            return 'ri-cash-line cash'
         default:
             return 'ri-question-fill' // Ícone padrão para null ou valores inválidos
     }
@@ -75,7 +74,6 @@ const AgendaGrafico = () => {
     const [isLoading, setIsLoading] = useState<boolean>(true)
     const [, setHasError] = useState<boolean>(false)
     const [modalIsOpen, setModalIsOpen] = useState<boolean>(false)
-    const [statusModalIsOpen, setStatusModalIsOpen] = useState<boolean>(false)
     const [createModalIsOpen, setCreateModalIsOpen] = useState<boolean>(false)
     const [selectedAgendamento, setSelectedAgendamento] = useState<Agendamento | null>(null)
     const [error, setError] = useState<string | null>(null)
@@ -158,17 +156,6 @@ const AgendaGrafico = () => {
     const closeModal = (): void => {
         setModalIsOpen(false)
         setSelectedAgendamento(null)
-    }
-
-    const openStatusModal = (agendamento: Agendamento): void => {
-        setSelectedAgendamento(agendamento)
-        setStatusModalIsOpen(true)
-    }
-
-    const closeStatusModal = (): void => {
-        setStatusModalIsOpen(false)
-        setSelectedAgendamento(null)
-        setError(null)
     }
 
     const openCreateModal = (): void => {
@@ -410,8 +397,6 @@ const AgendaGrafico = () => {
                         : agendamento,
                 ),
             )
-
-            closeStatusModal()
         } catch (err: unknown) {
             const error = err as Error
             console.error('Erro ao atualizar status:', error)
@@ -637,15 +622,31 @@ const AgendaGrafico = () => {
                                                                         >
                                                                             Detalhes
                                                                         </S.Button>
-                                                                        <S.Button
-                                                                            onClick={() =>
-                                                                                openStatusModal(
-                                                                                    agendamento,
+                                                                        <S.Select
+                                                                            value={
+                                                                                agendamento.status
+                                                                            }
+                                                                            onChange={(e) =>
+                                                                                atualizarStatusAgendamento(
+                                                                                    agendamento.id,
+                                                                                    e.target
+                                                                                        .value as Agendamento['status'],
                                                                                 )
                                                                             }
                                                                         >
-                                                                            Alterar Status
-                                                                        </S.Button>
+                                                                            <option value="CONFIRMADO">
+                                                                                Confirmado
+                                                                            </option>
+                                                                            <option value="CANCELADO">
+                                                                                Cancelado
+                                                                            </option>
+                                                                            <option value="EXPIRADO">
+                                                                                Expirado
+                                                                            </option>
+                                                                            <option value="CONCLUIDO">
+                                                                                Concluído
+                                                                            </option>
+                                                                        </S.Select>
                                                                     </div>
                                                                 </S.AgendamentoBlock>
                                                             )
@@ -665,15 +666,6 @@ const AgendaGrafico = () => {
                 isOpen={modalIsOpen}
                 onClose={closeModal}
                 agendamento={selectedAgendamento}
-                formatarStatus={formatarStatus}
-            />
-            <StatusModal
-                isOpen={statusModalIsOpen}
-                onClose={closeStatusModal}
-                agendamento={selectedAgendamento}
-                setAgendamento={setSelectedAgendamento}
-                error={error}
-                onUpdate={atualizarStatusAgendamento}
                 formatarStatus={formatarStatus}
             />
             <CriarAgendamentoModal

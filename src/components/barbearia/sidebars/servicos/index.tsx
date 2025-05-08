@@ -165,7 +165,11 @@ const Servicos = () => {
                                 </S.ListItem>
                             ))}
                         </S.List>
-                        <p className="servicos_length">{servicos.length} Serviços</p>
+                        <p className="servicos_length">
+                            {servicos.length > 1
+                                ? `${servicos.length} Serviços`
+                                : `${servicos.length} Serviço`}{' '}
+                        </p>
                     </>
                 )}
             </S.Container>
