@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom'
 import { toZonedTime } from 'date-fns-tz'
 import { getDay, format } from 'date-fns'
 
-// Importação dos componentes do dashboard
 import Overview from '../sidebars/visaogeral/index'
 import Agendamentos from '../sidebars/agendamentos/index'
 import Clientes from '../sidebars/clientes/index'
@@ -15,6 +14,7 @@ import PerfilBarbearia from '../sidebars/perfil_barbearia/index'
 import Configuracoes from '../sidebars/configuracoes/index'
 import api from '../../../services/api'
 import { authFetch } from '../../../utils/authFetch'
+import { Toast } from '../../../components/toast'
 
 import * as S from './styles'
 
@@ -23,7 +23,6 @@ import user from '../../../assets/images/user.png'
 import { ClipLoader } from 'react-spinners'
 import Chat from '../sidebars/chat'
 
-// Definindo a interface para o tipo do horário
 interface Horario {
     dia_semana: number
     horario_abertura: string | null
@@ -39,7 +38,6 @@ const Dash = () => {
 
     console.log('Barbearia atual:', barbearia)
 
-    // Restaurar activeTab do sessionStorage ou usar 'overview' como padrão
     const [activeTab, setActiveTab] = useState(() => {
         const savedTab = sessionStorage.getItem('activeTab')
         return savedTab || 'overview'
@@ -51,11 +49,11 @@ const Dash = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false)
     const [manualStatus, setManualStatus] = useState<'auto' | 'open' | 'closed'>('auto')
     const [showDropdown, setShowDropdown] = useState(false)
-    const [errorMessage, setErrorMessage] = useState<string | null>(null)
+    const [toastMessage, setToastMessage] = useState<string>('')
+    const [showToast, setShowToast] = useState<boolean>(false)
 
     const dropdownRef = useRef<HTMLDivElement>(null)
 
-    // Função para buscar horários (reutilizável)
     const fetchHorarios = async () => {
         try {
             const token = sessionStorage.getItem('access_token_barbearia')
@@ -72,15 +70,14 @@ const Dash = () => {
             const data = await response.json()
             console.log('Horários recebidos:', data)
             setHorarios(data)
-            // Não sobrescrever o manualStatus aqui, apenas carregar os horários
-            // O manualStatus já é inicializado como 'auto', e o comportamento será determinado no isBarbeariaAberta
         } catch (error) {
-            console.error('Erro ao buscar horários:', error)
-            setErrorMessage('Erro ao buscar horários da barbearia.')
+            const err = error as Error
+            console.error('Erro ao buscar horários:', err)
+            setToastMessage(err.message || 'Erro ao buscar horários da barbearia.')
+            setShowToast(true)
         }
     }
 
-    // Buscar a imagem da barbearia
     useEffect(() => {
         const fetchBarbearia = async () => {
             try {
@@ -93,7 +90,10 @@ const Dash = () => {
                     setPreview(data.imagem)
                 }
             } catch (error) {
-                console.error('Erro ao buscar barbearia:', error)
+                const err = error as Error
+                console.error('Erro ao buscar barbearia:', err)
+                setToastMessage(err.message || 'Erro ao buscar dados da barbearia.')
+                setShowToast(true)
             } finally {
                 setLogoIsLoading(false)
             }
@@ -102,12 +102,10 @@ const Dash = () => {
         if (slug) fetchBarbearia()
     }, [slug])
 
-    // Buscar os horários da barbearia na inicialização
     useEffect(() => {
         if (slug) fetchHorarios()
     }, [slug])
 
-    // Verificar se a barbearia está aberta
     useEffect(() => {
         const isBarbeariaAberta = () => {
             const agora = new Date()
@@ -146,35 +144,34 @@ const Dash = () => {
         }
     }, [horarios, manualStatus])
 
-    // Atualizar o status manual no backend
     const updateManualStatus = async (status: 'auto' | 'open' | 'closed') => {
         const diaAtual = getDay(toZonedTime(new Date(), 'America/Sao_Paulo'))
-        // Recarregar horários imediatamente antes da atualização
         await fetchHorarios()
         const horario = horarios.find((h) => h.dia_semana === diaAtual)
         if (!horario || !horario.id) {
-            setErrorMessage('Horário do dia atual não encontrado ou ID inválido.')
+            setToastMessage('Horário do dia atual não encontrado ou ID inválido.')
+            setShowToast(true)
             return
         }
 
         try {
             const token = sessionStorage.getItem('access_token_barbearia')
             if (!token) {
-                setErrorMessage('Token de autenticação não encontrado. Faça login novamente.')
+                setToastMessage('Token de autenticação não encontrado. Faça login novamente.')
+                setShowToast(true)
                 handleLogout()
                 return
             }
 
             const fechado = status === 'closed' ? true : status === 'open' ? false : horario.fechado
-            // Se fechado for false, garantir que horario_abertura e horario_fechamento tenham valores válidos
             const horarioAbertura = fechado ? null : horario.horario_abertura || '08:00:00'
             const horarioFechamento = fechado ? null : horario.horario_fechamento || '18:00:00'
 
-            // Verificar se os valores ainda são null ou inválidos
             if (!fechado && (!horarioAbertura || !horarioFechamento)) {
-                setErrorMessage(
+                setToastMessage(
                     'Horários de abertura e fechamento não podem ser nulos quando o dia está aberto.',
                 )
+                setShowToast(true)
                 return
             }
 
@@ -201,23 +198,22 @@ const Dash = () => {
             }
 
             setManualStatus(status)
-            setErrorMessage(null)
+            setToastMessage('Status da barbearia atualizado com sucesso!')
+            setShowToast(true)
             await fetchHorarios()
         } catch (error) {
-            console.error('Erro ao atualizar status:', error)
-            setErrorMessage(
-                error.message || 'Erro ao atualizar o status da barbearia. Tente novamente.',
-            )
+            const err = error as Error
+            console.error('Erro ao atualizar status:', err)
+            setToastMessage(err.message || 'Erro ao atualizar o status da barbearia.')
+            setShowToast(true)
             await fetchHorarios()
         }
     }
 
-    // Função para alternar o dropdown
     const toggleDropdown = () => {
         setShowDropdown(!showDropdown)
     }
 
-    // Fechar o dropdown ao clicar fora
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (dropdownRef.current) {
@@ -226,16 +222,8 @@ const Dash = () => {
                 const isClickInside =
                     dropdownRef.current.contains(target) || path.includes(dropdownRef.current)
 
-                console.log('Target do clique:', target)
-                console.log('Composed path:', path)
-                console.log('dropdownRef.current:', dropdownRef.current)
-                console.log('Clique está dentro do dropdown?', isClickInside)
-
                 if (!isClickInside) {
-                    console.log('Clique fora do dropdown detectado, fechando dropdown.')
                     setShowDropdown(false)
-                } else {
-                    console.log('Clique dentro do dropdown, mantendo aberto.')
                 }
             }
         }
@@ -244,7 +232,6 @@ const Dash = () => {
         return () => document.removeEventListener('click', handleClickOutside)
     }, [])
 
-    // Salvar activeTab no sessionStorage quando mudar
     useEffect(() => {
         sessionStorage.setItem('activeTab', activeTab)
     }, [activeTab])
@@ -324,10 +311,8 @@ const Dash = () => {
                         <h3>{barbearia?.nome_barbearia}</h3>
                         <S.Activity ref={dropdownRef} onClick={toggleDropdown}>
                             <div>
-                                <>
-                                    <span className={barbeariaIsOpen ? 'open' : 'closed'}></span>
-                                    <p>{barbeariaIsOpen ? 'Aberto Agora' : 'Fechado Agora'}</p>
-                                </>
+                                <span className={barbeariaIsOpen ? 'open' : 'closed'}></span>
+                                <p>{barbeariaIsOpen ? 'Aberto Agora' : 'Fechado Agora'}</p>
                             </div>
                             <i className="ri-arrow-down-s-line"></i>
                             <S.DropdownMenu className={showDropdown ? 'active' : ''}>
@@ -341,7 +326,7 @@ const Dash = () => {
                                                 e.target.value as 'auto' | 'open' | 'closed',
                                             )
                                         }}
-                                        onClick={(e) => e.stopPropagation()} // Impede propagação do clique no select
+                                        onClick={(e) => e.stopPropagation()}
                                     >
                                         <option value="auto">Automático</option>
                                         <option value="open">Aberto</option>
@@ -350,9 +335,9 @@ const Dash = () => {
                                 </S.StatusContainer>
                             </S.DropdownMenu>
                         </S.Activity>
-                        {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
                     </div>
                 </S.Profile>
+                {showToast && <Toast message={toastMessage} onClose={() => setShowToast(false)} />}
                 <nav>
                     <S.SidebarList>
                         {tabs.map((tab) => (

@@ -9,28 +9,10 @@ import * as S from './styles'
 import api from '../../../../services/api'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
-import { Agendamento } from '../../../../models/Agendamento'
-
-type Funcionario = {
-    id: number
-    nome: string
-}
-
-type Servico = {
-    id: number
-    nome: string
-    duracao_minutos: number
-}
-
-type NovoAgendamento = {
-    cliente_email: string
-    cliente_nome: string
-    funcionario: string
-    servico: string
-    data: string
-    hora_inicio: string
-    metodo_pagamento: string
-}
+import { Agendamento, NovoAgendamento } from '../../../../models/Agendamento'
+import { Funcionario } from '../../../../models/funcionario'
+import { Servico } from '../../../../models/servico'
+import { Toast } from '../../../../components/toast'
 
 const fusoHorario = 'America/Sao_Paulo'
 const hoje = formatInTimeZone(new Date(), fusoHorario, 'yyyy-MM-dd')
@@ -62,7 +44,7 @@ const getIconePagamento = (metodo: string | null): string => {
         case 'dinheiro':
             return 'ri-cash-line cash'
         default:
-            return 'ri-question-fill' // Ícone padrão para null ou valores inválidos
+            return 'ri-question-fill'
     }
 }
 
@@ -72,13 +54,14 @@ const AgendaGrafico = () => {
     const [funcionarios, setFuncionarios] = useState<Funcionario[]>([])
     const [servicos, setServicos] = useState<Servico[]>([])
     const [isLoading, setIsLoading] = useState<boolean>(true)
-    const [, setHasError] = useState<boolean>(false)
     const [modalIsOpen, setModalIsOpen] = useState<boolean>(false)
     const [createModalIsOpen, setCreateModalIsOpen] = useState<boolean>(false)
     const [selectedAgendamento, setSelectedAgendamento] = useState<Agendamento | null>(null)
-    const [error, setError] = useState<string | null>(null)
+    const [toastMessage, setToastMessage] = useState<string>('')
+    const [showToast, setShowToast] = useState<boolean>(false)
     const [criandoAgendamento, setCriandoAgendamento] = useState<boolean>(false)
     const [isCalendarOpen, setIsCalendarOpen] = useState<boolean>(false)
+    const [agendamentoSemLogin, setAgendamentoSemLogin] = useState<boolean>(false)
 
     const calendarRef = useRef<HTMLDivElement>(null)
     const dateDisplayRef = useRef<HTMLDivElement>(null)
@@ -98,6 +81,30 @@ const AgendaGrafico = () => {
     const alturaPorMinuto = 1.5
     const totalMinutos = (20 - 8) * 60
     const alturaTimeline = totalMinutos * alturaPorMinuto
+
+    // Fetch agendamentoSemLogin configuration
+    useEffect(() => {
+        const fetchConfig = async () => {
+            try {
+                const token = sessionStorage.getItem('access_token_barbearia')
+                if (!token) return
+                const response = await authFetch(`${api.baseURL}/barbearias/update/`, {
+                    method: 'GET',
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                })
+                const data = await response.json()
+                setAgendamentoSemLogin(data.agendamento_sem_login || false)
+            } catch (error) {
+                console.error('Erro ao carregar configurações:', error)
+                setToastMessage('Erro ao carregar configurações.')
+                setShowToast(true)
+            }
+        }
+        fetchConfig()
+    }, [])
 
     const formatarData = (data: string): string => {
         const selectedDate = toZonedTime(data, fusoHorario)
@@ -164,7 +171,8 @@ const AgendaGrafico = () => {
 
     const closeCreateModal = (): void => {
         setCreateModalIsOpen(false)
-        setError(null)
+        setToastMessage('')
+        setShowToast(false)
         setNovoAgendamento({
             cliente_email: '',
             cliente_nome: '',
@@ -200,10 +208,11 @@ const AgendaGrafico = () => {
             const dados: Funcionario[] = await res.json()
             setFuncionarios(dados)
             return true
-        } catch (err: unknown) {
+        } catch (err) {
             const error = err as Error
             console.error('Erro ao buscar funcionários:', error)
-            setHasError(true)
+            setToastMessage(error.message || 'Erro ao buscar funcionários.')
+            setShowToast(true)
             return false
         }
     }
@@ -232,10 +241,11 @@ const AgendaGrafico = () => {
             const dados: Servico[] = await res.json()
             setServicos(dados)
             return true
-        } catch (err: unknown) {
+        } catch (err) {
             const error = err as Error
             console.error('Erro ao buscar serviços:', error)
-            setHasError(true)
+            setToastMessage(error.message || 'Erro ao buscar serviços.')
+            setShowToast(true)
             return false
         }
     }
@@ -264,19 +274,24 @@ const AgendaGrafico = () => {
             const dados: Agendamento[] = await res.json()
             setAgendamentos(dados)
             return true
-        } catch (err: unknown) {
+        } catch (err) {
             const error = err as Error
             console.error('Erro ao buscar agendamentos:', error)
-            setHasError(true)
+            setToastMessage(error.message || 'Erro ao buscar agendamentos.')
+            setShowToast(true)
             return false
         }
     }
 
-    const validateNovoAgendamento = (): string | null => {
-        if (!novoAgendamento.cliente_email) {
-            return 'O e-mail do cliente é obrigatório.'
+    const validateNovoAgendamento = (agendamentoSemLogin: boolean): string | null => {
+        if (!agendamentoSemLogin && !novoAgendamento.cliente_email) {
+            return 'O e-mail do cliente é obrigatório quando o agendamento sem login está desativado.'
         }
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(novoAgendamento.cliente_email)) {
+        if (
+            !agendamentoSemLogin &&
+            novoAgendamento.cliente_email &&
+            !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(novoAgendamento.cliente_email)
+        ) {
             return 'Por favor, insira um e-mail válido.'
         }
         if (!novoAgendamento.cliente_nome) {
@@ -300,23 +315,23 @@ const AgendaGrafico = () => {
         return null
     }
 
-    const criarAgendamento = async (): Promise<void> => {
+    const criarAgendamento = async (agendamentoSemLogin: boolean): Promise<void> => {
         try {
-            const validationError = validateNovoAgendamento()
+            const validationError = validateNovoAgendamento(agendamentoSemLogin)
             if (validationError) {
-                setError(validationError)
+                setToastMessage(validationError)
+                setShowToast(true)
                 return
             }
 
             setCriandoAgendamento(true)
-            setError(null)
             const token = sessionStorage.getItem('access_token_barbearia')
             if (!token) {
                 throw new Error('Você precisa estar logado para criar agendamentos.')
             }
 
             const payload = {
-                cliente_email: novoAgendamento.cliente_email,
+                cliente_email: novoAgendamento.cliente_email || '',
                 cliente_nome: novoAgendamento.cliente_nome,
                 funcionario: parseInt(novoAgendamento.funcionario),
                 servico: parseInt(novoAgendamento.servico),
@@ -355,11 +370,14 @@ const AgendaGrafico = () => {
 
             const novoAgendamentoData: Agendamento = await res.json()
             setAgendamentos([...agendamentos, novoAgendamentoData])
+            setToastMessage('Agendamento criado com sucesso!')
+            setShowToast(true)
             closeCreateModal()
-        } catch (err: unknown) {
+        } catch (err) {
             const error = err as Error
             console.error('Erro ao criar agendamento:', error)
-            setError(error.message || 'Erro ao criar agendamento')
+            setToastMessage(error.message || 'Erro ao criar agendamento.')
+            setShowToast(true)
         } finally {
             setCriandoAgendamento(false)
         }
@@ -370,7 +388,6 @@ const AgendaGrafico = () => {
         novoStatus: Agendamento['status'],
     ): Promise<void> => {
         try {
-            setError(null)
             const token = sessionStorage.getItem('access_token_barbearia')
             if (!token) {
                 throw new Error('Você precisa estar logado para atualizar o status.')
@@ -397,27 +414,30 @@ const AgendaGrafico = () => {
                         : agendamento,
                 ),
             )
-        } catch (err: unknown) {
+            setToastMessage('Status do agendamento atualizado com sucesso!')
+            setShowToast(true)
+        } catch (err) {
             const error = err as Error
             console.error('Erro ao atualizar status:', error)
-            setError(error.message || 'Erro ao atualizar o status')
+            setToastMessage(error.message || 'Erro ao atualizar o status.')
+            setShowToast(true)
         }
     }
 
     useEffect(() => {
         const fetchData = async (): Promise<void> => {
             setIsLoading(true)
-            setHasError(false)
             try {
                 await Promise.all([
                     buscarFuncionarios(),
                     buscarServicos(),
                     buscarAgendamentos(dataSelecionada),
                 ])
-            } catch (err: unknown) {
+            } catch (err) {
                 const error = err as Error
                 console.error('Erro ao carregar dados:', error)
-                setHasError(true)
+                setToastMessage(error.message || 'Erro ao carregar dados.')
+                setShowToast(true)
             } finally {
                 setIsLoading(false)
             }
@@ -440,28 +460,13 @@ const AgendaGrafico = () => {
         }
     }
 
-    const handleRedirectToLogin = (): void => {
-        const slug = sessionStorage.getItem('barbearia_slug') || 'default-slug'
-        window.location.href = `/barbearia/${slug}/login`
-    }
-
     return (
         <S.Container>
             <h2>Meus Agendamentos</h2>
             <p className="subtitle">
                 Visualize e acompanhe os horários marcados pelos clientes, com todos os detalhes.
             </p>
-            {error && (
-                <S.ErrorMessage>
-                    {error}{' '}
-                    <span
-                        style={{ color: '#3399ff', cursor: 'pointer' }}
-                        onClick={handleRedirectToLogin}
-                    >
-                        Fazer login
-                    </span>
-                </S.ErrorMessage>
-            )}
+            {showToast && <Toast message={toastMessage} onClose={() => setShowToast(false)} />}
             <S.MeusAgendamentosHeader>
                 <S.Filtro>
                     <S.DateNavigator>
@@ -676,9 +681,9 @@ const AgendaGrafico = () => {
                 funcionarios={funcionarios}
                 servicos={servicos}
                 horas={horas}
-                error={error}
                 criandoAgendamento={criandoAgendamento}
-                onCreate={criarAgendamento}
+                onCreate={() => criarAgendamento(agendamentoSemLogin)}
+                agendamentoSemLogin={agendamentoSemLogin}
             />
         </S.Container>
     )

@@ -13,3 +13,13 @@ export interface Agendamento {
     preco_total: number
     metodo_pagamento: 'pix' | 'cartao_credito' | 'cartao_debito' | 'dinheiro' | null
 }
+
+export interface NovoAgendamento {
+    cliente_email?: string
+    cliente_nome: string
+    funcionario: string
+    servico: string
+    data: string
+    hora_inicio: string
+    metodo_pagamento: string
+}

@@ -1,28 +1,10 @@
 import { Dispatch, SetStateAction } from 'react'
 import * as S from './styles'
+import { NovoAgendamento } from '../../../../../models/Agendamento'
+import { Servico } from '../../../../../models/servico'
+import { Funcionario } from '../../../../../models/funcionario'
 
-type Funcionario = {
-    id: number
-    nome: string
-}
-
-type Servico = {
-    id: number
-    nome: string
-    duracao_minutos: number
-}
-
-type NovoAgendamento = {
-    cliente_email?: string
-    cliente_nome: string
-    funcionario: string
-    servico: string
-    data: string
-    hora_inicio: string
-    metodo_pagamento: string
-}
-
-type CriarAgendamentoModalProps = {
+interface CriarAgendamentoModalProps {
     isOpen: boolean
     onClose: () => void
     novoAgendamento: NovoAgendamento
@@ -30,7 +12,6 @@ type CriarAgendamentoModalProps = {
     funcionarios: Funcionario[]
     servicos: Servico[]
     horas: string[]
-    error: string | null
     criandoAgendamento: boolean
     onCreate: () => void
     agendamentoSemLogin: boolean
@@ -44,7 +25,6 @@ const CriarAgendamentoModal = ({
     funcionarios,
     servicos,
     horas,
-    error,
     criandoAgendamento,
     onCreate,
     agendamentoSemLogin,
@@ -56,7 +36,6 @@ const CriarAgendamentoModal = ({
             <S.Modal>
                 <S.CloseButton onClick={onClose}>×</S.CloseButton>
                 <h2>Criar Novo Agendamento</h2>
-                {error && <S.ErrorMessage>{error}</S.ErrorMessage>}
                 <S.ModalContent>
                     {!agendamentoSemLogin && (
                         <S.InfoItem>
@@ -176,9 +155,10 @@ const CriarAgendamentoModal = ({
                             disabled={criandoAgendamento}
                         >
                             <option value="">Selecione o método de pagamento</option>
-                            <option value="PIX">PIX</option>
-                            <option value="Cartão">Cartão</option>
-                            <option value="Dinheiro">Dinheiro</option>
+                            <option value="pix">PIX</option>
+                            <option value="cartao_credito">Cartão de Crédito</option>
+                            <option value="cartao_debito">Cartão de Débito</option>
+                            <option value="dinheiro">Dinheiro</option>
                         </S.Select>
                     </S.InfoItem>
                 </S.ModalContent>
