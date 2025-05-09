@@ -1,30 +1,31 @@
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
-
+import { useNavigate, useParams } from 'react-router-dom'
 import { Funcionario } from '../../../../models/funcionario'
 import { Servico } from '../../../../models/servico'
-
+import { Barbearia } from '../../../../models/Barbearia'
+import { AgendamentoData } from '../../agendamento'
 import * as S from './styles'
 import user from '../../../../assets/images/user.png'
 import { ClipLoader } from 'react-spinners'
 import api from '../../../../services/api'
 
 type Props = {
-    setActiveTab: (
-        tab: string,
-        data?: { servico: Servico; funcionario: Funcionario | null },
-    ) => void
+    setActiveTab: (tab: string, data?: Partial<AgendamentoData>) => void
+    barbearia: Barbearia | null
 }
 
-const FirstStep = ({ setActiveTab }: Props) => {
+const FirstStep = ({ setActiveTab, barbearia }: Props) => {
+    const navigate = useNavigate()
     const { slug } = useParams()
     const [servicos, setServicos] = useState<Servico[]>([])
     const [funcionarios, setFuncionarios] = useState<Funcionario[]>([])
     const [selectedServiceId, setSelectedServiceId] = useState<number | null>(null)
     const [selectedFuncionarioId, setSelectedFuncionarioId] = useState<number | null>(null)
+    const [clienteNome, setClienteNome] = useState<string>('')
+    const [clienteEmail, setClienteEmail] = useState<string>('')
+    const [telefone, setTelefone] = useState<string>('')
 
     useEffect(() => {
-        // Store slug in sessionStorage
         if (slug) {
             sessionStorage.setItem('barbearia_slug', slug)
         }
@@ -67,23 +68,46 @@ const FirstStep = ({ setActiveTab }: Props) => {
                     ? funcionarios.find((f) => f.id === selectedFuncionarioId) || null
                     : null
 
-            console.log('handleNext - selectedServiceId:', selectedServiceId, 'servico:', servico)
-            console.log(
-                'handleNext - selectedFuncionarioId:',
-                selectedFuncionarioId,
-                'funcionario:',
-                funcionario,
-            )
-
             if (!servico) {
                 alert('Erro: Serviço selecionado não encontrado.')
                 return
             }
 
-            setActiveTab('horarios', { servico, funcionario })
+            // Validação para agendamento sem login
+            if (barbearia?.agendamento_sem_login) {
+                if (!clienteNome.trim()) {
+                    alert('Por favor, insira o nome do cliente para prosseguir.')
+                    return
+                }
+                if (!clienteEmail.trim()) {
+                    alert('Por favor, insira o e-mail do cliente para prosseguir.')
+                    return
+                }
+                // Validação básica de e-mail (opcional)
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+                if (!emailRegex.test(clienteEmail.trim())) {
+                    alert('Por favor, insira um e-mail válido.')
+                    return
+                }
+            }
+
+            const dataToSend: Partial<AgendamentoData> = { servico, funcionario }
+            if (barbearia?.agendamento_sem_login) {
+                dataToSend.clienteNome = clienteNome.trim()
+                dataToSend.clienteEmail = clienteEmail.trim()
+                if (telefone.trim()) {
+                    dataToSend.telefone = telefone.trim()
+                }
+            }
+
+            setActiveTab('horarios', dataToSend)
         } else {
             alert('Por favor, selecione um serviço!')
         }
+    }
+
+    const logar = () => {
+        navigate(`/barbearia/${slug}/login`)
     }
 
     return (
@@ -133,6 +157,35 @@ const FirstStep = ({ setActiveTab }: Props) => {
                     <ClipLoader color="#00c1fe" size={32} speedMultiplier={1} />
                 )}
             </S.Service>
+            {barbearia?.agendamento_sem_login && (
+                <S.ClienteNome>
+                    <h3>Digite seus dados</h3>
+                    <S.Input
+                        type="text"
+                        value={clienteNome}
+                        onChange={(e) => setClienteNome(e.target.value)}
+                        placeholder="Digite seu nome completo"
+                        required
+                    />
+                    <S.Input
+                        type="email"
+                        value={clienteEmail}
+                        onChange={(e) => setClienteEmail(e.target.value)}
+                        placeholder="Digite seu e-mail"
+                        required
+                    />
+                    <S.Input
+                        type="tel"
+                        value={telefone}
+                        onChange={(e) => setTelefone(e.target.value)}
+                        placeholder="Digite seu telefone (opcional)"
+                    />
+                    <S.OrDivider>
+                        <span>ou</span>
+                    </S.OrDivider>
+                    <S.SignInOption onClick={logar}>Siga com uma conta</S.SignInOption>
+                </S.ClienteNome>
+            )}
             <S.Button onClick={handleNext}>Prosseguir</S.Button>
         </S.Container>
     )

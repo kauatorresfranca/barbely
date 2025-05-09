@@ -28,7 +28,12 @@ export async function authFetch(url: string, options: RequestInit = {}): Promise
         ? url
         : `${api.baseURL}${url.startsWith('/') ? url : `/${url}`}`
 
-    if (url.includes('/api/agendamentos/horarios-disponiveis/') && !accessToken) {
+    // Permitir requisições sem token para endpoints específicos
+    if (
+        (url.includes('/api/agendamentos/horarios-disponiveis/') ||
+            url.includes('/api/agendamentos/criar/')) &&
+        !accessToken
+    ) {
         return fetch(fullUrl, options)
     }
 
@@ -60,13 +65,13 @@ export async function authFetch(url: string, options: RequestInit = {}): Promise
 
         if (refreshResponse.ok) {
             const refreshData = await refreshResponse.json()
-            accessToken = refreshData.access // Atualizar o accessToken localmente
+            accessToken = refreshData.access
             sessionStorage.setItem(tokenKey, refreshData.access)
             if (refreshData.refresh) {
                 sessionStorage.setItem(refreshKey, refreshData.refresh)
             }
 
-            console.log(`Novo accessToken gerado: ${accessToken}`) // Log para depuração
+            console.log(`Novo accessToken gerado: ${accessToken}`)
 
             const retryHeaders =
                 options.body instanceof FormData

@@ -125,13 +125,29 @@ export const IconGroup = styled.div`
 
     i {
         &.edit {
+            background-color: ${colors.corPrimaria};
+            padding: 8px;
+            border-radius: 50%;
             color: ${colors.branco};
             cursor: pointer;
+            transition: 0.2s ease-in-out;
+
+            &:hover {
+                transform: scale(1.1);
+            }
         }
 
         &.delete {
-            color: red;
+            background-color: ${colors.vermelho};
+            color: ${colors.branco};
+            padding: 8px;
+            border-radius: 50%;
             cursor: pointer;
+            transition: 0.2s ease-in-out;
+
+            &:hover {
+                transform: scale(1.1);
+            }
         }
     }
 `

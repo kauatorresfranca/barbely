@@ -11,4 +11,9 @@ export interface Barbearia {
     data_criacao: string
     slug: string
     telefone: string
+    agendamento_sem_login: boolean
+    pix: boolean
+    credit_card: boolean
+    debit_card: boolean
+    cash: boolean
 }

@@ -93,18 +93,37 @@ export const ListItem = styled.li`
 
 export const IconsGroup = styled.div`
     display: flex;
+    align-items: center;
+    gap: 8px;
 
     i {
         cursor: pointer;
-    }
 
-    .edit {
-        color: ${colors.branco};
-    }
+        &.edit {
+            background-color: ${colors.corPrimaria};
+            padding: 8px;
+            border-radius: 50%;
+            color: ${colors.branco};
+            cursor: pointer;
+            transition: 0.2s ease-in-out;
 
-    .delete {
-        color: red;
-        margin-left: 10px;
+            &:hover {
+                transform: scale(1.1);
+            }
+        }
+
+        &.delete {
+            background-color: ${colors.vermelho};
+            color: ${colors.branco};
+            padding: 8px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: 0.2s ease-in-out;
+
+            &:hover {
+                transform: scale(1.1);
+            }
+        }
     }
 `
 

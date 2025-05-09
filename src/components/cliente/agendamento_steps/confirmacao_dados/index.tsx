@@ -1,6 +1,7 @@
 import { toZonedTime, format } from 'date-fns-tz'
 import { useNavigate } from 'react-router-dom'
 import { AgendamentoData } from '../../../cliente/agendamento'
+import { Barbearia } from '../../../../models/Barbearia'
 import { authFetch } from '../../../../utils/authFetch'
 import * as S from './styles'
 import api from '../../../../services/api'
@@ -8,9 +9,10 @@ import api from '../../../../services/api'
 type Props = {
     setActiveTab: (tab: string) => void
     agendamentoData: AgendamentoData
+    barbearia: Barbearia | null
 }
 
-const ConfirmacaoStep = ({ setActiveTab, agendamentoData }: Props) => {
+const ConfirmacaoStep = ({ setActiveTab, agendamentoData, barbearia }: Props) => {
     const fusoHorario = 'America/Sao_Paulo'
     const navigate = useNavigate()
 
@@ -20,7 +22,6 @@ const ConfirmacaoStep = ({ setActiveTab, agendamentoData }: Props) => {
           })
         : ''
 
-    // Mapeia o nome do método de pagamento do frontend para o backend
     const metodoPagamentoMap: { [key: string]: string } = {
         Pix: 'pix',
         'Cartão de Crédito': 'cartao_credito',
@@ -28,7 +29,6 @@ const ConfirmacaoStep = ({ setActiveTab, agendamentoData }: Props) => {
         Dinheiro: 'dinheiro',
     }
 
-    // Retorna o nome do método de pagamento para exibição
     const metodoPagamentoNome = () => {
         const metodo = agendamentoData.metodoPagamento
         if (!metodo || !metodoPagamentoMap[metodo]) {
@@ -39,15 +39,17 @@ const ConfirmacaoStep = ({ setActiveTab, agendamentoData }: Props) => {
 
     const handleNext = async () => {
         const token = sessionStorage.getItem('access_token_cliente')
+        const isAgendamentoSemLogin = barbearia?.agendamento_sem_login
 
-        if (!token) {
+        if (!isAgendamentoSemLogin && !token) {
             const slug = sessionStorage.getItem('barbearia_slug') || 'default-slug'
             navigate(`/clientes/login?redirect=/barbearia/${slug}/agendamento`)
             return
         }
 
+        console.log('Dados recebidos no ConfirmacaoStep:', agendamentoData)
+
         try {
-            // Validar metodo_pagamento
             const metodoPagamento = agendamentoData.metodoPagamento
             if (!metodoPagamento || !metodoPagamentoMap[metodoPagamento]) {
                 alert('Selecione um método de pagamento válido.')
@@ -70,10 +72,13 @@ const ConfirmacaoStep = ({ setActiveTab, agendamentoData }: Props) => {
 
             const payload = {
                 data: data,
-                funcionario: agendamentoData.funcionario?.id,
+                funcionario: agendamentoData.funcionario?.id || null,
                 hora_inicio: horaFormatada,
                 servico: agendamentoData.servico.id,
-                metodo_pagamento: metodoPagamentoMap[metodoPagamento], // Enviar valor mapeado
+                metodo_pagamento: metodoPagamento, // Enviar o valor original ("Dinheiro")
+                cliente_nome: agendamentoData.clienteNome || undefined,
+                cliente_email: agendamentoData.clienteEmail || undefined,
+                telefone: agendamentoData.telefone || undefined,
             }
 
             console.log('Enviando payload para /api/agendamentos/criar/', payload)
@@ -82,7 +87,6 @@ const ConfirmacaoStep = ({ setActiveTab, agendamentoData }: Props) => {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify(payload),
             })
@@ -134,6 +138,21 @@ const ConfirmacaoStep = ({ setActiveTab, agendamentoData }: Props) => {
                 <p>
                     <strong>Método de Pagamento:</strong> {metodoPagamentoNome()}
                 </p>
+                {agendamentoData.clienteNome && (
+                    <p>
+                        <strong>Nome do Cliente:</strong> {agendamentoData.clienteNome}
+                    </p>
+                )}
+                {agendamentoData.clienteEmail && (
+                    <p>
+                        <strong>E-mail do Cliente:</strong> {agendamentoData.clienteEmail}
+                    </p>
+                )}
+                {agendamentoData.telefone && (
+                    <p>
+                        <strong>Telefone do Cliente:</strong> {agendamentoData.telefone}
+                    </p>
+                )}
             </S.Confirmacao>
             <S.Button className="back" onClick={handleBack}>
                 Voltar

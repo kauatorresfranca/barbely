@@ -114,3 +114,61 @@ export const Button = styled.button`
         cursor: not-allowed;
     }
 `
+
+export const ClienteNome = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+`
+
+export const Input = styled.input`
+    padding: 10px;
+    border: 1px solid ${colors.cinzaTransparent};
+    border-radius: 4px;
+    background: ${colors.cinzaEscuro};
+    color: ${colors.branco};
+    font-size: 14px;
+
+    &:focus {
+        outline: none;
+        border-color: ${colors.corPrimaria};
+    }
+`
+
+export const OrDivider = styled.div`
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 12px 0;
+    color: ${colors.texto};
+
+    span {
+        padding: 0 10px;
+        z-index: 1;
+    }
+
+    &:before,
+    &:after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background-color: ${colors.cinzaTransparent};
+        margin: 0 8px;
+    }
+`
+
+export const SignInOption = styled.button`
+    padding: 10px;
+    background-color: transparent;
+    color: ${colors.corPrimaria};
+    border: 1px solid ${colors.corPrimaria};
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s;
+
+    &:hover {
+        background-color: ${colors.corPrimaria};
+        color: ${colors.cinzaEscuro};
+    }
+`

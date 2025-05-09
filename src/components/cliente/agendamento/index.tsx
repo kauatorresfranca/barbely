@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Funcionario } from '../../../models/funcionario'
 import { Servico } from '../../../models/servico'
+import { Barbearia } from '../../../models/Barbearia'
 import HorariosStep from '../agendamento_steps/horarios_step'
 import FirstStep from '../agendamento_steps/first_step'
 import ConfirmacaoStep from '../agendamento_steps/confirmacao_dados'
@@ -11,6 +12,7 @@ import * as S from './styles'
 type Props = {
     modalIsOpen: boolean
     onClose?: () => void
+    barbearia: Barbearia | null
 }
 
 export type AgendamentoData = {
@@ -19,9 +21,12 @@ export type AgendamentoData = {
     servico: Servico
     funcionario: Funcionario | null
     metodoPagamento: 'Pix' | 'Cartão de Crédito' | 'Cartão de Débito' | 'Dinheiro'
+    clienteNome?: string
+    clienteEmail?: string // Adicionado para suportar e-mail do cliente
+    telefone?: string // Adicionado para suportar telefone do cliente
 }
 
-const Agendamento = ({ modalIsOpen, onClose }: Props) => {
+const Agendamento = ({ modalIsOpen, onClose, barbearia }: Props) => {
     const [activeTab, setActiveTab] = useState('servico')
     const [agendamentoData, setAgendamentoData] = useState<AgendamentoData | null>(null)
 
@@ -72,7 +77,6 @@ const Agendamento = ({ modalIsOpen, onClose }: Props) => {
         setActiveTab(tab)
     }
 
-    // Função para resetar o agendamento
     const resetAgendamento = () => {
         setActiveTab('servico')
         setAgendamentoData(null)
@@ -107,7 +111,9 @@ const Agendamento = ({ modalIsOpen, onClose }: Props) => {
                     </>
                 )}
                 <S.Step className="active" id={activeTab}>
-                    {activeTab === 'servico' && <FirstStep setActiveTab={handleSetActiveTab} />}
+                    {activeTab === 'servico' && (
+                        <FirstStep setActiveTab={handleSetActiveTab} barbearia={barbearia} />
+                    )}
                     {activeTab === 'horarios' && agendamentoData && (
                         <HorariosStep
                             setActiveTab={handleSetActiveTab}
@@ -119,12 +125,14 @@ const Agendamento = ({ modalIsOpen, onClose }: Props) => {
                         <MetodoPagamentoStep
                             setActiveTab={handleSetActiveTab}
                             agendamentoData={agendamentoData}
+                            barbearia={barbearia}
                         />
                     )}
                     {activeTab === 'dia' && agendamentoData && (
                         <ConfirmacaoStep
                             setActiveTab={handleSetActiveTab}
                             agendamentoData={agendamentoData}
+                            barbearia={barbearia}
                         />
                     )}
                     {activeTab === 'sucesso' && (

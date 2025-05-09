@@ -13,26 +13,27 @@ type Servico = {
 }
 
 type NovoAgendamento = {
-    cliente_email: string
+    cliente_email?: string
     cliente_nome: string
     funcionario: string
     servico: string
     data: string
     hora_inicio: string
-    metodo_pagamento: string // Adicionado metodo_pagamento
+    metodo_pagamento: string
 }
 
 type CriarAgendamentoModalProps = {
     isOpen: boolean
     onClose: () => void
     novoAgendamento: NovoAgendamento
-    setNovoAgendamento: Dispatch<SetStateAction<NovoAgendamento>> // Corrigido o tipo
+    setNovoAgendamento: Dispatch<SetStateAction<NovoAgendamento>>
     funcionarios: Funcionario[]
     servicos: Servico[]
     horas: string[]
     error: string | null
     criandoAgendamento: boolean
     onCreate: () => void
+    agendamentoSemLogin: boolean
 }
 
 const CriarAgendamentoModal = ({
@@ -46,6 +47,7 @@ const CriarAgendamentoModal = ({
     error,
     criandoAgendamento,
     onCreate,
+    agendamentoSemLogin,
 }: CriarAgendamentoModalProps) => {
     if (!isOpen) return null
 
@@ -56,21 +58,23 @@ const CriarAgendamentoModal = ({
                 <h2>Criar Novo Agendamento</h2>
                 {error && <S.ErrorMessage>{error}</S.ErrorMessage>}
                 <S.ModalContent>
-                    <S.InfoItem>
-                        <S.InfoLabel>E-mail do Cliente</S.InfoLabel>
-                        <S.Input
-                            type="email"
-                            value={novoAgendamento.cliente_email}
-                            onChange={(e) =>
-                                setNovoAgendamento({
-                                    ...novoAgendamento,
-                                    cliente_email: e.target.value,
-                                })
-                            }
-                            placeholder="exemplo@dominio.com"
-                            disabled={criandoAgendamento}
-                        />
-                    </S.InfoItem>
+                    {!agendamentoSemLogin && (
+                        <S.InfoItem>
+                            <S.InfoLabel>E-mail do Cliente</S.InfoLabel>
+                            <S.Input
+                                type="email"
+                                value={novoAgendamento.cliente_email || ''}
+                                onChange={(e) =>
+                                    setNovoAgendamento({
+                                        ...novoAgendamento,
+                                        cliente_email: e.target.value,
+                                    })
+                                }
+                                placeholder="exemplo@dominio.com"
+                                disabled={criandoAgendamento}
+                            />
+                        </S.InfoItem>
+                    )}
                     <S.InfoItem>
                         <S.InfoLabel>Nome do Cliente</S.InfoLabel>
                         <S.Input

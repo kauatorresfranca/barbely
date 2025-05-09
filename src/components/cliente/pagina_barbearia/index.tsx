@@ -201,12 +201,11 @@ const PaginaBarbearia = () => {
     }, [navigate])
 
     useEffect(() => {
-        // Só verifica e renova o token se o cliente estiver autenticado
         if (cliente) {
             const checkToken = () => {
                 const accessToken = sessionStorage.getItem('access_token_cliente')
                 if (accessToken) {
-                    const expiryTime = 4 * 60 * 1000 // 4 minutos antes da expiração
+                    const expiryTime = 4 * 60 * 1000
                     const interval = setInterval(() => {
                         refreshToken()
                     }, expiryTime)
@@ -220,7 +219,7 @@ const PaginaBarbearia = () => {
     }, [navigate, refreshToken, cliente])
 
     function ToAgendamento() {
-        if (cliente) {
+        if (barbearia?.agendamento_sem_login || cliente) {
             setModalIsOpen(true)
         } else {
             navigate(`/barbearia/${slug}/login`)
@@ -369,7 +368,11 @@ const PaginaBarbearia = () => {
                             </S.Services>
                         </S.BarbeariaInfos>
                     </S.BarbeariaProfile>
-                    <Agendamento modalIsOpen={modalIsOpen} onClose={() => setModalIsOpen(false)} />
+                    <Agendamento
+                        modalIsOpen={modalIsOpen}
+                        onClose={() => setModalIsOpen(false)}
+                        barbearia={barbearia}
+                    />
                     {minhaContaModalIsOpen && (
                         <MinhaContaModal
                             onClose={() => setMinhaContaModalIsOpen(false)}
