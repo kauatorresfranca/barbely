@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import * as S from './styles'
 import api from '../../../../../services/api'
+import { Toast } from '../../../../../components/toast'
 
 interface Cost {
     id: number
@@ -29,15 +30,16 @@ const Custos = () => {
     const [isFormVisible, setIsFormVisible] = useState(false)
     const [editingCostId, setEditingCostId] = useState<number | null>(null)
     const [isLoading, setIsLoading] = useState(false)
-    const [error, setError] = useState<string | null>(null)
+    const [toastMessage, setToastMessage] = useState('') // Estado para a mensagem do Toast
+    const [showToast, setShowToast] = useState(false) // Estado para controlar a visibilidade do Toast
 
     useEffect(() => {
         const fetchCosts = async () => {
             setIsLoading(true)
-            setError(null)
             const token = sessionStorage.getItem('access_token_barbearia')
             if (!token) {
-                setError('Você precisa estar logado como barbearia.')
+                setToastMessage('Você precisa estar logado como barbearia.')
+                setShowToast(true)
                 setIsLoading(false)
                 return
             }
@@ -74,16 +76,19 @@ const Custos = () => {
                     console.log('Custos validados:', validatedCosts)
                     setCosts(validatedCosts)
                     if (data.length > 0 && validatedCosts.length === 0) {
-                        setError('Os custos retornados contêm dados inválidos.')
+                        setToastMessage('Os custos retornados contêm dados inválidos.')
+                        setShowToast(true)
                     }
                 } else {
-                    setError(data.error || 'Erro ao buscar custos.')
+                    setToastMessage(data.error || 'Erro ao buscar custos.')
+                    setShowToast(true)
                     console.error('Erro ao buscar custos:', data.error)
                 }
             } catch (err: unknown) {
                 const errorMessage =
                     err instanceof Error ? err.message : 'Erro de conexão com o servidor.'
-                setError(errorMessage)
+                setToastMessage(errorMessage)
+                setShowToast(true)
                 console.error('Erro ao buscar custos:', err)
             } finally {
                 setIsLoading(false)
@@ -99,10 +104,10 @@ const Custos = () => {
 
     const handleAddOrUpdateCost = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
-        setError(null)
         const token = sessionStorage.getItem('access_token_barbearia')
         if (!token) {
-            setError('Você precisa estar logado como barbearia.')
+            setToastMessage('Você precisa estar logado como barbearia.')
+            setShowToast(true)
             return
         }
         const payload = {
@@ -150,9 +155,12 @@ const Custos = () => {
                     setCosts((prev) =>
                         prev.map((cost) => (cost.id === editingCostId ? mappedCost : cost)),
                     )
+                    setToastMessage('Custo atualizado com sucesso!')
                 } else {
                     setCosts((prev) => [...prev, mappedCost])
+                    setToastMessage('Custo adicionado com sucesso!')
                 }
+                setShowToast(true)
                 setFormData({
                     description: '',
                     value: '',
@@ -162,13 +170,15 @@ const Custos = () => {
                 setEditingCostId(null)
                 setIsFormVisible(false)
             } else {
-                setError(data.error || 'Erro ao salvar custo.')
+                setToastMessage(data.error || 'Erro ao salvar custo.')
+                setShowToast(true)
                 console.error('Erro ao salvar custo:', data.error)
             }
         } catch (err: unknown) {
             const errorMessage =
                 err instanceof Error ? err.message : 'Erro de conexão com o servidor.'
-            setError(errorMessage)
+            setToastMessage(errorMessage)
+            setShowToast(true)
             console.error('Erro ao salvar custo:', err)
         }
     }
@@ -185,10 +195,10 @@ const Custos = () => {
     }
 
     const handleDeleteCost = async (id: number) => {
-        setError(null)
         const token = sessionStorage.getItem('access_token_barbearia')
         if (!token) {
-            setError('Você precisa estar logado como barbearia.')
+            setToastMessage('Você precisa estar logado como barbearia.')
+            setShowToast(true)
             return
         }
         try {
@@ -200,15 +210,19 @@ const Custos = () => {
             })
             if (response.ok) {
                 setCosts((prev) => prev.filter((cost) => cost.id !== id))
+                setToastMessage('Custo deletado com sucesso!')
+                setShowToast(true)
             } else {
                 const data = await response.json()
-                setError(data.error || 'Erro ao deletar custo.')
+                setToastMessage(data.error || 'Erro ao deletar custo.')
+                setShowToast(true)
                 console.error('Erro ao deletar custo:', data.error)
             }
         } catch (err: unknown) {
             const errorMessage =
                 err instanceof Error ? err.message : 'Erro de conexão com o servidor.'
-            setError(errorMessage)
+            setToastMessage(errorMessage)
+            setShowToast(true)
             console.error('Erro ao deletar custo:', err)
         }
     }
@@ -222,7 +236,6 @@ const Custos = () => {
             date: new Date().toISOString().split('T')[0],
             type: 'fixed',
         })
-        setError(null)
     }
 
     const handleCloseModal = () => {
@@ -234,7 +247,6 @@ const Custos = () => {
             date: new Date().toISOString().split('T')[0],
             type: 'fixed',
         })
-        setError(null)
     }
 
     const getMonthOptions = () => {
@@ -257,7 +269,7 @@ const Custos = () => {
             <h2>Custos</h2>
             <p className="subtitle">Adicione aqui todos os custos operacionais da sua barbearia</p>
 
-            {error && <S.ErrorMessage>{error}</S.ErrorMessage>}
+            {showToast && <Toast message={toastMessage} onClose={() => setShowToast(false)} />}
 
             {isFormVisible && (
                 <S.ModalOverlay>

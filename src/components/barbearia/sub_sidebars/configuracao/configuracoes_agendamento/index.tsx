@@ -2,12 +2,15 @@ import { useState, useEffect } from 'react'
 import * as S from './styles'
 import api from '../../../../../services/api'
 import { authFetch } from '../../../../../utils/authFetch'
+import { Toast } from '../../../../../components/toast'
 
 const ConfiguracoesAgendamento = () => {
     const [allowBookingWithoutLogin, setAllowBookingWithoutLogin] = useState(false)
     const [intervaloAgendamento, setIntervaloAgendamento] = useState(30)
     const [prazoCancelamento, setPrazoCancelamento] = useState(30)
     const [loading, setLoading] = useState(true)
+    const [toastMessage, setToastMessage] = useState('') // Estado para a mensagem do Toast
+    const [showToast, setShowToast] = useState(false) // Estado para controlar a visibilidade do Toast
 
     useEffect(() => {
         const fetchConfig = async () => {
@@ -25,6 +28,8 @@ const ConfiguracoesAgendamento = () => {
                 setPrazoCancelamento(data.prazo_cancelamento || 30)
             } catch (error) {
                 console.error('Erro ao carregar configurações:', error)
+                setToastMessage('Erro ao carregar configurações.')
+                setShowToast(true)
             } finally {
                 setLoading(false)
             }
@@ -46,10 +51,12 @@ const ConfiguracoesAgendamento = () => {
             if (!response.ok) {
                 throw new Error('Erro ao salvar configurações')
             }
-            alert('Configurações salvas com sucesso!')
+            setToastMessage('Configurações salvas com sucesso!')
+            setShowToast(true)
         } catch (error) {
             console.error('Erro ao salvar configurações:', error)
-            alert('Erro ao salvar configurações.')
+            setToastMessage('Erro ao salvar configurações.')
+            setShowToast(true)
         }
     }
 
@@ -58,6 +65,8 @@ const ConfiguracoesAgendamento = () => {
     return (
         <S.Container>
             <S.Title>Configurações de Agendamento</S.Title>
+
+            {showToast && <Toast message={toastMessage} onClose={() => setShowToast(false)} />}
 
             <S.Section>
                 <S.Subtitle>Agendamentos sem login</S.Subtitle>

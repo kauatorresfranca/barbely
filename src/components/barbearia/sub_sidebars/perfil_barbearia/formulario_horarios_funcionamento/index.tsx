@@ -4,6 +4,7 @@ import { authFetch } from '../../../../../utils/authFetch'
 import { useBarbeariaAtual } from '../../../../../hooks/useBarbeariaAtual'
 import * as S from './styles'
 import api from '../../../../../services/api'
+import { Toast } from '../../../../../components/toast'
 
 // Interface para os dados de horário retornados pela API
 interface HorarioAPI {
@@ -44,6 +45,8 @@ const HorarioFuncionamentoForm = () => {
     )
     const [isLoading, setIsLoading] = useState(true)
     const [hasError, setHasError] = useState(false)
+    const [toastMessage, setToastMessage] = useState('') // Estado para a mensagem do Toast
+    const [showToast, setShowToast] = useState(false) // Estado para controlar a visibilidade do Toast
 
     useEffect(() => {
         const fetchHorarios = async () => {
@@ -86,10 +89,14 @@ const HorarioFuncionamentoForm = () => {
                 } else {
                     console.error('Erro ao carregar horários')
                     setHasError(true)
+                    setToastMessage('Erro ao carregar horários.')
+                    setShowToast(true)
                 }
             } catch (error) {
                 console.error('Erro ao conectar com o servidor:', error)
                 setHasError(true)
+                setToastMessage('Erro ao conectar com o servidor.')
+                setShowToast(true)
             } finally {
                 setIsLoading(false)
             }
@@ -121,6 +128,12 @@ const HorarioFuncionamentoForm = () => {
         e.preventDefault()
         const token = sessionStorage.getItem('access_token_barbearia')
 
+        if (!token) {
+            setToastMessage('Você precisa estar logado para salvar os horários.')
+            setShowToast(true)
+            return
+        }
+
         const mapaDias = {
             Domingo: 0,
             'Segunda-feira': 1,
@@ -149,16 +162,19 @@ const HorarioFuncionamentoForm = () => {
             })
 
             if (response.ok) {
-                alert('Alterações salvas com sucesso!')
+                setToastMessage('Alterações salvas com sucesso!')
+                setShowToast(true)
                 setHasError(false)
             } else {
                 console.error('Erro ao salvar horários')
-                alert('Erro ao salvar horários.')
+                setToastMessage('Erro ao salvar horários.')
+                setShowToast(true)
                 setHasError(true)
             }
         } catch (error) {
             console.error('Erro ao enviar os horários:', error)
-            alert('Erro ao conectar com o servidor.')
+            setToastMessage('Erro ao conectar com o servidor.')
+            setShowToast(true)
             setHasError(true)
         }
     }
@@ -169,6 +185,8 @@ const HorarioFuncionamentoForm = () => {
             <p className="subtitle">
                 Defina os dias e horários em que sua barbearia estará aberta para atendimento.
             </p>
+
+            {showToast && <Toast message={toastMessage} onClose={() => setShowToast(false)} />}
 
             {isLoading ? (
                 <S.LoadingContainer>

@@ -3,6 +3,7 @@ import * as S from './styles'
 import api from '../../../../../services/api'
 import { authFetch } from '../../../../../utils/authFetch'
 import { useBarbeariaAtual } from '../../../../../hooks/useBarbeariaAtual'
+import { Toast } from '../../../../../components/toast'
 
 // Define the interface for payment methods
 interface PaymentMethods {
@@ -23,14 +24,15 @@ const MetodosPagamento = () => {
         cash: true,
     })
     const [loading, setLoading] = useState(false)
-    const [error, setError] = useState<string | null>(null)
-    const [success, setSuccess] = useState<string | null>(null)
+    const [toastMessage, setToastMessage] = useState('') // Estado para a mensagem do Toast
+    const [showToast, setShowToast] = useState(false) // Estado para controlar a visibilidade do Toast
 
     // Carrega os métodos de pagamento salvos ao montar o componente
     useEffect(() => {
         const fetchPaymentMethods = async () => {
             if (!slug) {
-                setError('Slug da barbearia não encontrado.')
+                setToastMessage('Slug da barbearia não encontrado.')
+                setShowToast(true)
                 setLoading(false)
                 return
             }
@@ -63,11 +65,11 @@ const MetodosPagamento = () => {
                     debitCard: data.debit_card || false,
                     cash: data.cash || false,
                 })
-                setError(null)
             } catch (err: unknown) {
                 const error = err as Error
                 console.error('Erro ao carregar métodos de pagamento:', error)
-                setError(error.message || 'Falha ao carregar dados.')
+                setToastMessage(error.message || 'Falha ao carregar dados.')
+                setShowToast(true)
             } finally {
                 setLoading(false)
             }
@@ -85,15 +87,13 @@ const MetodosPagamento = () => {
 
     const savePaymentMethods = async () => {
         if (!barbeariaId) {
-            setError('ID da barbearia não encontrado.')
+            setToastMessage('ID da barbearia não encontrado.')
+            setShowToast(true)
             return
         }
 
         try {
             setLoading(true)
-            setError(null)
-            setSuccess(null)
-
             const token = sessionStorage.getItem('access_token_barbearia')
             if (!token) {
                 throw new Error('Usuário não autenticado. Faça login como barbearia.')
@@ -119,12 +119,14 @@ const MetodosPagamento = () => {
                 throw new Error('Falha ao salvar métodos de pagamento.')
             }
 
-            setSuccess('Métodos de pagamento salvos com sucesso!')
+            setToastMessage('Métodos de pagamento salvos com sucesso!')
+            setShowToast(true)
             console.log('Enviando para o backend:', JSON.stringify(payload))
         } catch (err: unknown) {
             const error = err as Error
             console.error('Erro ao salvar métodos de pagamento:', error)
-            setError(error.message || 'Erro ao salvar os dados.')
+            setToastMessage(error.message || 'Erro ao salvar os dados.')
+            setShowToast(true)
         } finally {
             setLoading(false)
         }
@@ -134,9 +136,10 @@ const MetodosPagamento = () => {
         <S.Container>
             <h2>Métodos de Pagamento</h2>
             <p className="subtitle">Configure os métodos de pagamento aceito por sua barbearia.</p>
+
+            {showToast && <Toast message={toastMessage} onClose={() => setShowToast(false)} />}
+
             {loading && <p>Carregando...</p>}
-            {error && <p style={{ color: 'red' }}>{error}</p>}
-            {success && <p style={{ color: 'green' }}>{success}</p>}
             <S.PaymentList>
                 <S.PaymentItem>
                     <span>PIX</span>

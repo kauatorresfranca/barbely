@@ -5,6 +5,7 @@ import { authFetch } from '../../../../../utils/authFetch'
 import { useBarbeariaAtual, useSetBarbeariaAtual } from '../../../../../hooks/useBarbeariaAtual'
 import * as S from './styles'
 import api from '../../../../../services/api'
+import { Toast } from '../../../../../components/toast'
 
 const BarbeariaPerfilForm = () => {
     const barbearia = useBarbeariaAtual()
@@ -22,6 +23,8 @@ const BarbeariaPerfilForm = () => {
     })
     const [isLoading, setIsLoading] = useState(true)
     const [hasError, setHasError] = useState(false)
+    const [toastMessage, setToastMessage] = useState('')
+    const [showToast, setShowToast] = useState(false)
 
     const inputRef = useRef<HTMLInputElement>(null)
 
@@ -91,15 +94,14 @@ const BarbeariaPerfilForm = () => {
             alert('ID da barbearia não encontrado.')
             return
         }
-        const form = new FormData()
 
+        const form = new FormData()
         form.append('nome_proprietario', formData.nome_proprietario)
         form.append('nome_barbearia', formData.nome_barbearia)
         form.append('telefone', formData.telefone)
         form.append('cpf', formData.cpf)
         form.append('cnpj', formData.cnpj)
         form.append('descricao', formData.descricao)
-
         if (formData.imagem) {
             form.append('imagem', formData.imagem)
         }
@@ -109,7 +111,6 @@ const BarbeariaPerfilForm = () => {
                 method: 'PATCH',
                 headers: {
                     Authorization: `Bearer ${token}`,
-                    // Removido Content-Type para permitir multipart/form-data automático
                 },
                 body: form,
             })
@@ -121,7 +122,8 @@ const BarbeariaPerfilForm = () => {
                 const updatedData = await updatedResponse.json()
                 setBarbeariaAtual(updatedData)
                 setPreview(updatedData.imagem)
-                alert('Dados enviados com sucesso!')
+                setToastMessage('Dados enviados com sucesso!')
+                setShowToast(true)
             } else {
                 const errorData = await response.json()
                 console.error('Erro ao salvar alterações:', errorData)
@@ -139,6 +141,8 @@ const BarbeariaPerfilForm = () => {
             <p className="subtitle">
                 Gerencie os dados principais da sua barbearia, como nome, contato, descrição.
             </p>
+
+            {showToast && <Toast message={toastMessage} onClose={() => setShowToast(false)} />}
 
             {isLoading ? (
                 <S.LoadingContainer>

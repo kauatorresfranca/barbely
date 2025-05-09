@@ -5,8 +5,11 @@ import { authFetch } from '../../../../../utils/authFetch'
 import { useBarbeariaAtual } from '../../../../../hooks/useBarbeariaAtual'
 import * as S from './styles'
 import api from '../../../../../services/api'
+import { Toast } from '../../../../../components/toast'
 
 const Localizacao = () => {
+    const barbearia = useBarbeariaAtual()
+    const slug = barbearia?.slug
     const [form, setForm] = useState({
         cep: '',
         estado: '',
@@ -18,9 +21,8 @@ const Localizacao = () => {
     })
     const [isLoading, setIsLoading] = useState(true)
     const [hasError, setHasError] = useState(false)
-
-    const barbearia = useBarbeariaAtual()
-    const slug = barbearia?.slug
+    const [toastMessage, setToastMessage] = useState('') // Estado para a mensagem do Toast
+    const [showToast, setShowToast] = useState(false) // Estado para controlar a visibilidade do Toast
 
     // Preenche os campos se já existir endereço cadastrado
     useEffect(() => {
@@ -34,7 +36,6 @@ const Localizacao = () => {
             setHasError(false)
             try {
                 const response = await fetch(`${api.baseURL}/endereco-barbearia-publico/${slug}/`)
-
                 if (response.ok) {
                     const data = await response.json()
                     setForm({
@@ -96,9 +97,9 @@ const Localizacao = () => {
         e.preventDefault()
 
         const token = sessionStorage.getItem('access_token_barbearia')
-
         if (!token) {
-            alert('Você precisa estar logado para salvar o endereço.')
+            setToastMessage('Você precisa estar logado para salvar o endereço.')
+            setShowToast(true)
             return
         }
 
@@ -115,14 +116,17 @@ const Localizacao = () => {
             if (!res.ok) {
                 const errorData = await res.json()
                 console.error('Erro ao salvar endereço:', errorData)
-                alert('Erro ao salvar endereço.')
+                setToastMessage('Erro ao salvar endereço.')
+                setShowToast(true)
                 return
             }
 
-            alert('Endereço salvo com sucesso!')
+            setToastMessage('Endereço salvo com sucesso!')
+            setShowToast(true)
         } catch (err) {
             console.error('Erro ao salvar endereço:', err)
-            alert('Erro ao conectar com o servidor.')
+            setToastMessage('Erro ao conectar com o servidor.')
+            setShowToast(true)
         }
     }
 
@@ -133,6 +137,8 @@ const Localizacao = () => {
                 Adicione ou atualize o endereço da sua barbearia para que seus clientes possam te
                 encontrar com facilidade.
             </p>
+
+            {showToast && <Toast message={toastMessage} onClose={() => setShowToast(false)} />}
 
             {isLoading ? (
                 <S.LoadingContainer>
