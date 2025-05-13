@@ -34,7 +34,7 @@ export const PlanosGrid = styled.div`
     gap: 24px;
     justify-content: center;
 
-    @media (max-width: ${breakpoints.tablet}) {
+    @media (max-width: ${breakpoints.desktop}) {
         flex-direction: column;
         align-items: center;
     }

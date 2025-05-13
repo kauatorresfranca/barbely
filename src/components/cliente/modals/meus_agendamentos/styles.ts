@@ -59,7 +59,7 @@ export const ModalContent = styled.div`
     scrollbar-width: thin;
     scrollbar-color: ${colors.cinzaTransparent} transparent;
 
-    @media (max-width: ${breakpoints.tablet}) {
+    @media (max-width: ${breakpoints.desktop}) {
         max-width: 100%;
         height: 100%;
         border-radius: 0;

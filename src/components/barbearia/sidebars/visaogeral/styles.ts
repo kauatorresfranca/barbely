@@ -11,7 +11,7 @@ export const Container = styled.div`
         font-size: 14px;
     }
 
-    @media (max-width: ${breakpoints.tablet}) {
+    @media (max-width: ${breakpoints.desktop}) {
         .subtitle {
             font-size: 12px;
         }
@@ -54,7 +54,7 @@ export const Filtro = styled.div`
         }
     }
 
-    @media (max-width: ${breakpoints.tablet}) {
+    @media (max-width: ${breakpoints.desktop}) {
         gap: 8px;
 
         select {
@@ -82,7 +82,7 @@ export const DateRange = styled.div`
         color: ${colors.branco};
     }
 
-    @media (max-width: ${breakpoints.tablet}) {
+    @media (max-width: ${breakpoints.desktop}) {
         font-size: 12px;
         padding: 0px 0px 0px 0px;
     }
@@ -118,7 +118,7 @@ export const DateInputsWrapper = styled.div`
         }
     }
 
-    @media (max-width: ${breakpoints.tablet}) {
+    @media (max-width: ${breakpoints.desktop}) {
         flex-direction: column;
         left: 0;
         right: 0;
@@ -139,7 +139,7 @@ export const InputsGroup = styled.div`
     display: flex;
     gap: 8px;
 
-    @media (max-width: ${breakpoints.tablet}) {
+    @media (max-width: ${breakpoints.desktop}) {
         width: 100%;
     }
 `
@@ -181,7 +181,7 @@ export const InputGroup = styled.div`
         }
     }
 
-    @media (max-width: ${breakpoints.tablet}) {
+    @media (max-width: ${breakpoints.desktop}) {
         width: 100%;
 
         input[type='date'] {
@@ -194,7 +194,7 @@ export const FirstLine = styled.div`
     display: flex;
     gap: 20px;
 
-    @media (max-width: ${breakpoints.tablet}) {
+    @media (max-width: ${breakpoints.desktop}) {
         display: grid;
         grid-template-columns: 1fr 1fr;
     }
@@ -208,7 +208,7 @@ export const SecondLine = styled.div`
     margin-top: 40px;
     gap: 20px;
 
-    @media (max-width: ${breakpoints.tablet}) {
+    @media (max-width: ${breakpoints.desktop}) {
         flex-direction: column;
     }
 `
@@ -275,7 +275,7 @@ export const Card = styled.div`
         border: none;
     }
 
-    @media (max-width: ${breakpoints.tablet}) {
+    @media (max-width: ${breakpoints.desktop}) {
         flex-direction: column;
         padding: 12px;
         height: auto;
@@ -320,7 +320,7 @@ export const GraficoContainer = styled.div`
         box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
     }
 
-    @media (max-width: ${breakpoints.tablet}) {
+    @media (max-width: ${breakpoints.desktop}) {
         width: 100%;
     }
 `
@@ -331,7 +331,7 @@ export const Services = styled.div`
     gap: 20px;
     width: 40%;
 
-    @media (max-width: ${breakpoints.tablet}) {
+    @media (max-width: ${breakpoints.desktop}) {
         display: grid;
         grid-template-columns: 1fr 1fr;
         width: 100%;

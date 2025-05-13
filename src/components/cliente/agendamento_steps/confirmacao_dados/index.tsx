@@ -16,25 +16,42 @@ const ConfirmacaoStep = ({ setActiveTab, agendamentoData, barbearia }: Props) =>
     const fusoHorario = 'America/Sao_Paulo'
     const navigate = useNavigate()
 
-    const dataFormatada = agendamentoData.data
-        ? format(toZonedTime(agendamentoData.data, fusoHorario), 'dd/MM/yyyy', {
-              timeZone: fusoHorario,
-          })
-        : ''
-
-    const metodoPagamentoMap: { [key: string]: string } = {
-        Pix: 'pix',
-        'Cartão de Crédito': 'cartao_credito',
-        'Cartão de Débito': 'cartao_debito',
-        Dinheiro: 'dinheiro',
+    // Verificar se os dados essenciais estão presentes
+    if (!agendamentoData.servico) {
+        console.error('Erro: Serviço não definido no agendamentoData', agendamentoData)
+        alert('Erro: Dados do serviço não foram carregados. Por favor, reinicie o agendamento.')
+        setActiveTab('servico')
+        return null
     }
+
+    // Verificar se a data está presente
+    if (!agendamentoData.data) {
+        console.error('Erro: Data não definida no agendamentoData', agendamentoData)
+        alert('Erro: Data não foi selecionada. Por favor, retorne e escolha uma data.')
+        setActiveTab('horarios')
+        return null
+    }
+
+    const dataNormalizada = toZonedTime(agendamentoData.data, fusoHorario)
+    const dataFormatada = format(dataNormalizada, 'dd/MM/yyyy', {
+        timeZone: fusoHorario,
+    })
 
     const metodoPagamentoNome = () => {
         const metodo = agendamentoData.metodoPagamento
-        if (!metodo || !metodoPagamentoMap[metodo]) {
-            return 'Não especificado'
+        if (!metodo) return 'Não especificado'
+        switch (metodo.toLowerCase()) {
+            case 'pix':
+                return 'PIX'
+            case 'cartão de crédito':
+                return 'Cartão de Crédito'
+            case 'cartão de débito':
+                return 'Cartão de Débito'
+            case 'dinheiro':
+                return 'Dinheiro'
+            default:
+                return metodo
         }
-        return metodo
     }
 
     const handleNext = async () => {
@@ -50,11 +67,15 @@ const ConfirmacaoStep = ({ setActiveTab, agendamentoData, barbearia }: Props) =>
         console.log('Dados recebidos no ConfirmacaoStep:', agendamentoData)
 
         try {
-            const metodoPagamento = agendamentoData.metodoPagamento
-            if (!metodoPagamento || !metodoPagamentoMap[metodoPagamento]) {
+            const metodoPagamento = metodoPagamentoNome()
+            if (!metodoPagamento || metodoPagamento === 'Não especificado') {
                 alert('Selecione um método de pagamento válido.')
                 setActiveTab('metodo_pagamento')
                 return
+            }
+
+            if (!agendamentoData.servico || !agendamentoData.data || !agendamentoData.horario) {
+                throw new Error('Dados essenciais do agendamento estão ausentes.')
             }
 
             const dataNormalizada = toZonedTime(agendamentoData.data, fusoHorario)
@@ -75,7 +96,7 @@ const ConfirmacaoStep = ({ setActiveTab, agendamentoData, barbearia }: Props) =>
                 funcionario: agendamentoData.funcionario?.id || null,
                 hora_inicio: horaFormatada,
                 servico: agendamentoData.servico.id,
-                metodo_pagamento: metodoPagamento, // Enviar o valor original ("Dinheiro")
+                metodo_pagamento: metodoPagamento,
                 cliente_nome: agendamentoData.clienteNome || undefined,
                 cliente_email: agendamentoData.clienteEmail || undefined,
                 telefone: agendamentoData.telefone || undefined,
@@ -87,6 +108,7 @@ const ConfirmacaoStep = ({ setActiveTab, agendamentoData, barbearia }: Props) =>
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    ...(token && { Authorization: `Bearer ${token}` }),
                 },
                 body: JSON.stringify(payload),
             })
@@ -94,6 +116,13 @@ const ConfirmacaoStep = ({ setActiveTab, agendamentoData, barbearia }: Props) =>
             if (!res.ok) {
                 const errorData = await res.json()
                 console.error('Erro ao agendar:', errorData)
+                if (errorData.non_field_errors?.includes('A barbearia está fechada neste dia.')) {
+                    alert(
+                        'A barbearia está fechada na data selecionada. Por favor, escolha outra data.',
+                    )
+                    setActiveTab('horarios')
+                    return
+                }
                 alert(
                     `Erro: ${
                         errorData.detail || errorData.erro || 'Falha ao confirmar agendamento.'

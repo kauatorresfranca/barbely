@@ -47,7 +47,7 @@ export const Modal = styled.div`
         text-align: center;
     }
 
-    @media (max-width: ${breakpoints.tablet}) {
+    @media (max-width: ${breakpoints.desktop}) {
         width: 90%;
     }
 

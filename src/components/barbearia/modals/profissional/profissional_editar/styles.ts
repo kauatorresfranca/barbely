@@ -44,7 +44,7 @@ export const Modal = styled.div`
         color: ${colors.corPrimaria};
     }
 
-    @media (max-width: ${breakpoints.tablet}) {
+    @media (max-width: ${breakpoints.desktop}) {
         width: 90%;
     }
 

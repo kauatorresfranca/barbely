@@ -11,7 +11,7 @@ export const Container = styled.div`
         font-size: 14px;
     }
 
-    @media (max-width: ${breakpoints.tablet}) {
+    @media (max-width: ${breakpoints.desktop}) {
         .subtitle {
             font-size: 12px;
         }
@@ -22,7 +22,7 @@ export const PerfilBarbearia = styled.div`
     display: flex;
     gap: 40px;
 
-    @media (max-width: ${breakpoints.tablet}) {
+    @media (max-width: ${breakpoints.desktop}) {
         flex-direction: column;
     }
 `
@@ -82,7 +82,7 @@ export const Tab = styled.div`
         }
     }
 
-    @media (max-width: ${breakpoints.tablet}) {
+    @media (max-width: ${breakpoints.desktop}) {
         width: 100%;
     }
 `

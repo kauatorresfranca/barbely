@@ -73,7 +73,6 @@ const FirstStep = ({ setActiveTab, barbearia }: Props) => {
                 return
             }
 
-            // Validação para agendamento sem login
             if (barbearia?.agendamento_sem_login) {
                 if (!clienteNome.trim()) {
                     alert('Por favor, insira o nome do cliente para prosseguir.')
@@ -83,7 +82,6 @@ const FirstStep = ({ setActiveTab, barbearia }: Props) => {
                     alert('Por favor, insira o e-mail do cliente para prosseguir.')
                     return
                 }
-                // Validação básica de e-mail (opcional)
                 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
                 if (!emailRegex.test(clienteEmail.trim())) {
                     alert('Por favor, insira um e-mail válido.')

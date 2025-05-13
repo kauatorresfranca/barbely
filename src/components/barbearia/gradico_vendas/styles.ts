@@ -25,7 +25,7 @@ export const Container = styled.div`
         margin: 10px 0;
     }
 
-    @media (max-width: ${breakpoints.tablet}) {
+    @media (max-width: ${breakpoints.desktop}) {
         padding: 12px;
         h2 {
             font-size: 18px;

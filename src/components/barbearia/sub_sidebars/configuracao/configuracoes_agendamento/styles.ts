@@ -11,7 +11,7 @@ export const Container = styled.div`
     border-radius: 10px;
     background-color: ${colors.cinzaClaro};
 
-    @media (max-width: ${breakpoints.tablet}) {
+    @media (max-width: ${breakpoints.desktop}) {
         width: 100%;
     }
 `

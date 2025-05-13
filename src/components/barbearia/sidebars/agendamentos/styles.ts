@@ -9,7 +9,7 @@ export const Container = styled.div`
         font-size: 14px;
     }
 
-    @media (max-width: ${breakpoints.tablet}) {
+    @media (max-width: ${breakpoints.desktop}) {
         .subtitle {
             font-size: 12px;
         }
@@ -117,7 +117,7 @@ export const DateDisplay = styled.div`
         background: ${colors.cinzaClaro}80;
     }
 
-    @media (max-width: ${breakpoints.tablet}) {
+    @media (max-width: ${breakpoints.desktop}) {
         font-size: 14px;
         min-width: 110px;
     }

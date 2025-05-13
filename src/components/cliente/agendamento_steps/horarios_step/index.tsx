@@ -3,29 +3,22 @@ import { format } from 'date-fns'
 import DatePicker from 'react-datepicker'
 import { ptBR } from 'date-fns/locale'
 import 'react-datepicker/dist/react-datepicker.css'
-
 import { Funcionario } from '../../../../models/funcionario'
 import { Servico } from '../../../../models/servico'
-
+import { Barbearia } from '../../../../models/Barbearia'
+import { AgendamentoData } from '../../agendamento'
 import * as S from './styles'
 import { authFetch } from '../../../../utils/authFetch'
 import api from '../../../../services/api'
 
 type Props = {
-    setActiveTab: (
-        tab: string,
-        data?: {
-            data?: string
-            horario?: string
-            servico: Servico
-            funcionario: Funcionario | null
-        },
-    ) => void
+    setActiveTab: (tab: string, data?: Partial<AgendamentoData>) => void
     servico: Servico
     funcionario: Funcionario | null
+    barbearia: Barbearia | null
 }
 
-const HorariosStep = ({ setActiveTab, servico, funcionario }: Props) => {
+const HorariosStep = ({ setActiveTab, servico, funcionario, barbearia }: Props) => {
     const hoje = new Date()
     const hojeAjustado = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate(), 0, 0, 0)
 
@@ -73,6 +66,7 @@ const HorariosStep = ({ setActiveTab, servico, funcionario }: Props) => {
         )
         console.log('Data selecionada (UTC):', dataNormalizada.toISOString())
         setDataSelecionada(dataNormalizada)
+        setError(null)
     }
 
     useEffect(() => {
@@ -136,7 +130,7 @@ const HorariosStep = ({ setActiveTab, servico, funcionario }: Props) => {
         )
         const dataFormatada = format(dataAjustada, 'yyyy-MM-dd')
 
-        const dadosEnviados = {
+        const dadosEnviados: Partial<AgendamentoData> = {
             data: dataFormatada,
             horario: horarioSelecionado,
             servico,
@@ -167,8 +161,10 @@ const HorariosStep = ({ setActiveTab, servico, funcionario }: Props) => {
                             calendarClassName="custom-calendar"
                             locale={ptBR}
                             minDate={hojeAjustado}
+                            placeholderText={error || 'Selecione uma data'}
                         />
                     </S.CalendarContainer>
+                    {error && <p style={{ color: 'red' }}>{error}</p>}
                 </S.DataPickWrapper>
             </S.Data>
             <S.Horario>

@@ -40,7 +40,7 @@ export const Modal = styled.div`
         text-align: center;
     }
 
-    @media (max-width: ${breakpoints.tablet}) {
+    @media (max-width: ${breakpoints.desktop}) {
         width: 90%;
     }
 
@@ -86,7 +86,7 @@ export const Button = styled.button`
     }
 `
 
-export const inputGroup = styled.div`
+export const InputGroup = styled.div`
     display: flex;
     flex-direction: column;
     align-items: start;
@@ -126,4 +126,18 @@ export const inputGroup = styled.div`
         font-weight: 500;
         color: ${colors.texto};
     }
+`
+
+export const ErrorMessage = styled.p`
+    color: red;
+    font-size: 14px;
+    margin-bottom: 10px;
+    text-align: center;
+`
+
+export const SuccessMessage = styled.p`
+    color: green;
+    font-size: 14px;
+    margin-bottom: 10px;
+    text-align: center;
 `

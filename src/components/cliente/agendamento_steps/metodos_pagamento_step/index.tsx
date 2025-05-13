@@ -41,16 +41,38 @@ const MetodoPagamentoStep = ({ setActiveTab, agendamentoData, barbearia }: Props
         }
     }, [barbearia])
 
+    const validatePreviousSteps = () => {
+        const requiredFields = [
+            { field: 'data', message: 'Por favor, selecione uma data.' },
+            { field: 'horario', message: 'Por favor, selecione um horário.' },
+            { field: 'servico', message: 'Por favor, selecione um serviço.' },
+        ]
+
+        for (const { field, message } of requiredFields) {
+            if (!agendamentoData[field as keyof AgendamentoData]) {
+                alert(message)
+                if (field === 'servico') {
+                    setActiveTab('servico')
+                } else if (field === 'data' || field === 'horario') {
+                    setActiveTab('horarios')
+                }
+                return false
+            }
+        }
+        return true
+    }
+
     const handleNext = () => {
         if (!metodoSelecionado) {
             alert('Por favor, selecione um método de pagamento antes de prosseguir.')
             return
         }
-        if (!agendamentoData.data || !agendamentoData.horario) {
-            alert('Por favor, complete as etapas anteriores (data e horário) antes de prosseguir.')
+
+        if (!validatePreviousSteps()) {
             return
         }
 
+        console.log('Método de pagamento selecionado:', metodoSelecionado)
         setActiveTab('dia', { ...agendamentoData, metodoPagamento: metodoSelecionado })
     }
 

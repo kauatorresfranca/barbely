@@ -19,7 +19,7 @@ export const Container = styled.div`
         text-align: center;
     }
 
-    @media (max-width: ${breakpoints.tablet}) {
+    @media (max-width: ${breakpoints.desktop}) {
         width: 100%;
         padding: 20px 10px;
     }
@@ -95,7 +95,7 @@ export const CheckboxWrapper = styled.label`
         transform: translate(-50%, -50%);
     }
 
-    @media (max-width: ${breakpoints.tablet}) {
+    @media (max-width: ${breakpoints.desktop}) {
         h3 {
             font-size: 12px;
         }
@@ -118,7 +118,7 @@ export const Input = styled.input`
         opacity: 0.5;
     }
 
-    @media (max-width: ${breakpoints.tablet}) {
+    @media (max-width: ${breakpoints.desktop}) {
         width: 100%;
     }
 `

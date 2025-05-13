@@ -27,7 +27,7 @@ export const UsuariosContainer = styled.div<UsuariosContainerProps>`
     flex-direction: column;
     transition: transform 0.3s ease;
 
-    @media (max-width: ${breakpoints.tablet}) {
+    @media (max-width: ${breakpoints.desktop}) {
         position: absolute;
         z-index: 10;
         width: 100%;
@@ -127,7 +127,7 @@ export const BackButton = styled.button`
     cursor: pointer;
     margin-right: 16px;
 
-    @media (max-width: ${breakpoints.tablet}) {
+    @media (max-width: ${breakpoints.desktop}) {
         display: block;
     }
 `

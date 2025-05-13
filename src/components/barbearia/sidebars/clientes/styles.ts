@@ -20,7 +20,7 @@ export const Container = styled.div`
         color: ${colors.texto};
     }
 
-    @media (max-width: ${breakpoints.tablet}) {
+    @media (max-width: ${breakpoints.desktop}) {
         .subtitle {
             font-size: 12px;
         }
@@ -86,7 +86,7 @@ export const SearchAndAdd = styled.div`
         }
     }
 
-    @media (max-width: ${breakpoints.tablet}) {
+    @media (max-width: ${breakpoints.desktop}) {
         input {
             height: 42px;
             width: 55%;

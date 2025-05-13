@@ -34,7 +34,7 @@ export const FormularioContainer = styled.div`
         text-align: center;
     }
 
-    @media (max-width: ${breakpoints.tablet}) {
+    @media (max-width: ${breakpoints.desktop}) {
         width: 90%;
         padding: 20px;
     }

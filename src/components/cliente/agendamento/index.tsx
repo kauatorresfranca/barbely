@@ -16,19 +16,19 @@ type Props = {
 }
 
 export type AgendamentoData = {
-    data: string
-    horario: string
-    servico: Servico
-    funcionario: Funcionario | null
-    metodoPagamento: 'Pix' | 'Cartão de Crédito' | 'Cartão de Débito' | 'Dinheiro'
+    data?: string
+    horario?: string
+    servico?: Servico
+    funcionario?: Funcionario | null
+    metodoPagamento?: 'Pix' | 'Cartão de Crédito' | 'Cartão de Débito' | 'Dinheiro'
     clienteNome?: string
-    clienteEmail?: string // Adicionado para suportar e-mail do cliente
-    telefone?: string // Adicionado para suportar telefone do cliente
+    clienteEmail?: string
+    telefone?: string
 }
 
 const Agendamento = ({ modalIsOpen, onClose, barbearia }: Props) => {
     const [activeTab, setActiveTab] = useState('servico')
-    const [agendamentoData, setAgendamentoData] = useState<AgendamentoData | null>(null)
+    const [agendamentoData, setAgendamentoData] = useState<AgendamentoData>({})
 
     useEffect(() => {
         console.log('agendamentoData atualizado:', agendamentoData)
@@ -37,49 +37,57 @@ const Agendamento = ({ modalIsOpen, onClose, barbearia }: Props) => {
     const canAccessTab = (tab: string, incomingData?: Partial<AgendamentoData>): boolean => {
         if (tab === 'servico') return true
 
-        const dataToCheck = incomingData ? { ...agendamentoData, ...incomingData } : agendamentoData
+        const dataToCheck = { ...agendamentoData, ...(incomingData || {}) }
 
         if (tab === 'horarios') {
-            return !!dataToCheck?.servico
+            return !!dataToCheck.servico
         }
         if (tab === 'metodo_pagamento') {
-            return !!dataToCheck?.data && !!dataToCheck?.horario
+            return !!dataToCheck.data && !!dataToCheck.horario && !!dataToCheck.servico
         }
         if (tab === 'dia') {
             return (
-                !!dataToCheck?.data &&
-                !!dataToCheck?.horario &&
-                !!dataToCheck?.servico &&
-                !!dataToCheck?.metodoPagamento
+                !!dataToCheck.data &&
+                !!dataToCheck.horario &&
+                !!dataToCheck.servico &&
+                !!dataToCheck.metodoPagamento
             )
         }
         if (tab === 'sucesso') {
             return (
-                !!dataToCheck?.data &&
-                !!dataToCheck?.horario &&
-                !!dataToCheck?.servico &&
-                !!dataToCheck?.metodoPagamento
+                !!dataToCheck.data &&
+                !!dataToCheck.horario &&
+                !!dataToCheck.servico &&
+                !!dataToCheck.metodoPagamento
             )
         }
         return false
     }
 
     const handleSetActiveTab = (tab: string, data?: Partial<AgendamentoData>) => {
+        console.log('Antes da validação - agendamentoData:', agendamentoData, 'incomingData:', data)
         if (!canAccessTab(tab, data)) {
-            console.log('Bloqueado: canAccessTab retornou false para', tab, 'com data:', data)
+            console.log('Bloqueado: canAccessTab retornou false para', tab, 'com data:', {
+                ...agendamentoData,
+                ...data,
+            })
             alert(`Por favor, complete a etapa atual antes de prosseguir para "${tab}".`)
             return
         }
 
         if (data) {
-            setAgendamentoData((prev) => ({ ...prev, ...data } as AgendamentoData))
+            setAgendamentoData((prev) => {
+                const newData = { ...prev, ...data }
+                console.log('Novo agendamentoData:', newData)
+                return newData
+            })
         }
         setActiveTab(tab)
     }
 
     const resetAgendamento = () => {
         setActiveTab('servico')
-        setAgendamentoData(null)
+        setAgendamentoData({})
     }
 
     if (!modalIsOpen) return null
@@ -114,24 +122,25 @@ const Agendamento = ({ modalIsOpen, onClose, barbearia }: Props) => {
                     {activeTab === 'servico' && (
                         <FirstStep setActiveTab={handleSetActiveTab} barbearia={barbearia} />
                     )}
-                    {activeTab === 'horarios' && agendamentoData && (
+                    {activeTab === 'horarios' && (
                         <HorariosStep
                             setActiveTab={handleSetActiveTab}
-                            servico={agendamentoData.servico}
-                            funcionario={agendamentoData.funcionario}
+                            servico={agendamentoData.servico!}
+                            funcionario={agendamentoData.funcionario || null}
+                            barbearia={barbearia}
                         />
                     )}
-                    {activeTab === 'metodo_pagamento' && agendamentoData && (
+                    {activeTab === 'metodo_pagamento' && (
                         <MetodoPagamentoStep
                             setActiveTab={handleSetActiveTab}
                             agendamentoData={agendamentoData}
                             barbearia={barbearia}
                         />
                     )}
-                    {activeTab === 'dia' && agendamentoData && (
+                    {activeTab === 'dia' && (
                         <ConfirmacaoStep
                             setActiveTab={handleSetActiveTab}
-                            agendamentoData={agendamentoData}
+                            agendamentoData={agendamentoData as AgendamentoData}
                             barbearia={barbearia}
                         />
                     )}

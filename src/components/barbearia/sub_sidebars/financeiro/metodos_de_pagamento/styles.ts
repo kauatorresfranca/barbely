@@ -17,7 +17,7 @@ export const Container = styled.div`
         color: ${colors.texto};
     }
 
-    @media (max-width: ${breakpoints.tablet}) {
+    @media (max-width: ${breakpoints.desktop}) {
         width: 100%;
     }
 `

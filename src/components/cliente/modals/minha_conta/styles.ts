@@ -36,7 +36,7 @@ export const ModalContent = styled.div`
     position: relative;
     animation: slideUp 0.3s ease-out;
 
-    @media (max-width: ${breakpoints.tablet}) {
+    @media (max-width: ${breakpoints.desktop}) {
         max-width: 100%;
         height: 100%;
         border-radius: 0;

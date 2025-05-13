@@ -83,7 +83,7 @@ export const DropdownMenu = styled.ul`
         display: flex;
     }
 
-    @media (max-width: ${breakpoints.tablet}) {
+    @media (max-width: ${breakpoints.desktop}) {
         top: 60px;
         right: 12px;
     }
@@ -155,7 +155,7 @@ export const BarbeariaResume = styled.div`
     gap: 16px;
     margin: 0 0 20px 0;
 
-    @media (max-width: ${breakpoints.tablet}) {
+    @media (max-width: ${breakpoints.desktop}) {
         flex-direction: column;
     }
 `
@@ -187,7 +187,7 @@ export const ResumeGroup = styled.div`
         margin-top: 8px;
     }
 
-    @media (max-width: ${breakpoints.tablet}) {
+    @media (max-width: ${breakpoints.desktop}) {
         p {
             margin-top: 4px;
             font-size: 12px;
@@ -217,7 +217,7 @@ export const AgendarHorario = styled.div`
         color: ${colors.branco};
     }
 
-    @media (max-width: ${breakpoints.tablet}) {
+    @media (max-width: ${breakpoints.desktop}) {
         width: 100%;
     }
 `
@@ -227,7 +227,7 @@ export const BarbeariaInfos = styled.div`
     grid-template-columns: 1fr 1fr;
     gap: 0 80px;
 
-    @media (max-width: ${breakpoints.tablet}) {
+    @media (max-width: ${breakpoints.desktop}) {
         display: flex;
         flex-direction: column;
     }
@@ -257,7 +257,7 @@ export const TableHours = styled.div`
     background-color: ${colors.cinzaClaro};
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 
-    @media (max-width: ${breakpoints.tablet}) {
+    @media (max-width: ${breakpoints.desktop}) {
         width: 100%;
     }
 `
@@ -291,7 +291,7 @@ export const Service = styled.div`
     background-color: ${colors.cinzaClaro};
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 
-    @media (max-width: ${breakpoints.tablet}) {
+    @media (max-width: ${breakpoints.desktop}) {
         width: 100%;
     }
 `

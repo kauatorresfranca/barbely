@@ -14,6 +14,7 @@ const ClienteNew: React.FC<ClienteEditProps> = ({ closeModal }) => {
     const [email, setEmail] = useState('')
     const [senha, setSenha] = useState('')
     const [errorMessage, setErrorMessage] = useState<string | null>(null)
+    const [successMessage, setSuccessMessage] = useState<string | null>(null)
 
     const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
         if (e.target === e.currentTarget) {
@@ -23,6 +24,10 @@ const ClienteNew: React.FC<ClienteEditProps> = ({ closeModal }) => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
+
+        // Limpar mensagens anteriores
+        setErrorMessage(null)
+        setSuccessMessage(null)
 
         // Validar formato do telefone
         const telefoneRegex = /^\(\d{2}\) \d{5}-\d{4}$/
@@ -44,7 +49,7 @@ const ClienteNew: React.FC<ClienteEditProps> = ({ closeModal }) => {
             return
         }
 
-        // Obter o barbearia_token do sessionStorage (autenticado como barbearia)
+        // Obter o barbearia_token do sessionStorage
         const barbeariaId = sessionStorage.getItem('barbearia_token')
         if (!barbeariaId) {
             setErrorMessage('Barbearia não autenticada.')
@@ -71,12 +76,19 @@ const ClienteNew: React.FC<ClienteEditProps> = ({ closeModal }) => {
             })
 
             if (response.ok) {
-                setErrorMessage(null)
-                closeModal()
+                const responseData = await response.json()
+                setSuccessMessage(
+                    `Cliente criado com sucesso: ${responseData.user.nome} (${responseData.user.telefone})`,
+                )
+                setTimeout(() => {
+                    closeModal()
+                }, 2000) // Fechar o modal após 2 segundos
             } else {
                 const errorText = await response.text()
                 if (errorText.includes('cliente user with this email already exists')) {
                     setErrorMessage('Este email já está em uso. Por favor, escolha outro.')
+                } else if (errorText.includes('Cliente user with this telefone already exists')) {
+                    setErrorMessage('Este telefone já está em uso. Por favor, escolha outro.')
                 } else {
                     setErrorMessage(`Erro ao criar cliente: ${errorText}`)
                 }
@@ -84,7 +96,7 @@ const ClienteNew: React.FC<ClienteEditProps> = ({ closeModal }) => {
         } catch (err: any) {
             console.error('Erro ao criar cliente:', {
                 message: err.message,
-                response: err.response ? await err.response.text() : 'No response',
+                response: err.response ? await err.response.text() : 'Sem resposta',
                 status: err.response?.status,
             })
             setErrorMessage('Ocorreu um erro ao criar o cliente. Tente novamente.')
@@ -97,8 +109,9 @@ const ClienteNew: React.FC<ClienteEditProps> = ({ closeModal }) => {
                 <S.CloseButton onClick={closeModal}>×</S.CloseButton>
                 <h2>Criar Cliente</h2>
                 <form onSubmit={handleSubmit}>
-                    {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
-                    <S.inputGroup>
+                    {errorMessage && <S.ErrorMessage>{errorMessage}</S.ErrorMessage>}
+                    {successMessage && <S.SuccessMessage>{successMessage}</S.SuccessMessage>}
+                    <S.InputGroup>
                         <label>Nome</label>
                         <input
                             type="text"
@@ -107,8 +120,8 @@ const ClienteNew: React.FC<ClienteEditProps> = ({ closeModal }) => {
                             placeholder="Nome do Cliente"
                             required
                         />
-                    </S.inputGroup>
-                    <S.inputGroup>
+                    </S.InputGroup>
+                    <S.InputGroup>
                         <label>Telefone</label>
                         <IMaskInput
                             mask="(00) 00000-0000"
@@ -118,8 +131,8 @@ const ClienteNew: React.FC<ClienteEditProps> = ({ closeModal }) => {
                             placeholder="(00) 00000-0000"
                             required
                         />
-                    </S.inputGroup>
-                    <S.inputGroup>
+                    </S.InputGroup>
+                    <S.InputGroup>
                         <label>Email</label>
                         <input
                             type="email"
@@ -128,8 +141,8 @@ const ClienteNew: React.FC<ClienteEditProps> = ({ closeModal }) => {
                             placeholder="Email"
                             required
                         />
-                    </S.inputGroup>
-                    <S.inputGroup>
+                    </S.InputGroup>
+                    <S.InputGroup>
                         <label>Senha</label>
                         <input
                             type="password"
@@ -138,7 +151,7 @@ const ClienteNew: React.FC<ClienteEditProps> = ({ closeModal }) => {
                             placeholder="Senha"
                             required
                         />
-                    </S.inputGroup>
+                    </S.InputGroup>
                     <S.Button type="submit">Criar Cliente</S.Button>
                 </form>
             </S.Modal>

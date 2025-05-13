@@ -47,7 +47,7 @@ export const Modal = styled.div`
         }
     }
 
-    @media (max-width: ${breakpoints.tablet}) {
+    @media (max-width: ${breakpoints.desktop}) {
         width: 90%;
     }
 `
@@ -154,6 +154,13 @@ export const Select = styled.select`
 
 export const ErrorMessage = styled.p`
     color: #ff4444;
+    font-size: 0.9rem;
+    text-align: center;
+    margin-bottom: 1rem;
+`
+
+export const SuccessMessage = styled.p`
+    color: rgb(43, 138, 67);
     font-size: 0.9rem;
     text-align: center;
     margin-bottom: 1rem;

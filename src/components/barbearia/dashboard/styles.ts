@@ -206,7 +206,7 @@ export const Profile = styled.div`
         font-weight: bold;
     }
 
-    @media (max-width: ${breakpoints.tablet}) {
+    @media (max-width: ${breakpoints.desktop}) {
         justify-content: center;
         width: 80%;
         margin: 16px auto 0 auto;
@@ -334,7 +334,7 @@ export const StatusContainer = styled.div`
         margin-bottom: 8px;
     }
 
-    @media (max-width: ${breakpoints.tablet}) {
+    @media (max-width: ${breakpoints.desktop}) {
         h4 {
             font-size: 14px;
         }

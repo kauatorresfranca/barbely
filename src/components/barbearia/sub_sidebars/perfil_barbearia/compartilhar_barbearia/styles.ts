@@ -38,7 +38,7 @@ export const Container = styled.div`
         }
     }
 
-    @media (max-width: ${breakpoints.tablet}) {
+    @media (max-width: ${breakpoints.desktop}) {
         width: 100%;
         text-align: center;
 
@@ -68,7 +68,7 @@ export const Button = styled.button`
     transition: 0.3s;
     text-align: center;
 
-    @media (max-width: ${breakpoints.tablet}) {
+    @media (max-width: ${breakpoints.desktop}) {
         width: 24pc;
     }
 `
