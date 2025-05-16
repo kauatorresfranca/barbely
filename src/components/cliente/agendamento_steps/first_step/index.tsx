@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { Funcionario } from '../../../../models/funcionario'
 import { Servico } from '../../../../models/servico'
 import { Barbearia } from '../../../../models/Barbearia'
@@ -14,16 +14,12 @@ type Props = {
     barbearia: Barbearia | null
 }
 
-const FirstStep = ({ setActiveTab, barbearia }: Props) => {
-    const navigate = useNavigate()
+const FirstStep = ({ setActiveTab }: Props) => {
     const { slug } = useParams()
     const [servicos, setServicos] = useState<Servico[]>([])
     const [funcionarios, setFuncionarios] = useState<Funcionario[]>([])
     const [selectedServiceId, setSelectedServiceId] = useState<number | null>(null)
     const [selectedFuncionarioId, setSelectedFuncionarioId] = useState<number | null>(null)
-    const [clienteNome, setClienteNome] = useState<string>('')
-    const [clienteEmail, setClienteEmail] = useState<string>('')
-    const [telefone, setTelefone] = useState<string>('')
 
     useEffect(() => {
         if (slug) {
@@ -73,39 +69,11 @@ const FirstStep = ({ setActiveTab, barbearia }: Props) => {
                 return
             }
 
-            if (barbearia?.agendamento_sem_login) {
-                if (!clienteNome.trim()) {
-                    alert('Por favor, insira o nome do cliente para prosseguir.')
-                    return
-                }
-                if (!clienteEmail.trim()) {
-                    alert('Por favor, insira o e-mail do cliente para prosseguir.')
-                    return
-                }
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-                if (!emailRegex.test(clienteEmail.trim())) {
-                    alert('Por favor, insira um e-mail válido.')
-                    return
-                }
-            }
-
             const dataToSend: Partial<AgendamentoData> = { servico, funcionario }
-            if (barbearia?.agendamento_sem_login) {
-                dataToSend.clienteNome = clienteNome.trim()
-                dataToSend.clienteEmail = clienteEmail.trim()
-                if (telefone.trim()) {
-                    dataToSend.telefone = telefone.trim()
-                }
-            }
-
             setActiveTab('horarios', dataToSend)
         } else {
             alert('Por favor, selecione um serviço!')
         }
-    }
-
-    const logar = () => {
-        navigate(`/barbearia/${slug}/login`)
     }
 
     return (
@@ -155,35 +123,6 @@ const FirstStep = ({ setActiveTab, barbearia }: Props) => {
                     <ClipLoader color="#00c1fe" size={32} speedMultiplier={1} />
                 )}
             </S.Service>
-            {barbearia?.agendamento_sem_login && (
-                <S.ClienteNome>
-                    <h3>Digite seus dados</h3>
-                    <S.Input
-                        type="text"
-                        value={clienteNome}
-                        onChange={(e) => setClienteNome(e.target.value)}
-                        placeholder="Digite seu nome completo"
-                        required
-                    />
-                    <S.Input
-                        type="email"
-                        value={clienteEmail}
-                        onChange={(e) => setClienteEmail(e.target.value)}
-                        placeholder="Digite seu e-mail"
-                        required
-                    />
-                    <S.Input
-                        type="tel"
-                        value={telefone}
-                        onChange={(e) => setTelefone(e.target.value)}
-                        placeholder="Digite seu telefone (opcional)"
-                    />
-                    <S.OrDivider>
-                        <span>ou</span>
-                    </S.OrDivider>
-                    <S.SignInOption onClick={logar}>Siga com uma conta</S.SignInOption>
-                </S.ClienteNome>
-            )}
             <S.Button onClick={handleNext}>Prosseguir</S.Button>
         </S.Container>
     )

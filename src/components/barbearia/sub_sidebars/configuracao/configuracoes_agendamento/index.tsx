@@ -5,7 +5,6 @@ import { authFetch } from '../../../../../utils/authFetch'
 import { Toast } from '../../../../../components/toast'
 
 const ConfiguracoesAgendamento = () => {
-    const [allowBookingWithoutLogin, setAllowBookingWithoutLogin] = useState(false)
     const [intervaloAgendamento, setIntervaloAgendamento] = useState(30)
     const [prazoCancelamento, setPrazoCancelamento] = useState(30)
     const [loading, setLoading] = useState(true)
@@ -23,7 +22,6 @@ const ConfiguracoesAgendamento = () => {
                     throw new Error('Erro ao carregar configurações')
                 }
                 const data = await response.json()
-                setAllowBookingWithoutLogin(data.agendamento_sem_login || false)
                 setIntervaloAgendamento(data.intervalo_agendamento || 30)
                 setPrazoCancelamento(data.prazo_cancelamento || 30)
             } catch (error) {
@@ -43,7 +41,6 @@ const ConfiguracoesAgendamento = () => {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    agendamento_sem_login: allowBookingWithoutLogin,
                     intervalo_agendamento: intervaloAgendamento,
                     prazo_cancelamento: prazoCancelamento,
                 }),
@@ -67,33 +64,6 @@ const ConfiguracoesAgendamento = () => {
             <S.Title>Configurações de Agendamento</S.Title>
 
             {showToast && <Toast message={toastMessage} onClose={() => setShowToast(false)} />}
-
-            <S.Section>
-                <S.Subtitle>Agendamentos sem login</S.Subtitle>
-                <S.RadioGroup>
-                    <S.RadioOption>
-                        <input
-                            type="radio"
-                            id="desativado"
-                            name="allowBookingWithoutLogin"
-                            checked={!allowBookingWithoutLogin}
-                            onChange={() => setAllowBookingWithoutLogin(false)}
-                        />
-                        <label htmlFor="desativado">Desativado</label>
-                    </S.RadioOption>
-                    <S.RadioOption>
-                        <input
-                            type="radio"
-                            id="ativado"
-                            name="allowBookingWithoutLogin"
-                            checked={allowBookingWithoutLogin}
-                            onChange={() => setAllowBookingWithoutLogin(true)}
-                        />
-                        <label htmlFor="ativado">Ativado</label>
-                    </S.RadioOption>
-                </S.RadioGroup>
-                <S.Description>Permite que clientes agendem sem estar logados.</S.Description>
-            </S.Section>
 
             <S.Section>
                 <S.Subtitle>Intervalo de Agendamento</S.Subtitle>

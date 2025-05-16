@@ -80,11 +80,12 @@ export const InfoItem = styled.div`
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
-    padding: 0.8rem 1rem;
+    width: 100%;
     transition: all 0.3s ease;
 `
 
 export const InfoLabel = styled.span`
+    margin: 12px 0;
     font-size: 14px;
     font-weight: 500;
     color: ${colors.corPrimaria};
