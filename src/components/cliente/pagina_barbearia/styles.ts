@@ -1,6 +1,13 @@
 import styled from 'styled-components'
+import { Link as RouterLink } from 'react-router-dom'
 import { breakpoints, colors } from '../../../../styles'
-import { Link } from 'react-router-dom'
+
+// Definir a interface de props para suportar tanto Link quanto button
+interface ButtonProps {
+    as?: 'button' | typeof RouterLink // Permite que o componente seja um button ou um Link
+    to?: string // to é opcional, só necessário quando usado como Link
+    onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void // onClick para button
+}
 
 export const Container = styled.div``
 
@@ -89,7 +96,11 @@ export const DropdownMenu = styled.ul`
     }
 `
 
-export const Button = styled(Link)`
+// Definir o Button como polimórfico
+export const Button = styled('button').attrs<ButtonProps>(({ as, to }) => ({
+    as: as || RouterLink, // Por padrão é um Link, mas pode ser sobrescrito com as="button"
+    to: to || undefined, // to é opcional
+}))<ButtonProps>`
     background: ${colors.corPrimaria};
     color: ${colors.cinzaEscuro};
     border: 2px solid ${colors.corPrimaria};

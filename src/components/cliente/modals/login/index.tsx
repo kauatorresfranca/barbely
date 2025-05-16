@@ -1,21 +1,29 @@
 import { useState } from 'react'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import * as S from './styles'
-import logo from '../../../../assets/images/logo.png'
 import api from '../../../../services/api'
 
-const FormularioLoginCliente = () => {
+interface FormularioLoginClienteProps {
+    onLoginSuccess: () => void
+    onLoginError?: (message: string) => void
+    onSwitchToCadastro: () => void
+}
+
+const FormularioLoginCliente = ({
+    onLoginSuccess,
+    onLoginError,
+    onSwitchToCadastro,
+}: FormularioLoginClienteProps) => {
     const [formData, setFormData] = useState({ email: '', senha: '' })
     const [showPassword, setShowPassword] = useState(false)
     const [error, setError] = useState('')
-    const navigate = useNavigate()
     const { slug } = useParams()
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value })
     }
 
-    const handleLogin = async (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         setError('')
 
@@ -44,25 +52,26 @@ const FormularioLoginCliente = () => {
                 }
 
                 window.dispatchEvent(new Event('storage'))
-                navigate(`/barbearia/${slug}`)
+                if (onLoginSuccess) onLoginSuccess()
             } else {
-                setError(data.detail || 'Erro ao fazer login.')
+                const errorMsg = data.detail || 'Erro ao fazer login.'
+                setError(errorMsg)
+                if (onLoginError) onLoginError(errorMsg)
             }
         } catch {
-            setError('Erro ao conectar com o servidor.')
+            const errorMsg = 'Erro ao conectar com o servidor.'
+            setError(errorMsg)
+            if (onLoginError) onLoginError(errorMsg)
         }
     }
 
     return (
-        <S.FormularioContainer>
-            <img src={logo} alt="Logo" />
+        <>
             <h2>Acesse sua conta</h2>
             <p>Agende horários com as melhores barbearias.</p>
-
             {error && <S.ErrorMessage>{error}</S.ErrorMessage>}
-
-            <S.Form onSubmit={handleLogin}>
-                <S.inputGroup>
+            <S.Form onSubmit={handleSubmit}>
+                <S.InputGroup>
                     <label htmlFor="email">E-mail</label>
                     <input
                         type="email"
@@ -73,8 +82,8 @@ const FormularioLoginCliente = () => {
                         placeholder="E-mail"
                         required
                     />
-                </S.inputGroup>
-                <S.inputGroup>
+                </S.InputGroup>
+                <S.InputGroup>
                     <label htmlFor="senha">Senha</label>
                     <div className="input-wrapper">
                         <input
@@ -94,14 +103,21 @@ const FormularioLoginCliente = () => {
                             aria-label="Mostrar ou esconder senha"
                         ></i>
                     </div>
-                </S.inputGroup>
+                </S.InputGroup>
                 <button type="submit">Entrar</button>
                 <Link to={`/barbearia/${slug}/esqueci-senha`}>Esqueci minha senha</Link>
-                <Link to={`/barbearia/${slug}/cadastro`} className="criarConta">
+                <Link
+                    to="#"
+                    className="criarConta"
+                    onClick={(e) => {
+                        e.preventDefault()
+                        onSwitchToCadastro()
+                    }}
+                >
                     <span>Não possui conta?</span> Faça seu cadastro
                 </Link>
             </S.Form>
-        </S.FormularioContainer>
+        </>
     )
 }
 

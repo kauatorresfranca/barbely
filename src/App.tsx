@@ -5,8 +5,6 @@ import CadastroBarbearia from './pages/formularios/cadastroBarbearia'
 import ProtectedRoute from './pages/protectedRoute'
 import Dashboard from './pages/dashboard'
 import PaginaBarbearia from './components/cliente/pagina_barbearia'
-import LoginCliente from './pages/formularios/loginCliente'
-import CadastroCliente from './pages/formularios/cadastroCliente'
 import FormularioEsqueciSenha from './components/cliente/formularios/fomulario_esqueci_senha'
 import FormularioResetSenha from './components/cliente/formularios/formulario_reset_senha'
 import FormularioEsqueciSenhaBarbearia from './components/barbearia/formularios/formulario_esqueci_senha'
@@ -27,8 +25,6 @@ function App() {
                     path="/reset-password-barbearia/:token"
                     element={<FormularioResetSenhaBarbearia />}
                 />
-                <Route path="/barbearia/:slug/login" element={<LoginCliente />} />
-                <Route path="/barbearia/:slug/cadastro" element={<CadastroCliente />} />
                 <Route path="/barbearia/:slug/esqueci-senha" element={<FormularioEsqueciSenha />} />
                 <Route
                     path="/barbearia/:slug/reset-password/:token"

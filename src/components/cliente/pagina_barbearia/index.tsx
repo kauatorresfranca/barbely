@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef, useCallback } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { Barbearia } from '../../../models/Barbearia'
 import { Servico } from '../../../models/servico'
 import { Cliente } from '../../../models/cliente'
@@ -7,6 +7,7 @@ import { useCliente } from '../../../hooks/useClienteAuth'
 import Agendamento from '../agendamento'
 import MeusAgendamentosModal from '../modals/meus_agendamentos'
 import MinhaContaModal from '../modals/minha_conta'
+import AuthModal from '../modals/auth_modal'
 import * as S from './styles'
 import logo from '../../../assets/images/logo.png'
 import user from '../../../assets/images/user.png'
@@ -14,7 +15,6 @@ import { ClipLoader } from 'react-spinners'
 import api from '../../../services/api'
 
 const PaginaBarbearia = () => {
-    const navigate = useNavigate()
     const { cliente, loading, updateCliente } = useCliente()
     const { slug } = useParams()
 
@@ -23,6 +23,7 @@ const PaginaBarbearia = () => {
         { dia_semana: number; horario_abertura: string | null; horario_fechamento: string | null }[]
     >([])
     const [modalIsOpen, setModalIsOpen] = useState(false)
+    const [authModalIsOpen, setAuthModalIsOpen] = useState(false)
     const [minhaContaModalIsOpen, setMinhaContaModalIsOpen] = useState(false)
     const [meusAgendamentosModalIsOpen, setMeusAgendamentosModalIsOpen] = useState(false)
     const [servicos, setServicos] = useState<Servico[]>([])
@@ -191,14 +192,18 @@ const PaginaBarbearia = () => {
                     console.log('Token renovado com sucesso.')
                 } else {
                     console.error('Falha ao renovar token:', data)
-                    navigate('/clientes/login')
+                    sessionStorage.removeItem('access_token_cliente')
+                    sessionStorage.removeItem('refresh_token_cliente')
+                    window.dispatchEvent(new Event('storage'))
                 }
             } catch (error) {
                 console.error('Erro ao renovar token:', error)
-                navigate('/clientes/login')
+                sessionStorage.removeItem('access_token_cliente')
+                sessionStorage.removeItem('refresh_token_cliente')
+                window.dispatchEvent(new Event('storage'))
             }
         }
-    }, [navigate])
+    }, [])
 
     useEffect(() => {
         if (cliente) {
@@ -210,19 +215,17 @@ const PaginaBarbearia = () => {
                         refreshToken()
                     }, expiryTime)
                     return () => clearInterval(interval)
-                } else {
-                    navigate('/clientes/login')
                 }
             }
             checkToken()
         }
-    }, [navigate, refreshToken, cliente])
+    }, [refreshToken, cliente])
 
     function ToAgendamento() {
-        if (barbearia?.agendamento_sem_login || cliente) {
+        if (cliente) {
             setModalIsOpen(true)
         } else {
-            navigate(`/barbearia/${slug}/login`)
+            setAuthModalIsOpen(true)
         }
     }
 
@@ -236,6 +239,10 @@ const PaginaBarbearia = () => {
         console.log('Atualizando cliente no pai:', updatedCliente)
         updateCliente(updatedCliente)
         setMinhaContaModalIsOpen(false)
+    }
+
+    const handleOpenAuthModal = () => {
+        setAuthModalIsOpen(true)
     }
 
     const userImageSrc = cliente?.fotoPerfil
@@ -283,7 +290,7 @@ const PaginaBarbearia = () => {
                                         </S.DropdownMenu>
                                     </S.UserResume>
                                 ) : (
-                                    <S.Button to={`/barbearia/${slug}/login`}>Login</S.Button>
+                                    <S.Button onClick={handleOpenAuthModal}>Login</S.Button>
                                 ))}
                         </S.ButtonGroup>
                     </S.Header>
@@ -386,6 +393,11 @@ const PaginaBarbearia = () => {
                             cliente={cliente}
                         />
                     )}
+                    <AuthModal
+                        isOpen={authModalIsOpen}
+                        onClose={() => setAuthModalIsOpen(false)}
+                        onLoginSuccess={() => setModalIsOpen(true)}
+                    />
                 </S.Container>
             ) : (
                 <ClipLoader color="#00c1fe" size={32} speedMultiplier={1} />

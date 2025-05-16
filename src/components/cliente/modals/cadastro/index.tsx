@@ -1,16 +1,14 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { IMaskInput } from 'react-imask'
-
 import * as S from './styles'
-
-import logo from '../../../../assets/images/logo.png'
 import api from '../../../../services/api'
 
-const FormularioCadastroCliente = () => {
-    const { slug } = useParams()
-    const [barbeariaId, setBarbeariaId] = useState<number | null>(null)
+interface FormularioCadastroClienteProps {
+    onSwitchToLogin: () => void
+}
 
+const FormularioCadastroCliente = ({ onSwitchToLogin }: FormularioCadastroClienteProps) => {
     const [formData, setFormData] = useState({
         first_name: '',
         last_name: '',
@@ -19,25 +17,28 @@ const FormularioCadastroCliente = () => {
         confirmarSenha: '',
         telefone: '',
     })
-
     const [showPassword, setShowPassword] = useState(false)
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+    const [error, setError] = useState('')
+    const [successMessage, setSuccessMessage] = useState<string | null>(null)
+    const [barbeariaId, setBarbeariaId] = useState<number | null>(null)
+    const { slug } = useParams()
 
     useEffect(() => {
         if (slug) {
             fetch(`${api.baseURL}/barbearias/buscar-por-slug/${slug}/`)
                 .then((res) => res.json())
                 .then((data) => {
-                    console.log('Resposta de /api/barbearias/buscar-por-slug/:', data) // Adicionar log
+                    console.log('Resposta de /api/barbearias/buscar-por-slug/:', data)
                     if (data.id) {
                         setBarbeariaId(data.id)
                     } else {
-                        alert('Barbearia não encontrada.')
+                        setError('Barbearia não encontrada.')
                     }
                 })
                 .catch((err) => {
                     console.error('Erro ao buscar barbearia:', err)
-                    alert('Erro ao buscar barbearia.')
+                    setError('Erro ao buscar barbearia.')
                 })
         }
     }, [slug])
@@ -48,14 +49,16 @@ const FormularioCadastroCliente = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
+        setError('')
+        setSuccessMessage(null)
 
         if (formData.password !== formData.confirmarSenha) {
-            alert('As senhas não coincidem')
+            setError('As senhas não coincidem')
             return
         }
 
         if (!barbeariaId) {
-            alert('Barbearia não carregada.')
+            setError('Barbearia não carregada.')
             return
         }
 
@@ -81,25 +84,28 @@ const FormularioCadastroCliente = () => {
             })
 
             if (response.ok) {
-                alert('Cadastro realizado com sucesso!')
+                setSuccessMessage('Cadastro realizado com sucesso!')
+                setTimeout(() => {
+                    onSwitchToLogin()
+                }, 2000)
             } else {
                 const errorData = await response.json()
-                alert('Erro ao cadastrar: ' + JSON.stringify(errorData))
+                setError('Erro ao cadastrar: ' + JSON.stringify(errorData))
             }
         } catch (error) {
             console.error('Erro na requisição:', error)
-            alert('Erro na requisição.')
+            setError('Erro na requisição.')
         }
     }
 
     return (
-        <S.FormularioContainer>
-            <img src={logo} alt="Logo" />
+        <>
             <h2>Criar uma conta</h2>
             <p>Preencha seus dados para se cadastrar como cliente.</p>
-
+            {error && <S.ErrorMessage>{error}</S.ErrorMessage>}
+            {successMessage && <S.SuccessMessage>{successMessage}</S.SuccessMessage>}
             <S.Form onSubmit={handleSubmit}>
-                <S.inputGroup>
+                <S.InputGroup>
                     <label htmlFor="first_name">Nome</label>
                     <input
                         type="text"
@@ -110,8 +116,8 @@ const FormularioCadastroCliente = () => {
                         placeholder="Seu nome"
                         required
                     />
-                </S.inputGroup>
-                <S.inputGroup>
+                </S.InputGroup>
+                <S.InputGroup>
                     <label htmlFor="last_name">Sobrenome</label>
                     <input
                         type="text"
@@ -122,8 +128,8 @@ const FormularioCadastroCliente = () => {
                         placeholder="Seu sobrenome"
                         required
                     />
-                </S.inputGroup>
-                <S.inputGroup>
+                </S.InputGroup>
+                <S.InputGroup>
                     <label htmlFor="email">E-mail</label>
                     <input
                         type="email"
@@ -134,8 +140,8 @@ const FormularioCadastroCliente = () => {
                         placeholder="E-mail"
                         required
                     />
-                </S.inputGroup>
-                <S.inputGroup>
+                </S.InputGroup>
+                <S.InputGroup>
                     <label htmlFor="telefone">Telefone</label>
                     <IMaskInput
                         mask="(00) 00000-0000"
@@ -147,8 +153,8 @@ const FormularioCadastroCliente = () => {
                         placeholder="(00) 00000-0000"
                         required
                     />
-                </S.inputGroup>
-                <S.inputGroup>
+                </S.InputGroup>
+                <S.InputGroup>
                     <label htmlFor="password">Senha</label>
                     <div className="input-wrapper">
                         <input
@@ -165,8 +171,8 @@ const FormularioCadastroCliente = () => {
                             onClick={() => setShowPassword(!showPassword)}
                         ></i>
                     </div>
-                </S.inputGroup>
-                <S.inputGroup>
+                </S.InputGroup>
+                <S.InputGroup>
                     <label htmlFor="confirmarSenha">Confirmar senha</label>
                     <div className="input-wrapper">
                         <input
@@ -183,13 +189,19 @@ const FormularioCadastroCliente = () => {
                             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                         ></i>
                     </div>
-                </S.inputGroup>
+                </S.InputGroup>
                 <button type="submit">Cadastrar</button>
-                <Link to={`/barbearia/${slug}/login`}>
+                <Link
+                    to="#"
+                    onClick={(e) => {
+                        e.preventDefault()
+                        onSwitchToLogin()
+                    }}
+                >
                     <span>Já possui cadastro?</span> Faça login
                 </Link>
             </S.Form>
-        </S.FormularioContainer>
+        </>
     )
 }
 

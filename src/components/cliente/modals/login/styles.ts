@@ -1,30 +1,47 @@
 import styled from 'styled-components'
 import { breakpoints, colors } from '../../../../../styles'
 
-export const FormularioContainer = styled.div`
-    display: flex;
-    flex-direction: column;
+export const Overlay = styled.div<{ isOpen: boolean }>`
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: ${({ isOpen }) => (isOpen ? 'flex' : 'none')};
     justify-content: center;
     align-items: center;
-    position: relative;
-    height: 500px;
-    width: 500px;
-    padding: 48px;
-    border-radius: 8px;
-    margin: 60px auto 0 auto;
-    background-color: ${colors.cinzaClaro};
+    z-index: 1000;
+    animation: fadeIn 0.3s ease-in;
 
-    img {
-        width: 160px;
-        position: absolute;
-        top: 24px;
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
     }
+`
+
+export const Modal = styled.div`
+    background: linear-gradient(135deg, ${colors.cinzaClaro}, ${colors.cinzaEscuro});
+    border-radius: 12px;
+    padding: 48px;
+    width: 100%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    position: relative;
+    animation: slideUp 0.3s ease-out;
 
     h2 {
         font-size: 24px;
         font-weight: bold;
         color: ${colors.branco};
         margin-bottom: 4px;
+        text-align: center;
     }
 
     p {
@@ -38,6 +55,28 @@ export const FormularioContainer = styled.div`
         width: 90%;
         padding: 20px;
     }
+
+    @keyframes slideUp {
+        from {
+            transform: translateY(50px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+`
+
+export const CloseButton = styled.button`
+    position: absolute;
+    top: 8px;
+    right: 12px;
+    font-size: 1.5rem;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: #fff;
 `
 
 export const Form = styled.form`
@@ -76,12 +115,13 @@ export const Form = styled.form`
     }
 `
 
-export const inputGroup = styled.div`
+export const InputGroup = styled.div`
     display: flex;
     flex-direction: column;
     align-items: start;
     position: relative;
     width: 100%;
+    margin-top: 16px;
 
     input {
         width: 100%;
@@ -115,7 +155,6 @@ export const inputGroup = styled.div`
     }
 
     label {
-        margin-top: 8px;
         margin-bottom: 8px;
         font-size: 14px;
         font-weight: 500;
@@ -137,4 +176,5 @@ export const ErrorMessage = styled.p`
     color: red;
     font-size: 14px;
     margin-top: 8px;
+    text-align: center;
 `
