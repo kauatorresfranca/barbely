@@ -152,13 +152,13 @@ export const IconGroup = styled.div`
     }
 `
 
-export const List = styled.ul`
+export const ClienteList = styled.ul`
     list-style: none;
     margin-top: 16px;
     padding: 0;
 `
 
-export const ListItem = styled.li`
+export const ClienteItem = styled.li`
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -168,10 +168,41 @@ export const ListItem = styled.li`
     margin-bottom: 8px;
     border-radius: 4px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
 
     p {
         width: 35%;
         color: ${colors.branco};
+    }
+`
+
+export const ClienteImage = styled.div`
+    img {
+        width: 32px;
+        height: 32px;
+        border-radius: 10px;
+        object-fit: cover;
+    }
+
+    i {
+        padding: 8px;
+        background: ${colors.cinzaTransparent};
+        color: ${colors.texto};
+        border-radius: 8px;
+    }
+`
+
+export const ClienteNameContainer = styled.div`
+    width: 35%;
+
+    h4 {
+        font-size: 16px;
+        font-weight: 500;
+    }
+
+    p {
+        font-size: 14px;
+        color: ${colors.texto};
     }
 `
 

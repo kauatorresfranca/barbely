@@ -25,31 +25,26 @@ const ClienteNew: React.FC<ClienteEditProps> = ({ closeModal }) => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
 
-        // Limpar mensagens anteriores
         setErrorMessage(null)
         setSuccessMessage(null)
 
-        // Validar formato do telefone
         const telefoneRegex = /^\(\d{2}\) \d{5}-\d{4}$/
         if (!telefoneRegex.test(telefone)) {
             setErrorMessage('O telefone deve estar no formato (XX) XXXXX-XXXX.')
             return
         }
 
-        // Validar formato do email
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
         if (!emailRegex.test(email)) {
             setErrorMessage('Email inválido.')
             return
         }
 
-        // Validar se a senha foi fornecida
         if (!senha) {
             setErrorMessage('A senha é obrigatória.')
             return
         }
 
-        // Obter o barbearia_token do sessionStorage
         const barbeariaId = sessionStorage.getItem('barbearia_token')
         if (!barbeariaId) {
             setErrorMessage('Barbearia não autenticada.')
@@ -67,6 +62,7 @@ const ClienteNew: React.FC<ClienteEditProps> = ({ closeModal }) => {
         }
 
         try {
+            console.log('Criando cliente com payload:', payload)
             const response = await authFetch(`${api.baseURL}/clientes/`, {
                 method: 'POST',
                 headers: {
@@ -82,9 +78,10 @@ const ClienteNew: React.FC<ClienteEditProps> = ({ closeModal }) => {
                 )
                 setTimeout(() => {
                     closeModal()
-                }, 2000) // Fechar o modal após 2 segundos
+                }, 2000)
             } else {
                 const errorText = await response.text()
+                console.error('Erro na resposta:', errorText)
                 if (errorText.includes('cliente user with this email already exists')) {
                     setErrorMessage('Este email já está em uso. Por favor, escolha outro.')
                 } else if (errorText.includes('Cliente user with this telefone already exists')) {

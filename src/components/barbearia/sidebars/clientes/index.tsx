@@ -3,9 +3,9 @@ import { useNavigate } from 'react-router-dom'
 import { ClipLoader } from 'react-spinners'
 import { Cliente } from '../../../../models/cliente'
 import { authFetch } from '../../../../utils/authFetch'
-import ClienteEdit from '../../modals/cliente/editar'
 import ClienteNew from '../../modals/cliente/criar'
 import DeleteConfirmationModal from '../../modals/confirmar_delecao/index'
+import Detalhes from '../../modals/cliente/detalhes'
 import * as S from './styles'
 import api from '../../../../services/api'
 
@@ -16,11 +16,11 @@ const Clientes = () => {
     const [isLoading, setIsLoading] = useState(true)
     const [hasError, setHasError] = useState(false)
     const [errorMessage, setErrorMessage] = useState<string | null>(null)
-    const [modalEditIsOpen, setModalEditIsOpen] = useState<boolean>(false)
     const [modalCriarIsOpen, setModalCriarIsOpen] = useState<boolean>(false)
     const [modalDeleteIsOpen, setModalDeleteIsOpen] = useState<boolean>(false)
     const [selectedCliente, setSelectedCliente] = useState<Cliente | null>(null)
     const [clienteToDelete, setClienteToDelete] = useState<Cliente | null>(null)
+    const [modalDetalhesIsOpen, setModalDetalhesIsOpen] = useState<boolean>(false)
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -101,16 +101,6 @@ const Clientes = () => {
         setModalCriarIsOpen(false)
     }
 
-    const handleOpenModalEdit = (cliente: Cliente) => {
-        setSelectedCliente(cliente)
-        setModalEditIsOpen(true)
-    }
-
-    const handleCloseModalEdit = () => {
-        setSelectedCliente(null)
-        setModalEditIsOpen(false)
-    }
-
     const handleOpenDeleteModal = (cliente: Cliente) => {
         setClienteToDelete(cliente)
         setModalDeleteIsOpen(true)
@@ -128,12 +118,15 @@ const Clientes = () => {
             console.log(
                 `Tentando deletar cliente ID: ${clienteToDelete.id}, Barbearia: ${clienteToDelete.barbearia}`,
             )
-            const response = await authFetch(`${api.baseURL}/clientes/${clienteToDelete.id}/`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
+            const response = await authFetch(
+                `${api.baseURL}/barbearia/clientes/${clienteToDelete.id}/`,
+                {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
                 },
-            })
+            )
 
             if (response.status === 404) {
                 throw new Error('Cliente não encontrado ou não pertence à sua barbearia.')
@@ -161,6 +154,22 @@ const Clientes = () => {
                 navigate('/login')
             }
         }
+    }
+
+    const handleOpenModalDetalhes = (cliente: Cliente) => {
+        setSelectedCliente(cliente)
+        setModalDetalhesIsOpen(true)
+    }
+
+    const handleCloseModalDetalhes = () => {
+        setSelectedCliente(null)
+        setModalDetalhesIsOpen(false)
+    }
+
+    const getFotoPerfilUrl = (fotoPerfil: string | null): string | null => {
+        if (!fotoPerfil) return null
+        const isFullUrl = fotoPerfil.startsWith('http') || fotoPerfil.startsWith('https')
+        return isFullUrl ? fotoPerfil : `${api.baseURL}${fotoPerfil}`
     }
 
     return (
@@ -200,25 +209,36 @@ const Clientes = () => {
             ) : clientes.length === 0 ? (
                 <S.Message>Você ainda não tem clientes cadastrados.</S.Message>
             ) : (
-                <S.List>
+                <S.ClienteList>
                     {filteredClientes.length > 0 ? (
                         filteredClientes.map((cliente) => (
-                            <S.ListItem key={cliente.id}>
-                                <p>{cliente.user?.nome || 'Nome indisponível'}</p>
+                            <S.ClienteItem
+                                key={cliente.id}
+                                onClick={() => handleOpenModalDetalhes(cliente)}
+                            >
+                                <S.ClienteImage>
+                                    {getFotoPerfilUrl(cliente.fotoPerfil) ? (
+                                        <img
+                                            src={getFotoPerfilUrl(cliente.fotoPerfil)!}
+                                            alt="Foto do cliente"
+                                        />
+                                    ) : null}
+                                    <i
+                                        className="ri-user-3-fill"
+                                        style={{
+                                            display: getFotoPerfilUrl(cliente.fotoPerfil)
+                                                ? 'none'
+                                                : 'block',
+                                        }}
+                                    ></i>
+                                </S.ClienteImage>
+                                <S.ClienteNameContainer>
+                                    <h4>{cliente.user?.nome || 'Nome indisponível'}</h4>
+                                    <p>{cliente.user?.email}</p>
+                                </S.ClienteNameContainer>
                                 <p>{cliente.user?.telefone || 'Telefone indisponível'}</p>
-                                <S.IconGroup>
-                                    <i
-                                        className="ri-edit-2-line edit"
-                                        title="Editar Cliente"
-                                        onClick={() => handleOpenModalEdit(cliente)}
-                                    ></i>
-                                    <i
-                                        className="ri-delete-bin-line delete"
-                                        title="Apagar Cliente"
-                                        onClick={() => handleOpenDeleteModal(cliente)}
-                                    ></i>
-                                </S.IconGroup>
-                            </S.ListItem>
+                                <i className="ri-arrow-right-s-line"></i>
+                            </S.ClienteItem>
                         ))
                     ) : (
                         <S.Message>
@@ -227,12 +247,9 @@ const Clientes = () => {
                                 : 'Nenhum cliente encontrado'}
                         </S.Message>
                     )}
-                </S.List>
+                </S.ClienteList>
             )}
             {modalCriarIsOpen && <ClienteNew closeModal={handleCloseModalCriar} />}
-            {modalEditIsOpen && (
-                <ClienteEdit cliente={selectedCliente} closeModal={handleCloseModalEdit} />
-            )}
             {modalDeleteIsOpen && clienteToDelete && (
                 <DeleteConfirmationModal
                     isOpen={modalDeleteIsOpen}
@@ -241,11 +258,18 @@ const Clientes = () => {
                     onClose={handleCloseDeleteModal}
                 />
             )}
+            {modalDetalhesIsOpen && selectedCliente && (
+                <Detalhes
+                    cliente={selectedCliente}
+                    onClose={handleCloseModalDetalhes}
+                    onDelete={handleOpenDeleteModal}
+                />
+            )}
             {!isLoading && !hasError && (
                 <p className="cliente_length">
                     {filteredClientes.length > 1
                         ? `${filteredClientes.length} Clientes`
-                        : `${filteredClientes.length} Cliente`}{' '}
+                        : `${filteredClientes.length} Cliente`}
                 </p>
             )}
         </S.Container>

@@ -1,5 +1,4 @@
 import { toZonedTime, format } from 'date-fns-tz'
-import { useNavigate } from 'react-router-dom'
 import { AgendamentoData } from '../../../cliente/agendamento'
 import { Barbearia } from '../../../../models/Barbearia'
 import { authFetch } from '../../../../utils/authFetch'
@@ -12,9 +11,8 @@ type Props = {
     barbearia: Barbearia | null
 }
 
-const ConfirmacaoStep = ({ setActiveTab, agendamentoData, barbearia }: Props) => {
+const ConfirmacaoStep = ({ setActiveTab, agendamentoData }: Props) => {
     const fusoHorario = 'America/Sao_Paulo'
-    const navigate = useNavigate()
 
     // Verificar se os dados essenciais estão presentes
     if (!agendamentoData.servico) {
@@ -56,13 +54,6 @@ const ConfirmacaoStep = ({ setActiveTab, agendamentoData, barbearia }: Props) =>
 
     const handleNext = async () => {
         const token = sessionStorage.getItem('access_token_cliente')
-        const isAgendamentoSemLogin = barbearia?.agendamento_sem_login
-
-        if (!isAgendamentoSemLogin && !token) {
-            const slug = sessionStorage.getItem('barbearia_slug') || 'default-slug'
-            navigate(`/clientes/login?redirect=/barbearia/${slug}/agendamento`)
-            return
-        }
 
         console.log('Dados recebidos no ConfirmacaoStep:', agendamentoData)
 

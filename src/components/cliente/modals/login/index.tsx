@@ -45,10 +45,14 @@ const FormularioLoginCliente = ({
                     headers: { Authorization: `Bearer ${data.access}` },
                 })
 
-                const clienteData = await clienteResponse.json()
-
                 if (clienteResponse.ok) {
+                    const clienteData = await clienteResponse.json()
                     sessionStorage.setItem('cliente', JSON.stringify(clienteData))
+                } else {
+                    const errorMsg = 'Erro ao buscar os dados do cliente.'
+                    setError(errorMsg)
+                    if (onLoginError) onLoginError(errorMsg)
+                    return
                 }
 
                 window.dispatchEvent(new Event('storage'))

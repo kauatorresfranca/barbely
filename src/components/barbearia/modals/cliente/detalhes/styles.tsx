@@ -56,25 +56,6 @@ export const Modal = styled.div`
     }
 `
 
-export const ModalButton = styled.button`
-    background: ${colors.corPrimaria};
-    color: ${colors.branco};
-    border: none;
-    padding: 12px 24px;
-    border-radius: 8px;
-    font-weight: bold;
-    cursor: pointer;
-    margin-top: 16px;
-    transition: transform 0.2s, box-shadow 0.2s;
-    width: 100%;
-    text-align: center;
-
-    &:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    }
-`
-
 export const CloseButton = styled.button`
     position: absolute;
     top: 8px;
@@ -86,15 +67,15 @@ export const CloseButton = styled.button`
     color: #fff;
 `
 
-export const CancelButton = styled.button`
-    background: ${colors.cinzaEscuro};
+export const Button = styled.button`
+    background: ${colors.corPrimaria};
     color: ${colors.branco};
-    border: 1px solid ${colors.cinzaTransparent};
+    border: none;
     padding: 12px 24px;
     border-radius: 8px;
     font-weight: bold;
     cursor: pointer;
-    margin-top: 16px;
+    margin-top: 8px;
     transition: transform 0.2s, box-shadow 0.2s;
     width: 100%;
     text-align: center;
@@ -105,18 +86,23 @@ export const CancelButton = styled.button`
     }
 `
 
-export const ButtonGroup = styled.div`
-    display: flex;
-    width: 100%;
-    gap: 12px;
+export const CancelButton = styled(Button)`
+    background: ${colors.cinzaClaro};
+    color: ${colors.branco};
 `
 
-export const inputGroup = styled.div`
+export const DeleteButton = styled(Button)`
+    background: ${colors.vermelho};
+    color: ${colors.branco};
+`
+
+export const InputGroup = styled.div`
     display: flex;
     flex-direction: column;
     align-items: start;
     position: relative;
     width: 100%;
+    margin-bottom: 8px;
 
     input {
         width: 100%;
@@ -125,6 +111,7 @@ export const inputGroup = styled.div`
         border: 1px solid ${colors.cinzaTransparent};
         border-radius: 4px;
         background: ${colors.cinzaEscuro};
+        color: ${colors.branco};
         transition: border 0.4s ease-in-out;
 
         &:hover {
@@ -137,13 +124,6 @@ export const inputGroup = styled.div`
         }
     }
 
-    .input-wrapper {
-        position: relative;
-        width: 100%;
-        display: flex;
-        align-items: center;
-    }
-
     label {
         margin-top: 8px;
         margin-bottom: 8px;
@@ -152,53 +132,94 @@ export const inputGroup = styled.div`
         color: ${colors.texto};
     }
 `
+export const ClienteImage = styled.div`
+    margin-right: 15px;
 
-export const ProfileHeader = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 24px;
-`
+    img {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
 
-export const ImageWrapper = styled.div`
-    position: relative;
-    cursor: pointer;
-    transition: opacity 0.2s;
-
-    &:hover {
-        opacity: 0.8;
+    i {
+        padding: 40px;
+        background: ${colors.cinzaTransparent};
+        color: ${colors.texto};
+        font-size: 40px;
+        border-radius: 15px;
     }
 `
 
-export const ProfileImage = styled.img`
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin-bottom: 12px;
-    border: 2px solid ${colors.corPrimaria};
-`
-
-export const UserName = styled.h2`
-    font-size: 24px;
-    font-weight: bold;
-    color: ${colors.branco};
-    margin: 0;
-    text-align: center;
-`
-
-export const InfoClientList = styled.div`
+export const ClientInfo = styled.div`
     display: flex;
-    flex-direction: column;
-    gap: 12px;
+    align-items: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
 
-    strong {
-        color: ${colors.corPrimaria};
+    h3 {
+        font-size: 24px;
+        color: ${colors.branco};
     }
 
     p {
-        display: flex;
-        gap: 12px;
-        font-weight: 400;
+        margin: 5px 0;
+        color: ${colors.branco};
     }
+`
+
+export const InfoSection = styled.div`
+    margin-bottom: 20px;
+
+    h3 {
+        font-size: 1.2rem;
+        margin-bottom: 10px;
+        color: ${colors.branco};
+    }
+
+    p {
+        margin: 5px 0;
+        display: flex;
+        align-items: center;
+        color: ${colors.branco};
+
+        i {
+            margin-right: 8px;
+            padding: 8px;
+            background: ${colors.cinzaTransparent};
+            color: ${colors.corPrimaria};
+            border-radius: 8px;
+        }
+
+        strong {
+            margin-left: 6px;
+        }
+    }
+`
+
+export const StatsSection = styled.div`
+    margin-bottom: 20px;
+
+    h3 {
+        font-size: 1.2rem;
+        margin-bottom: 10px;
+        color: ${colors.branco};
+    }
+
+    p {
+        margin: 5px 0;
+        color: ${colors.branco};
+    }
+`
+
+export const ErrorMessage = styled.p`
+    color: ${colors.vermelho};
+    font-size: 14px;
+    margin-bottom: 10px;
+    text-align: center;
+`
+
+export const ButtonGroup = styled.div`
+    display: flex;
+    gap: 10px;
 `
