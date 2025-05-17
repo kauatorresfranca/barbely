@@ -40,10 +40,6 @@ export const Modal = styled.div`
         text-align: center;
     }
 
-    strong {
-        color: ${colors.corPrimaria};
-    }
-
     @media (max-width: ${breakpoints.desktop}) {
         width: 90%;
     }
@@ -60,25 +56,6 @@ export const Modal = styled.div`
     }
 `
 
-export const ModalButton = styled.button`
-    background: ${colors.corPrimaria};
-    color: ${colors.branco};
-    border: none;
-    padding: 12px 24px;
-    border-radius: 8px;
-    font-weight: bold;
-    cursor: pointer;
-    margin-top: 16px;
-    transition: transform 0.2s, box-shadow 0.2s;
-    width: 100%;
-    text-align: center;
-
-    &:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    }
-`
-
 export const CloseButton = styled.button`
     position: absolute;
     top: 8px;
@@ -90,15 +67,15 @@ export const CloseButton = styled.button`
     color: #fff;
 `
 
-export const CancelButton = styled.button`
-    background: ${colors.cinzaEscuro};
+export const Button = styled.button`
+    background: ${colors.corPrimaria};
     color: ${colors.branco};
-    border: 1px solid ${colors.cinzaTransparent};
+    border: none;
     padding: 12px 24px;
     border-radius: 8px;
     font-weight: bold;
     cursor: pointer;
-    margin-top: 16px;
+    margin-top: 8px;
     transition: transform 0.2s, box-shadow 0.2s;
     width: 100%;
     text-align: center;
@@ -109,18 +86,35 @@ export const CancelButton = styled.button`
     }
 `
 
-export const ButtonGroup = styled.div`
-    display: flex;
-    width: 100%;
-    gap: 12px;
+export const CancelButton = styled(Button)`
+    background: ${colors.cinzaClaro};
+    color: ${colors.branco};
 `
 
-export const inputGroup = styled.div`
+export const DeleteButton = styled(Button)`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 14px;
+    font-weight: bold;
+    gap: 6px;
+    background: transparent;
+    border: 1px solid ${colors.cinzaTransparent};
+    color: ${colors.branco};
+
+    i {
+        font-weight: 500;
+        color: ${colors.vermelho};
+    }
+`
+
+export const InputGroup = styled.div`
     display: flex;
     flex-direction: column;
     align-items: start;
     position: relative;
     width: 100%;
+    margin-bottom: 8px;
 
     input {
         width: 100%;
@@ -129,6 +123,7 @@ export const inputGroup = styled.div`
         border: 1px solid ${colors.cinzaTransparent};
         border-radius: 4px;
         background: ${colors.cinzaEscuro};
+        color: ${colors.branco};
         transition: border 0.4s ease-in-out;
 
         &:hover {
@@ -141,13 +136,6 @@ export const inputGroup = styled.div`
         }
     }
 
-    .input-wrapper {
-        position: relative;
-        width: 100%;
-        display: flex;
-        align-items: center;
-    }
-
     label {
         margin-top: 8px;
         margin-bottom: 8px;
@@ -157,11 +145,60 @@ export const inputGroup = styled.div`
     }
 `
 
-export const InfoList = styled.div`
-    display: flex;
-    flex-direction: column;
+export const InfoSection = styled.div`
+    margin-bottom: 20px;
+
+    h3 {
+        font-size: 1.2rem;
+        margin-bottom: 10px;
+        color: ${colors.branco};
+    }
+
+    p {
+        margin: 5px 0;
+        display: flex;
+        align-items: center;
+        color: ${colors.branco};
+
+        i {
+            margin-right: 8px;
+            padding: 8px;
+            background: ${colors.cinzaTransparent};
+            color: ${colors.corPrimaria};
+            border-radius: 8px;
+        }
+
+        strong {
+            margin-left: 6px;
+        }
+    }
 `
 
-export const InfoItem = styled.div`
+export const ProfissionalDeleteSection = styled.div`
+    margin-top: 20px;
+
+    h3 {
+        font-size: 1.2rem;
+        margin-bottom: 10px;
+        color: ${colors.branco};
+    }
+
+    p {
+        font-size: 14px;
+        font-weight: 400;
+        color: ${colors.texto};
+        margin-bottom: 12px;
+    }
+`
+
+export const ErrorMessage = styled.p`
+    color: ${colors.vermelho};
+    font-size: 14px;
+    margin-bottom: 10px;
+    text-align: center;
+`
+
+export const ButtonGroup = styled.div`
     display: flex;
+    gap: 10px;
 `

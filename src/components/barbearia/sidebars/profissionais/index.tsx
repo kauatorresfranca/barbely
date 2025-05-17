@@ -2,27 +2,26 @@ import { useEffect, useState } from 'react'
 import { ClipLoader } from 'react-spinners'
 import { authFetch } from '../../../../utils/authFetch'
 import { Funcionario } from '../../../../models/funcionario'
-import CriarProfissionalModal from '../../modals/profissional/profissional_criar'
-import EditarProfissionalModal from '../../modals/profissional/profissional_editar'
+import CriarProfissionalModal from '../../modals/profissional/criar'
+import DetalhesProfissionalModal from '../../modals/profissional/detalhes' // Nova modal
 import DeleteConfirmationModal from '../../modals/confirmar_delecao/index'
 import * as S from './styles'
 import api from '../../../../services/api'
 
 const Profissionais = () => {
     const [modalIsOpen, setModalIsOpen] = useState(false)
-    const [editModalIsOpen, setEditModalIsOpen] = useState(false)
     const [deleteModalIsOpen, setDeleteModalIsOpen] = useState(false)
+    const [detalhesModalIsOpen, setDetalhesModalIsOpen] = useState(false)
     const [profissionais, setProfissionais] = useState<Funcionario[]>([])
-    const [profissionalSelecionado, setProfissionalSelecionado] = useState<Funcionario | null>(null)
-    const [profissionalToDelete, setProfissionalToDelete] = useState<Funcionario | null>(null)
+    const [filteredProfissionais, setFilteredProfissionais] = useState<Funcionario[]>([])
+    const [searchTerm, setSearchTerm] = useState<string>('')
     const [isLoading, setIsLoading] = useState(true)
     const [hasError, setHasError] = useState(false)
+    const [selectedProfissional, setSelectedProfissional] = useState<Funcionario | null>(null)
+    const [profissionalToDelete, setProfissionalToDelete] = useState<Funcionario | null>(null)
 
     const openModal = () => setModalIsOpen(true)
     const closeModal = () => setModalIsOpen(false)
-
-    const openEditModal = () => setEditModalIsOpen(true)
-    const closeEditModal = () => setEditModalIsOpen(false)
 
     const openDeleteModal = (profissional: Funcionario) => {
         setProfissionalToDelete(profissional)
@@ -32,6 +31,16 @@ const Profissionais = () => {
     const closeDeleteModal = () => {
         setProfissionalToDelete(null)
         setDeleteModalIsOpen(false)
+    }
+
+    const openDetalhesModal = (profissional: Funcionario) => {
+        setSelectedProfissional(profissional)
+        setDetalhesModalIsOpen(true)
+    }
+
+    const closeDetalhesModal = () => {
+        setSelectedProfissional(null)
+        setDetalhesModalIsOpen(false)
     }
 
     const fetchFuncionarios = async () => {
@@ -47,6 +56,7 @@ const Profissionais = () => {
             if (response.ok) {
                 const data = await response.json()
                 setProfissionais(data)
+                setFilteredProfissionais(data)
             } else {
                 console.error('Erro ao buscar profissionais')
                 setHasError(true)
@@ -76,6 +86,9 @@ const Profissionais = () => {
 
             if (response.ok) {
                 setProfissionais((prev) => prev.filter((f) => f.id !== profissionalToDelete.id))
+                setFilteredProfissionais((prev) =>
+                    prev.filter((f) => f.id !== profissionalToDelete.id),
+                )
                 closeDeleteModal()
             } else {
                 console.error('Erro ao deletar profissional')
@@ -83,6 +96,15 @@ const Profissionais = () => {
         } catch (error) {
             console.error('Erro:', error)
         }
+    }
+
+    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const term = e.target.value
+        setSearchTerm(term)
+        const filtered = profissionais.filter((profissional) =>
+            profissional.nome.toLowerCase().includes(term.toLowerCase()),
+        )
+        setFilteredProfissionais(filtered)
     }
 
     useEffect(() => {
@@ -97,7 +119,20 @@ const Profissionais = () => {
                     Adicione, edite ou remova os profissionais que fazem parte da sua equipe.
                 </p>
                 <S.ServiceHeader>
-                    <button onClick={openModal}>+ Novo Profissional</button>
+                    <S.SearchAndAdd>
+                        <input
+                            type="text"
+                            placeholder="Pesquisar por profissional..."
+                            value={searchTerm}
+                            onChange={handleSearchChange}
+                        />
+                        <button onClick={openModal}>+ Novo Profissional</button>
+                    </S.SearchAndAdd>
+                    {filteredProfissionais.length > 0 && (
+                        <S.FieldNames>
+                            <p>Nome</p>
+                        </S.FieldNames>
+                    )}
                 </S.ServiceHeader>
 
                 {isLoading ? (
@@ -110,34 +145,29 @@ const Profissionais = () => {
                     <S.Message>Você ainda não tem profissionais cadastrados.</S.Message>
                 ) : (
                     <>
-                        <S.Head>
-                            <p>Nome</p>
-                            <p>Ações</p>
-                        </S.Head>
                         <S.List>
-                            {profissionais.map((profissional) => (
-                                <S.ListItem key={profissional.id}>
-                                    <p>{profissional.nome}</p>
-                                    <S.IconsGroup>
-                                        <i
-                                            className="ri-edit-2-line edit"
-                                            onClick={() => {
-                                                openEditModal()
-                                                setProfissionalSelecionado(profissional)
-                                            }}
-                                        ></i>
-                                        <i
-                                            className="ri-delete-bin-line delete"
-                                            onClick={() => openDeleteModal(profissional)}
-                                        ></i>
-                                    </S.IconsGroup>
-                                </S.ListItem>
-                            ))}
+                            {filteredProfissionais.length > 0 ? (
+                                filteredProfissionais.map((profissional) => (
+                                    <S.ListItem
+                                        key={profissional.id}
+                                        onClick={() => openDetalhesModal(profissional)}
+                                    >
+                                        <p>{profissional.nome}</p>
+                                        <i className="ri-arrow-right-s-line"></i>
+                                    </S.ListItem>
+                                ))
+                            ) : (
+                                <S.Message>
+                                    {searchTerm
+                                        ? `Nenhum profissional encontrado com "${searchTerm}"`
+                                        : 'Você ainda não tem profissionais cadastrados.'}
+                                </S.Message>
+                            )}
                         </S.List>
                         <p className="profissionais_length">
-                            {profissionais.length > 1
-                                ? `${profissionais.length} Profissionais`
-                                : `${profissionais.length} Profissional`}{' '}
+                            {filteredProfissionais.length > 1
+                                ? `${filteredProfissionais.length} Profissionais`
+                                : `${filteredProfissionais.length} Profissional`}
                         </p>
                     </>
                 )}
@@ -146,18 +176,19 @@ const Profissionais = () => {
             {modalIsOpen && (
                 <CriarProfissionalModal closeModal={closeModal} onSuccess={fetchFuncionarios} />
             )}
-            {editModalIsOpen && (
-                <EditarProfissionalModal
-                    closeModal={closeEditModal}
-                    profissional={profissionalSelecionado}
-                />
-            )}
             {deleteModalIsOpen && profissionalToDelete && (
                 <DeleteConfirmationModal
                     isOpen={deleteModalIsOpen}
                     itemName={`o profissional ${profissionalToDelete.nome}`}
                     onConfirm={handleDelete}
                     onClose={closeDeleteModal}
+                />
+            )}
+            {detalhesModalIsOpen && selectedProfissional && (
+                <DetalhesProfissionalModal
+                    profissional={selectedProfissional}
+                    onClose={closeDetalhesModal}
+                    onDelete={openDeleteModal}
                 />
             )}
         </>

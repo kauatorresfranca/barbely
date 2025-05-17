@@ -4,9 +4,11 @@ import { breakpoints, colors } from '../../../../../styles'
 export const Container = styled.div`
     position: relative;
     height: 100%;
+    margin-bottom: 16px;
 
     .subtitle {
-        margin-top: 6px;
+        margin-top: 16px;
+        margin-bottom: 8px;
         color: ${colors.texto};
         font-size: 14px;
     }
@@ -31,7 +33,8 @@ export const Head = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding-top: 10px;
+    padding-top: 16px;
+    margin-bottom: 16px;
     gap: 16px;
 
     .empty {
@@ -44,6 +47,7 @@ export const Head = styled.div`
 export const SearchAndAdd = styled.div`
     display: flex;
     align-items: center;
+    margin-bottom: 16px;
 
     input {
         width: 85%;
@@ -97,7 +101,8 @@ export const SearchAndAdd = styled.div`
 export const FieldNames = styled.div`
     display: flex;
     padding: 0 20px;
-    justify-content: space-between;
+    margin-bottom: 16px;
+    justify-content: space-around;
 
     p {
         font-weight: 500;
@@ -122,40 +127,13 @@ export const IconGroup = styled.div`
             transform: scale(1.1);
         }
     }
-
-    i {
-        &.edit {
-            background-color: ${colors.corPrimaria};
-            padding: 8px;
-            border-radius: 50%;
-            color: ${colors.branco};
-            cursor: pointer;
-            transition: 0.2s ease-in-out;
-
-            &:hover {
-                transform: scale(1.1);
-            }
-        }
-
-        &.delete {
-            background-color: ${colors.vermelho};
-            color: ${colors.branco};
-            padding: 8px;
-            border-radius: 50%;
-            cursor: pointer;
-            transition: 0.2s ease-in-out;
-
-            &:hover {
-                transform: scale(1.1);
-            }
-        }
-    }
 `
 
 export const ClienteList = styled.ul`
     list-style: none;
     margin-top: 16px;
     padding: 0;
+    margin-bottom: 16px;
 `
 
 export const ClienteItem = styled.li`
@@ -165,7 +143,7 @@ export const ClienteItem = styled.li`
     height: 58px;
     padding: 20px;
     background: linear-gradient(-45deg, ${colors.cinzaClaro}, ${colors.cinzaClaro}AA);
-    margin-bottom: 8px;
+    margin-bottom: 16px;
     border-radius: 4px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     cursor: pointer;
@@ -173,10 +151,21 @@ export const ClienteItem = styled.li`
     p {
         width: 35%;
         color: ${colors.branco};
+
+        &.status {
+            font-size: 12px;
+            color: ${colors.verde};
+        }
+    }
+
+    .arrow {
+        color: ${colors.corPrimaria};
     }
 `
 
 export const ClienteImage = styled.div`
+    margin-right: 12px;
+
     img {
         width: 32px;
         height: 32px;
@@ -194,6 +183,7 @@ export const ClienteImage = styled.div`
 
 export const ClienteNameContainer = styled.div`
     width: 35%;
+    margin-right: 8px;
 
     h4 {
         font-size: 16px;
@@ -210,14 +200,16 @@ export const LoadingContainer = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 2rem;
-    min-height: 200px; /* Ajuste conforme necessário */
+    padding: 16px;
+    min-height: 200px;
+    margin-bottom: 16px;
 `
 
 export const Message = styled.p`
     text-align: center;
-    padding: 2rem;
+    padding: 16px;
     color: #666;
     font-size: 1.1rem;
     font-weight: 500;
+    margin-bottom: 16px;
 `

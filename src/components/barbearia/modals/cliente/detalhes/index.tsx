@@ -215,14 +215,45 @@ const Detalhes: React.FC<DetalhesProps> = ({ cliente, onClose, onDelete }) => {
                             <h3>Estatísticas do cliente</h3>
                             <p>-</p>
                         </S.StatsSection>
-                        {onDelete && (
-                            <S.DeleteButton
-                                onClick={() => onDelete(cliente)}
-                                style={{ marginTop: '10px' }}
-                            >
-                                Excluir cliente
-                            </S.DeleteButton>
-                        )}
+                        <S.HistorySection>
+                            <h3>Histórico</h3>
+                            <S.HistoryContainer>
+                                <i className="ri-history-fill"></i>
+                                <S.HistoryContent>
+                                    <div>
+                                        <h4>Sexta-feira, 02/05</h4>
+                                        <p className="horario">09:00 - 19:00</p>
+                                    </div>
+                                    <S.HistoryInfos>
+                                        <S.Info>
+                                            <h4>Barbeiro</h4>
+                                            <p>Chocolate</p>
+                                        </S.Info>
+                                        <S.Info>
+                                            <h4>Serviço</h4>
+                                            <p>Corte de cabelo</p>
+                                        </S.Info>
+                                    </S.HistoryInfos>
+                                </S.HistoryContent>
+                            </S.HistoryContainer>
+                        </S.HistorySection>
+                        <S.ClienteDeleteSection>
+                            <h3>Excluir cliente</h3>
+                            <p>
+                                Esta ação é irreversível e apagará todos os dados do cliente
+                                relacionados à sua barbearia, como valores recebidos e históricos de
+                                atendimento.
+                            </p>
+                            {onDelete && (
+                                <S.DeleteButton
+                                    onClick={() => onDelete(cliente)}
+                                    style={{ marginTop: '10px' }}
+                                >
+                                    <i className="ri-delete-bin-line"></i>
+                                    Excluir cliente
+                                </S.DeleteButton>
+                            )}
+                        </S.ClienteDeleteSection>
                     </>
                 )}
             </S.Modal>

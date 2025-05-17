@@ -1,17 +1,19 @@
 import { useEffect, useState } from 'react'
 import { authFetch } from '../../../../utils/authFetch'
 import { Servico } from '../../../../models/servico'
-import CriarServicoModal from '../../modals/servicos/servico_criar'
-import EditarServicoModal from '../../modals/servicos/servico_editar'
+import CriarServicoModal from '../../modals/servicos/criar'
+import DetalhesServicoModal from '../../modals/servicos/detalhes'
 import DeleteConfirmationModal from '../../modals/confirmar_delecao/index'
 import * as S from './styles'
 import api from '../../../../services/api'
 
 const Servicos = () => {
     const [modalIsOpen, setModalIsOpen] = useState(false)
-    const [editModalIsOpen, setEditModalIsOpen] = useState(false)
     const [deleteModalIsOpen, setDeleteModalIsOpen] = useState(false)
+    const [detalhesModalIsOpen, setDetalhesModalIsOpen] = useState(false)
     const [servicos, setServicos] = useState<Servico[]>([])
+    const [filteredServicos, setFilteredServicos] = useState<Servico[]>([])
+    const [searchTerm, setSearchTerm] = useState<string>('')
     const [isLoading, setIsLoading] = useState(true)
     const [hasError, setHasError] = useState(false)
     const [selectedServico, setSelectedServico] = useState<Servico | null>(null)
@@ -19,15 +21,6 @@ const Servicos = () => {
 
     const openModal = () => setModalIsOpen(true)
     const closeModal = () => setModalIsOpen(false)
-
-    const openEditModal = (servico: Servico) => {
-        setSelectedServico(servico)
-        setEditModalIsOpen(true)
-    }
-    const closeEditModal = () => {
-        setSelectedServico(null)
-        setEditModalIsOpen(false)
-    }
 
     const openDeleteModal = (servico: Servico) => {
         setServicoToDelete(servico)
@@ -37,6 +30,16 @@ const Servicos = () => {
     const closeDeleteModal = () => {
         setServicoToDelete(null)
         setDeleteModalIsOpen(false)
+    }
+
+    const openDetalhesModal = (servico: Servico) => {
+        setSelectedServico(servico)
+        setDetalhesModalIsOpen(true)
+    }
+
+    const closeDetalhesModal = () => {
+        setSelectedServico(null)
+        setDetalhesModalIsOpen(false)
     }
 
     const fetchServicos = async () => {
@@ -58,6 +61,7 @@ const Servicos = () => {
             if (response.ok) {
                 const data = await response.json()
                 setServicos(data)
+                setFilteredServicos(data)
             } else {
                 if (response.status === 401) {
                     throw new Error('Sessão expirada. Por favor, faça login novamente.')
@@ -91,6 +95,7 @@ const Servicos = () => {
 
             if (response.ok) {
                 setServicos((prev) => prev.filter((s) => s.id !== servicoToDelete.id))
+                setFilteredServicos((prev) => prev.filter((s) => s.id !== servicoToDelete.id))
                 closeDeleteModal()
             } else {
                 console.error('Erro ao deletar serviço')
@@ -103,6 +108,15 @@ const Servicos = () => {
     const handleRedirectToLogin = () => {
         const slug = sessionStorage.getItem('barbearia_slug') || 'default-slug'
         window.location.href = `/barbearia/${slug}/login`
+    }
+
+    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const term = e.target.value
+        setSearchTerm(term)
+        const filtered = servicos.filter((servico) =>
+            servico.nome.toLowerCase().includes(term.toLowerCase()),
+        )
+        setFilteredServicos(filtered)
     }
 
     useEffect(() => {
@@ -118,7 +132,22 @@ const Servicos = () => {
                     descrições.
                 </p>
                 <S.ServiceHeader>
-                    <button onClick={openModal}>+ Novo Serviço</button>
+                    <S.SearchAndAdd>
+                        <input
+                            type="text"
+                            placeholder="Pesquisar por serviço..."
+                            value={searchTerm}
+                            onChange={handleSearchChange}
+                        />
+                        <button onClick={openModal}>+ Novo Serviço</button>
+                    </S.SearchAndAdd>
+                    {filteredServicos.length > 0 && (
+                        <S.FieldNames>
+                            <p>Nome</p>
+                            <p>Valor</p>
+                            <p>Duração</p>
+                        </S.FieldNames>
+                    )}
                 </S.ServiceHeader>
 
                 {hasError && (
@@ -140,50 +169,50 @@ const Servicos = () => {
                     </S.LoadingContainer>
                 ) : (
                     <>
-                        <S.Head>
-                            <p>Nome</p>
-                            <p>Valor</p>
-                            <p>Duração</p>
-                            <p>Ações</p>
-                        </S.Head>
                         <S.List>
-                            {servicos.map((servico) => (
-                                <S.ListItem key={servico.id}>
-                                    <p>{servico.nome}</p>
-                                    <p>R$ {Number(servico.preco).toFixed(2)}</p>
-                                    <p>{servico.duracao_minutos} min</p>
-                                    <S.IconsGroup>
-                                        <i
-                                            className="ri-edit-2-line edit"
-                                            onClick={() => openEditModal(servico)}
-                                        ></i>
-                                        <i
-                                            className="ri-delete-bin-line delete"
-                                            onClick={() => openDeleteModal(servico)}
-                                        ></i>
-                                    </S.IconsGroup>
-                                </S.ListItem>
-                            ))}
+                            {filteredServicos.length > 0 ? (
+                                filteredServicos.map((servico) => (
+                                    <S.ListItem
+                                        key={servico.id}
+                                        onClick={() => openDetalhesModal(servico)}
+                                    >
+                                        <p>{servico.nome}</p>
+                                        <p>R$ {Number(servico.preco).toFixed(2)}</p>
+                                        <p>{servico.duracao_minutos} min</p>
+                                        <i className="ri-arrow-right-s-line"></i>
+                                    </S.ListItem>
+                                ))
+                            ) : (
+                                <S.Message>
+                                    {searchTerm
+                                        ? `Nenhum serviço encontrado com "${searchTerm}"`
+                                        : 'Você ainda não tem serviços cadastrados.'}
+                                </S.Message>
+                            )}
                         </S.List>
                         <p className="servicos_length">
-                            {servicos.length > 1
-                                ? `${servicos.length} Serviços`
-                                : `${servicos.length} Serviço`}{' '}
+                            {filteredServicos.length > 1
+                                ? `${filteredServicos.length} Serviços`
+                                : `${filteredServicos.length} Serviço`}
                         </p>
                     </>
                 )}
             </S.Container>
 
             {modalIsOpen && <CriarServicoModal closeModal={closeModal} onSuccess={fetchServicos} />}
-            {editModalIsOpen && selectedServico && (
-                <EditarServicoModal closeModal={closeEditModal} servico={selectedServico} />
-            )}
             {deleteModalIsOpen && servicoToDelete && (
                 <DeleteConfirmationModal
                     isOpen={deleteModalIsOpen}
                     itemName={`o serviço ${servicoToDelete.nome}`}
                     onConfirm={handleDelete}
                     onClose={closeDeleteModal}
+                />
+            )}
+            {detalhesModalIsOpen && selectedServico && (
+                <DetalhesServicoModal
+                    servico={selectedServico}
+                    onClose={closeDetalhesModal}
+                    onDelete={openDeleteModal}
                 />
             )}
         </>

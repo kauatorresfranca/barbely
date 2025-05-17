@@ -108,6 +108,52 @@ export const DeleteButton = styled(Button)`
     }
 `
 
+export const InfoSection = styled.div`
+    margin-bottom: 20px;
+
+    h3 {
+        font-size: 1.2rem;
+        margin-bottom: 10px;
+        color: ${colors.branco};
+    }
+
+    p {
+        margin: 5px 0;
+        display: flex;
+        align-items: center;
+        color: ${colors.branco};
+
+        i {
+            margin-right: 8px;
+            padding: 8px;
+            background: ${colors.cinzaTransparent};
+            color: ${colors.corPrimaria};
+            border-radius: 8px;
+        }
+
+        strong {
+            margin-left: 6px;
+        }
+    }
+`
+
+export const ServicoDeleteSection = styled.div`
+    margin-top: 20px;
+
+    h3 {
+        font-size: 1.2rem;
+        margin-bottom: 10px;
+        color: ${colors.branco};
+    }
+
+    p {
+        font-size: 14px;
+        font-weight: 400;
+        color: ${colors.texto};
+        margin-bottom: 12px;
+    }
+`
+
 export const InputGroup = styled.div`
     display: flex;
     flex-direction: column;
@@ -144,154 +190,10 @@ export const InputGroup = styled.div`
         color: ${colors.texto};
     }
 `
-export const ClienteImage = styled.div`
-    margin-right: 15px;
 
-    img {
-        width: 140px;
-        height: 140px;
-        border-radius: 10px;
-        object-fit: cover;
-    }
-
-    i {
-        padding: 40px;
-        background: ${colors.cinzaTransparent};
-        color: ${colors.texto};
-        font-size: 40px;
-        border-radius: 15px;
-    }
-`
-
-export const ClientInfo = styled.div`
+export const ButtonGroup = styled.div`
     display: flex;
-    align-items: center;
-    margin-top: 20px;
-    margin-bottom: 20px;
-
-    h3 {
-        font-size: 24px;
-        color: ${colors.branco};
-    }
-
-    p {
-        margin: 5px 0;
-        color: ${colors.texto};
-    }
-`
-
-export const InfoSection = styled.div`
-    margin-bottom: 20px;
-
-    h3 {
-        font-size: 1.2rem;
-        margin-bottom: 10px;
-        color: ${colors.branco};
-    }
-
-    p {
-        margin: 5px 0;
-        display: flex;
-        align-items: center;
-        color: ${colors.branco};
-
-        i {
-            margin-right: 8px;
-            padding: 8px;
-            background: ${colors.cinzaTransparent};
-            color: ${colors.corPrimaria};
-            border-radius: 8px;
-        }
-
-        strong {
-            margin-left: 6px;
-        }
-    }
-`
-
-export const StatsSection = styled.div`
-    margin-bottom: 20px;
-
-    h3 {
-        font-size: 1.2rem;
-        margin-bottom: 10px;
-        color: ${colors.branco};
-    }
-
-    p {
-        margin: 5px 0;
-        color: ${colors.branco};
-    }
-`
-
-export const HistorySection = styled.div`
-    h3 {
-        font-size: 1.2rem;
-        margin-bottom: 10px;
-        color: ${colors.branco};
-    }
-`
-
-export const HistoryContainer = styled.div`
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    width: 100%;
-    padding: 12px;
-    background-color: ${colors.cinzaClaro};
-    border-radius: 10px;
-
-    i {
-        color: ${colors.corPrimaria};
-    }
-`
-
-export const HistoryContent = styled.div`
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-
-    .horario {
-        font-size: 12px;
-        color: ${colors.texto};
-    }
-`
-
-export const HistoryInfos = styled.div`
-    display: flex;
-    gap: 12px;
-`
-
-export const Info = styled.div`
-    display: flex;
-    flex-direction: column;
-
-    h4 {
-        font-size: 12px;
-        font-weight: 400;
-        color: ${colors.texto};
-    }
-
-    p {
-        font-size: 14px;
-    }
-`
-
-export const ClienteDeleteSection = styled.div`
-    margin-top: 20px;
-
-    h3 {
-        font-size: 1.2rem;
-        margin-bottom: 10px;
-        color: ${colors.branco};
-    }
-
-    p {
-        font-size: 14px;
-        font-weight: 400;
-        color: ${colors.texto};
-        margin-bottom: 12px;
-    }
+    gap: 10px;
 `
 
 export const ErrorMessage = styled.p`
@@ -299,9 +201,4 @@ export const ErrorMessage = styled.p`
     font-size: 14px;
     margin-bottom: 10px;
     text-align: center;
-`
-
-export const ButtonGroup = styled.div`
-    display: flex;
-    gap: 10px;
 `

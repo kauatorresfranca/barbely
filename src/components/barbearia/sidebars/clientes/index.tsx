@@ -193,7 +193,7 @@ const Clientes = () => {
                     <S.FieldNames>
                         <p>Nome</p>
                         <p>Celular</p>
-                        <p>Ações</p>
+                        <p>Status</p>
                     </S.FieldNames>
                 )}
             </S.Head>
@@ -237,7 +237,8 @@ const Clientes = () => {
                                     <p>{cliente.user?.email}</p>
                                 </S.ClienteNameContainer>
                                 <p>{cliente.user?.telefone || 'Telefone indisponível'}</p>
-                                <i className="ri-arrow-right-s-line"></i>
+                                <p className="status">Ativo</p>
+                                <i className="ri-arrow-right-s-line arrow"></i>
                             </S.ClienteItem>
                         ))
                     ) : (
