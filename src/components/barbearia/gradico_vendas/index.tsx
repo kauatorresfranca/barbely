@@ -67,7 +67,7 @@ const GraficoVendas = ({ inicio, fim }: GraficoVendasProps) => {
 
             try {
                 const response = await fetch(
-                    `${api.baseURL}/barbearias/overview/?grafico=vendas&inicio=${inicio}&fim=${fim}`,
+                    `${api.baseURL}/barbearias-overview/?grafico=vendas&inicio=${inicio}&fim=${fim}`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,

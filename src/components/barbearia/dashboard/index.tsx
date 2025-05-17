@@ -21,7 +21,6 @@ import * as S from './styles'
 import logo from '../../../assets/images/logo.png'
 import user from '../../../assets/images/user.png'
 import { ClipLoader } from 'react-spinners'
-import Chat from '../sidebars/chat'
 
 interface Horario {
     dia_semana: number
@@ -263,7 +262,6 @@ const Dash = () => {
             icon: 'ri-bank-card-fill',
             component: <Financeiro />,
         },
-        { id: 'Chat', label: 'Chat', icon: 'ri-chat-3-fill', component: <Chat /> },
         {
             id: 'perfil_da_barbearia',
             label: 'Perfil da Barbearia',

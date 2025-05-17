@@ -42,6 +42,18 @@ export const PaymentItem = styled.li`
     &:last-child {
         border-bottom: none;
     }
+
+    .pix {
+        color: ${colors.verde};
+    }
+
+    .card {
+        color: ${colors.branco};
+    }
+
+    .cash {
+        color: green;
+    }
 `
 
 export const ToggleSwitch = styled.label`

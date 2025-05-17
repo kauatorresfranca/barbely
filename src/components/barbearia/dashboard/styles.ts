@@ -131,10 +131,11 @@ export const Content = styled.div`
     flex: 1;
     overflow-y: auto;
     height: 100vh;
-    background-color: ${colors.cinzaEscuro}; /* Definindo fundo consistente para o conteúdo */
+    background-color: ${colors.cinzaEscuro};
 
     @media (max-width: 768px) {
         padding-top: 60px;
+        padding-bottom: 80px; /* Aumenta o padding inferior para mais "respiro" */
     }
 
     &::-webkit-scrollbar {

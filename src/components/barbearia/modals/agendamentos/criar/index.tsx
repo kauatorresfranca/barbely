@@ -29,7 +29,6 @@ const CriarAgendamentoModal = ({
     horas,
     criandoAgendamento,
     onCreate,
-    agendamentoSemLogin,
 }: CriarAgendamentoModalProps) => {
     const [errorMessage, setErrorMessage] = useState<string | null>(null)
     const [successMessage, setSuccessMessage] = useState<string | null>(null)

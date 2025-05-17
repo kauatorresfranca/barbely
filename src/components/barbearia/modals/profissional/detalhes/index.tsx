@@ -56,7 +56,6 @@ const DetalhesProfissionalModal: React.FC<DetalhesProps> = ({
             })
 
             if (response.ok) {
-                const updatedProfissional = await response.json()
                 setIsEditing(false)
                 // Atualizar o estado local se necessário (depende da lógica do componente pai)
                 setErrorMessage(null)

@@ -85,7 +85,6 @@ const Detalhes: React.FC<DetalhesProps> = ({ cliente, onClose, onDelete }) => {
             })
 
             if (response.ok) {
-                const updatedCliente = await response.json()
                 if (cliente && cliente.user) {
                     cliente.user.nome = nome
                     cliente.user.telefone = telefone

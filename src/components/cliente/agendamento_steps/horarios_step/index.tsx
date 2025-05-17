@@ -18,7 +18,7 @@ type Props = {
     barbearia: Barbearia | null
 }
 
-const HorariosStep = ({ setActiveTab, servico, funcionario, barbearia }: Props) => {
+const HorariosStep = ({ setActiveTab, servico, funcionario }: Props) => {
     const hoje = new Date()
     const hojeAjustado = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate(), 0, 0, 0)
 

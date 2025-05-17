@@ -79,7 +79,7 @@ const MetodosPagamento = () => {
                     debitCard: data.debit_card ?? false,
                     cash: data.cash ?? false,
                 })
-            } catch (err: unknown) {
+            } catch (err: any) {
                 const error = err as Error
                 console.error('Erro ao carregar métodos de pagamento:', {
                     message: error.message,
@@ -139,7 +139,7 @@ const MetodosPagamento = () => {
 
             setToastMessage('Métodos de pagamento salvos com sucesso!')
             setShowToast(true)
-        } catch (err: unknown) {
+        } catch (err: any) {
             const error = err as Error
             console.error('Erro ao salvar métodos de pagamento:', {
                 message: error.message,
@@ -174,7 +174,10 @@ const MetodosPagamento = () => {
             {!loading && (
                 <S.PaymentList>
                     <S.PaymentItem>
-                        <span>PIX</span>
+                        <span>
+                            {' '}
+                            <i className="ri-pix-fill pix"></i> <i className=""></i> PIX
+                        </span>
                         <S.ToggleSwitch>
                             <input
                                 type="checkbox"
@@ -186,7 +189,10 @@ const MetodosPagamento = () => {
                         </S.ToggleSwitch>
                     </S.PaymentItem>
                     <S.PaymentItem>
-                        <span>Cartão de Crédito</span>
+                        <span>
+                            {' '}
+                            <i className="ri-bank-card-fill card"></i> Cartão de Crédito
+                        </span>
                         <S.ToggleSwitch>
                             <input
                                 type="checkbox"
@@ -198,7 +204,10 @@ const MetodosPagamento = () => {
                         </S.ToggleSwitch>
                     </S.PaymentItem>
                     <S.PaymentItem>
-                        <span>Cartão de Débito</span>
+                        <span>
+                            {' '}
+                            <i className="ri-bank-card-fill card"></i> Cartão de Débito
+                        </span>
                         <S.ToggleSwitch>
                             <input
                                 type="checkbox"
@@ -210,7 +219,10 @@ const MetodosPagamento = () => {
                         </S.ToggleSwitch>
                     </S.PaymentItem>
                     <S.PaymentItem>
-                        <span>Dinheiro</span>
+                        <span>
+                            {' '}
+                            <i className="ri-cash-fill cash"></i> Dinheiro
+                        </span>
                         <S.ToggleSwitch>
                             <input
                                 type="checkbox"
