@@ -292,7 +292,7 @@ export const ServicesList = styled.div`
     gap: 12px;
 `
 
-export const Service = styled.div`
+export const ServiceItem = styled.div`
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -304,5 +304,18 @@ export const Service = styled.div`
 
     @media (max-width: ${breakpoints.desktop}) {
         width: 100%;
+    }
+`
+
+export const ServiceName = styled.div`
+    display: flex;
+    align-items: center;
+
+    .tesoura {
+        padding: 8px;
+        margin-right: 10px;
+        border-radius: 10px;
+        background-color: ${colors.cinzaTransparent};
+        color: ${colors.texto};
     }
 `

@@ -112,10 +112,13 @@ const FirstStep = ({ setActiveTab }: Props) => {
                                     onClick={() => setSelectedServiceId(servico.id)}
                                     $selected={selectedServiceId === servico.id}
                                 >
-                                    <div>
-                                        <h4>{servico.nome}</h4>
-                                        <p>{servico.duracao_minutos} min</p>
-                                    </div>
+                                    <S.ServiceName>
+                                        <i className="ri-scissors-fill tesoura"></i>
+                                        <div>
+                                            <h4>{servico.nome}</h4>
+                                            <p>{servico.duracao_minutos} min</p>
+                                        </div>
+                                    </S.ServiceName>
                                     <p>R$ {servico.preco}</p>
                                 </S.ServiceItem>
                             ))}

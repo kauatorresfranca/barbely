@@ -76,7 +76,7 @@ export const ServiceItem = styled.div<SelectableProps>`
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 16px;
+    padding: 12px 16px 12px 12px;
     border: 2px solid ${({ $selected }) => ($selected ? colors.corPrimaria : 'transparent')};
     border-radius: 8px;
     cursor: pointer;
@@ -96,6 +96,19 @@ export const ServiceItem = styled.div<SelectableProps>`
 
     p {
         margin: 2px 0;
+        color: ${colors.texto};
+    }
+`
+
+export const ServiceName = styled.div`
+    display: flex;
+    align-items: center;
+
+    .tesoura {
+        padding: 8px;
+        margin-right: 10px;
+        border-radius: 10px;
+        background-color: ${colors.cinzaClaro};
         color: ${colors.texto};
     }
 `

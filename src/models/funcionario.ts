@@ -5,5 +5,4 @@ export interface Funcionario {
     email?: string
     telefone?: string
     imagem?: string
-    fotoPerfil?: string
 }

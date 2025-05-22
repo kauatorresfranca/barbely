@@ -101,7 +101,6 @@ export const FieldNames = styled.div`
     p {
         font-weight: 500;
         flex: 1;
-        text-align: center;
 
         &:first-child {
             text-align: left;
@@ -131,14 +130,26 @@ export const ListItem = styled.li`
     p {
         flex: 1;
         color: ${colors.branco};
-        text-align: center;
 
         &:first-child {
             text-align: left;
         }
     }
 
-    i {
+    h4 {
+        flex: 1;
+        color: ${colors.branco};
+    }
+
+    .tesoura {
+        padding: 8px;
+        margin-right: 10px;
+        border-radius: 10px;
+        background-color: ${colors.cinzaTransparent};
+        color: ${colors.texto};
+    }
+
+    .flecha {
         color: ${colors.corPrimaria};
     }
 `

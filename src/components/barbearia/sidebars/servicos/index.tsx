@@ -176,10 +176,11 @@ const Servicos = () => {
                                         key={servico.id}
                                         onClick={() => openDetalhesModal(servico)}
                                     >
-                                        <p>{servico.nome}</p>
+                                        <i className="ri-scissors-fill tesoura"></i>
+                                        <h4>{servico.nome}</h4>
                                         <p>R$ {Number(servico.preco).toFixed(2)}</p>
                                         <p>{servico.duracao_minutos} min</p>
-                                        <i className="ri-arrow-right-s-line"></i>
+                                        <i className="ri-arrow-right-s-line flecha"></i>
                                     </S.ListItem>
                                 ))
                             ) : (

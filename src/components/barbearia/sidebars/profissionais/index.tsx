@@ -190,9 +190,9 @@ const Profissionais = () => {
                                         onClick={() => openDetalhesModal(profissional)}
                                     >
                                         <S.ProfissionalImage>
-                                            {getFotoPerfilUrl(profissional.fotoPerfil) ? (
+                                            {getFotoPerfilUrl(profissional.imagem) ? (
                                                 <img
-                                                    src={getFotoPerfilUrl(profissional.fotoPerfil)!}
+                                                    src={getFotoPerfilUrl(profissional.imagem)!}
                                                     alt="Foto do profissional"
                                                 />
                                             ) : null}
@@ -200,7 +200,7 @@ const Profissionais = () => {
                                                 className="ri-user-3-fill"
                                                 style={{
                                                     display: getFotoPerfilUrl(
-                                                        profissional.fotoPerfil,
+                                                        profissional.imagem,
                                                     )
                                                         ? 'none'
                                                         : 'block',

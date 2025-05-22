@@ -368,13 +368,16 @@ const PaginaBarbearia = () => {
                                 {servicos.length > 0 ? (
                                     <S.ServicesList>
                                         {servicos.map((servico) => (
-                                            <S.Service key={servico.id}>
-                                                <div>
-                                                    <h4>{servico.nome}</h4>
-                                                    <p>{servico.duracao_minutos} min</p>
-                                                </div>
+                                            <S.ServiceItem key={servico.id}>
+                                                <S.ServiceName>
+                                                    <i className="ri-scissors-fill tesoura"></i>
+                                                    <div>
+                                                        <h4>{servico.nome}</h4>
+                                                        <p>{servico.duracao_minutos} min</p>
+                                                    </div>
+                                                </S.ServiceName>
                                                 <p>R$ {servico.preco}</p>
-                                            </S.Service>
+                                            </S.ServiceItem>
                                         ))}
                                     </S.ServicesList>
                                 ) : (
