@@ -29,7 +29,7 @@ export const Container = styled.div`
     }
 `
 
-export const ServiceHeader = styled.div`
+export const Head = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -96,27 +96,21 @@ export const FieldNames = styled.div`
     display: flex;
     padding: 0 20px;
     margin-bottom: 16px;
-    justify-content: space-between;
+    justify-content: space-around;
 
     p {
         font-weight: 500;
-        flex: 1;
-        text-align: center;
-
-        &:first-child {
-            text-align: left;
-        }
     }
 `
 
-export const List = styled.ul`
+export const ProfissionalList = styled.ul`
     list-style: none;
     margin-top: 16px;
     padding: 0;
     margin-bottom: 16px;
 `
 
-export const ListItem = styled.li`
+export const ProfissionalItem = styled.li`
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -129,53 +123,50 @@ export const ListItem = styled.li`
     cursor: pointer;
 
     p {
-        flex: 1;
+        width: 35%;
         color: ${colors.branco};
-        text-align: center;
 
-        &:first-child {
-            text-align: left;
+        &.status {
+            font-size: 12px;
+            color: ${colors.verde};
         }
     }
 
-    i {
+    .arrow {
         color: ${colors.corPrimaria};
     }
 `
 
-export const IconsGroup = styled.div`
-    display: flex;
-    align-items: center;
-    gap: 8px;
+export const ProfissionalImage = styled.div`
+    margin-right: 12px;
+
+    img {
+        width: 32px;
+        height: 32px;
+        border-radius: 10px;
+        object-fit: cover;
+    }
 
     i {
-        cursor: pointer;
+        padding: 8px;
+        background: ${colors.cinzaTransparent};
+        color: ${colors.texto};
+        border-radius: 8px;
+    }
+`
 
-        &.edit {
-            background-color: ${colors.corPrimaria};
-            padding: 8px;
-            border-radius: 50%;
-            color: ${colors.branco};
-            cursor: pointer;
-            transition: 0.2s ease-in-out;
+export const ProfissionalNameContainer = styled.div`
+    width: 35%;
+    margin-right: 8px;
 
-            &:hover {
-                transform: scale(1.1);
-            }
-        }
+    h4 {
+        font-size: 16px;
+        font-weight: 500;
+    }
 
-        &.delete {
-            background-color: ${colors.vermelho};
-            color: ${colors.branco};
-            padding: 8px;
-            border-radius: 50%;
-            cursor: pointer;
-            transition: 0.2s ease-in-out;
-
-            &:hover {
-                transform: scale(1.1);
-            }
-        }
+    p {
+        font-size: 14px;
+        color: ${colors.texto};
     }
 `
 

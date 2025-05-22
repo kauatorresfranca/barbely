@@ -81,22 +81,22 @@ const FirstStep = ({ setActiveTab }: Props) => {
             <S.Employee>
                 <h3>Escolha um barbeiro</h3>
                 {funcionarios ? (
-                    <S.EmployeeList>
-                        {funcionarios.length > 0 ? (
-                            funcionarios.map((func) => (
+                    funcionarios.length > 0 ? (
+                        <S.EmployeeList>
+                            {funcionarios.map((func) => (
                                 <S.EmployeeItem
                                     key={func.id}
                                     onClick={() => setSelectedFuncionarioId(func.id)}
                                     $selected={selectedFuncionarioId === func.id}
                                 >
-                                    <img src={user} alt={`Foto de ${func.nome}`} />
+                                    <img src={func.imagem ? `${func.imagem}` : `${user}`} alt={`Foto de ${func.nome}`} />
                                     <h4>{func.nome}</h4>
                                 </S.EmployeeItem>
-                            ))
-                        ) : (
-                            <p>A barbearia ainda não tem barbeiros cadastrados.</p>
-                        )}
-                    </S.EmployeeList>
+                            ))}
+                        </S.EmployeeList>
+                    ) : (
+                        <p className='empty'>A barbearia ainda não tem nenhum barbeiro cadastrado.</p>
+                    )
                 ) : (
                     <ClipLoader color="#00c1fe" size={32} speedMultiplier={1} />
                 )}
@@ -104,21 +104,25 @@ const FirstStep = ({ setActiveTab }: Props) => {
             <S.Service>
                 <h3>Escolha o serviço</h3>
                 {servicos ? (
-                    <S.ServicesList>
-                        {servicos.map((servico) => (
-                            <S.ServiceItem
-                                key={servico.id}
-                                onClick={() => setSelectedServiceId(servico.id)}
-                                $selected={selectedServiceId === servico.id}
-                            >
-                                <div>
-                                    <h4>{servico.nome}</h4>
-                                    <p>{servico.duracao_minutos} min</p>
-                                </div>
-                                <p>R$ {servico.preco}</p>
-                            </S.ServiceItem>
-                        ))}
-                    </S.ServicesList>
+                    servicos.length > 0 ? (
+                        <S.ServicesList>
+                            {servicos.map((servico) => (
+                                <S.ServiceItem
+                                    key={servico.id}
+                                    onClick={() => setSelectedServiceId(servico.id)}
+                                    $selected={selectedServiceId === servico.id}
+                                >
+                                    <div>
+                                        <h4>{servico.nome}</h4>
+                                        <p>{servico.duracao_minutos} min</p>
+                                    </div>
+                                    <p>R$ {servico.preco}</p>
+                                </S.ServiceItem>
+                            ))}
+                        </S.ServicesList>
+                    ) : (
+                        <p className='empty'>A barbearia ainda não tem nenhum serviço cadastrado.</p>
+                    )
                 ) : (
                     <ClipLoader color="#00c1fe" size={32} speedMultiplier={1} />
                 )}

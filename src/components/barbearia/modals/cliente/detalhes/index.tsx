@@ -136,12 +136,12 @@ const Detalhes: React.FC<DetalhesProps> = ({ cliente, onClose, onDelete }) => {
                     </S.ClienteImage>
                     <div>
                         <h3>{cliente.user?.nome}</h3>
+                         <p>Status do cliente: Ativo</p>
                         <p>ID do cliente: {cliente.id}</p>
                         <p>
                             Cliente desde:{' '}
                             {new Date(cliente.user.date_joined).toLocaleDateString('pt-BR')}
                         </p>
-                        <S.Button onClick={handleEdit}>Editar dados do cliente</S.Button>
                     </div>
                 </S.ClientInfo>
 
@@ -209,6 +209,7 @@ const Detalhes: React.FC<DetalhesProps> = ({ cliente, onClose, onDelete }) => {
                                 <i className="ri-money-dollar-circle-line"></i> Saldo do cliente:{' '}
                                 <strong>R$ 0,00</strong>
                             </p>
+                            <S.Button onClick={handleEdit}>Editar dados do cliente</S.Button>
                         </S.InfoSection>
                         <S.StatsSection>
                             <h3>Estatísticas do cliente</h3>

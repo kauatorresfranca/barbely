@@ -46,7 +46,7 @@ export const Etapas = styled.div`
     margin-bottom: 20px;
 
     span {
-        height: 8px;
+        height: 10px;
         width: 23%;
         background-color: ${colors.branco};
         border-radius: 10px;

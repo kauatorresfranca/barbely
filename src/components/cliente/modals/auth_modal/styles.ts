@@ -36,6 +36,11 @@ export const Modal = styled.div`
     position: relative;
     animation: slideUp 0.3s ease-out;
 
+    img {
+        width: 160px;
+        margin-bottom: 12px;
+    }
+
     h2 {
         font-size: 24px;
         font-weight: bold;

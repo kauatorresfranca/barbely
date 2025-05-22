@@ -6,6 +6,7 @@ import { useBarbeariaAtual, useSetBarbeariaAtual } from '../../../../../hooks/us
 import * as S from './styles'
 import api from '../../../../../services/api'
 import { Toast } from '../../../../../components/toast'
+import user from '../../../../../assets/images/user.png' // Importar a imagem padrão
 
 const BarbeariaPerfilForm = () => {
     const barbearia = useBarbeariaAtual()
@@ -53,7 +54,11 @@ const BarbeariaPerfilForm = () => {
                         descricao: data.descricao || '',
                     }))
                     if (data.imagem) {
-                        setPreview(data.imagem)
+                        const isFullUrl =
+                            data.imagem.startsWith('http') || data.imagem.startsWith('https')
+                        setPreview(isFullUrl ? data.imagem : `${api.baseURL}${data.imagem}`)
+                    } else {
+                        setPreview(user) // Usar imagem padrão 'user' se não houver imagem
                     }
                 } else {
                     console.error('Erro ao buscar barbearia')
@@ -121,7 +126,7 @@ const BarbeariaPerfilForm = () => {
                 )
                 const updatedData = await updatedResponse.json()
                 setBarbeariaAtual(updatedData)
-                setPreview(updatedData.imagem)
+                setPreview(updatedData.imagem || user) // Usar 'user' se a imagem não for retornada
                 setToastMessage('Dados enviados com sucesso!')
                 setShowToast(true)
             } else {
@@ -159,9 +164,13 @@ const BarbeariaPerfilForm = () => {
                         <S.ImagemWrapper>
                             <S.ImagemContainer>
                                 <S.ImagemPerfil
-                                    src={preview || 'https://via.placeholder.com/150x150'}
+                                    src={preview || user} // Usar 'user' como fallback
                                     alt="Foto da Sua Barbearia"
                                     onClick={handleClickImagem}
+                                    onError={(e) => {
+                                        console.error('Erro ao carregar imagem da barbearia:', preview)
+                                        e.currentTarget.src = user // Fallback para 'user' em caso de erro
+                                    }}
                                 />
                                 <i className="ri-pencil-line"></i>
                             </S.ImagemContainer>

@@ -3,7 +3,7 @@ import { ClipLoader } from 'react-spinners'
 import { authFetch } from '../../../../utils/authFetch'
 import { Funcionario } from '../../../../models/funcionario'
 import CriarProfissionalModal from '../../modals/profissional/criar'
-import DetalhesProfissionalModal from '../../modals/profissional/detalhes' // Nova modal
+import DetalhesProfissionalModal from '../../modals/profissional/detalhes'
 import DeleteConfirmationModal from '../../modals/confirmar_delecao/index'
 import * as S from './styles'
 import api from '../../../../services/api'
@@ -17,6 +17,7 @@ const Profissionais = () => {
     const [searchTerm, setSearchTerm] = useState<string>('')
     const [isLoading, setIsLoading] = useState(true)
     const [hasError, setHasError] = useState(false)
+    const [errorMessage, setErrorMessage] = useState<string | null>(null)
     const [selectedProfissional, setSelectedProfissional] = useState<Funcionario | null>(null)
     const [profissionalToDelete, setProfissionalToDelete] = useState<Funcionario | null>(null)
 
@@ -43,27 +44,42 @@ const Profissionais = () => {
         setDetalhesModalIsOpen(false)
     }
 
+    const getFotoPerfilUrl = (fotoPerfil: string | null): string | null => {
+        if (!fotoPerfil) return null
+        const isFullUrl = fotoPerfil.startsWith('http') || fotoPerfil.startsWith('https')
+        return isFullUrl ? fotoPerfil : `${api.baseURL}${fotoPerfil}`
+    }
+
     const fetchFuncionarios = async () => {
         setIsLoading(true)
         setHasError(false)
+        setErrorMessage(null)
         try {
             const token = sessionStorage.getItem('access_token_barbearia')
+            if (!token) {
+                throw new Error('Sessão expirada. Por favor, faça login novamente.')
+            }
             const response = await authFetch(`${api.baseURL}/funcionarios/`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
                 },
             })
-            if (response.ok) {
-                const data = await response.json()
-                setProfissionais(data)
-                setFilteredProfissionais(data)
-            } else {
-                console.error('Erro ao buscar profissionais')
-                setHasError(true)
+            if (response.status === 401) {
+                throw new Error('Sessão expirada. Por favor, faça login novamente.')
             }
+            if (!response.ok) {
+                throw new Error(
+                    `Erro ao buscar profissionais: ${response.status} ${response.statusText}`,
+                )
+            }
+            const data = await response.json()
+            setProfissionais(data)
+            setFilteredProfissionais(data)
         } catch (error) {
             console.error('Erro:', error)
             setHasError(true)
+            setErrorMessage(error instanceof Error ? error.message : 'Erro desconhecido')
         } finally {
             setIsLoading(false)
         }
@@ -80,30 +96,47 @@ const Profissionais = () => {
                     method: 'DELETE',
                     headers: {
                         Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json',
                     },
                 },
             )
 
-            if (response.ok) {
-                setProfissionais((prev) => prev.filter((f) => f.id !== profissionalToDelete.id))
-                setFilteredProfissionais((prev) =>
-                    prev.filter((f) => f.id !== profissionalToDelete.id),
-                )
-                closeDeleteModal()
-            } else {
-                console.error('Erro ao deletar profissional')
+            if (response.status === 404) {
+                throw new Error('Profissional não encontrado.')
             }
+            if (response.status === 401) {
+                throw new Error('Sessão expirada. Por favor, faça login novamente.')
+            }
+            if (!response.ok) {
+                throw new Error(
+                    `Erro ao deletar profissional: ${response.status} ${response.statusText}`,
+                )
+            }
+
+            setProfissionais((prev) => prev.filter((f) => f.id !== profissionalToDelete.id))
+            setFilteredProfissionais((prev) => prev.filter((f) => f.id !== profissionalToDelete.id))
+            closeDeleteModal()
         } catch (error) {
-            console.error('Erro:', error)
+            console.error('Erro ao deletar profissional:', error)
+            setHasError(true)
+            setErrorMessage(error instanceof Error ? error.message : 'Erro desconhecido')
         }
     }
 
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const term = e.target.value
         setSearchTerm(term)
-        const filtered = profissionais.filter((profissional) =>
-            profissional.nome.toLowerCase().includes(term.toLowerCase()),
-        )
+        const filtered = profissionais.filter((profissional) => {
+            const nome = profissional.nome || ''
+            const email = profissional.email || ''
+            const telefone = (profissional.telefone || '').replace(/[()-/\s]/g, '')
+            const normalizedSearchTerm = term.replace(/[()-/\s]/g, '')
+            return (
+                nome.toLowerCase().includes(term.toLowerCase()) ||
+                email.toLowerCase().includes(term.toLowerCase()) ||
+                telefone.toLowerCase().includes(normalizedSearchTerm.toLowerCase())
+            )
+        })
         setFilteredProfissionais(filtered)
     }
 
@@ -118,11 +151,11 @@ const Profissionais = () => {
                 <p className="subtitle">
                     Adicione, edite ou remova os profissionais que fazem parte da sua equipe.
                 </p>
-                <S.ServiceHeader>
+                <S.Head>
                     <S.SearchAndAdd>
                         <input
                             type="text"
-                            placeholder="Pesquisar por profissional..."
+                            placeholder="Buscar por nome, email ou telefone..."
                             value={searchTerm}
                             onChange={handleSearchChange}
                         />
@@ -131,30 +164,59 @@ const Profissionais = () => {
                     {filteredProfissionais.length > 0 && (
                         <S.FieldNames>
                             <p>Nome</p>
+                            <p>Telefone</p>
+                            <p>Status</p>
                         </S.FieldNames>
                     )}
-                </S.ServiceHeader>
+                </S.Head>
 
                 {isLoading ? (
                     <S.LoadingContainer>
                         <ClipLoader color="#00c1fe" size={32} speedMultiplier={1} />
                     </S.LoadingContainer>
                 ) : hasError ? (
-                    <S.Message>Erro ao carregar os profissionais. Tente novamente.</S.Message>
+                    <S.Message>
+                        {errorMessage || 'Erro ao carregar os profissionais. Tente novamente.'}
+                    </S.Message>
                 ) : profissionais.length === 0 ? (
                     <S.Message>Você ainda não tem profissionais cadastrados.</S.Message>
                 ) : (
                     <>
-                        <S.List>
+                        <S.ProfissionalList>
                             {filteredProfissionais.length > 0 ? (
                                 filteredProfissionais.map((profissional) => (
-                                    <S.ListItem
+                                    <S.ProfissionalItem
                                         key={profissional.id}
                                         onClick={() => openDetalhesModal(profissional)}
                                     >
-                                        <p>{profissional.nome}</p>
-                                        <i className="ri-arrow-right-s-line"></i>
-                                    </S.ListItem>
+                                        <S.ProfissionalImage>
+                                            {getFotoPerfilUrl(profissional.fotoPerfil) ? (
+                                                <img
+                                                    src={getFotoPerfilUrl(profissional.fotoPerfil)!}
+                                                    alt="Foto do profissional"
+                                                />
+                                            ) : null}
+                                            <i
+                                                className="ri-user-3-fill"
+                                                style={{
+                                                    display: getFotoPerfilUrl(
+                                                        profissional.fotoPerfil,
+                                                    )
+                                                        ? 'none'
+                                                        : 'block',
+                                                }}
+                                            ></i>
+                                        </S.ProfissionalImage>
+                                        <S.ProfissionalNameContainer>
+                                            <h4>{profissional.nome || 'Nome indisponível'}</h4>
+                                            <p>{profissional.email || 'Email indisponível'}</p>
+                                        </S.ProfissionalNameContainer>
+                                        <p>
+                                            {profissional.telefone || 'Telefone indisponível'}
+                                        </p>
+                                        <p className="status">Ativo</p>
+                                        <i className="ri-arrow-right-s-line arrow"></i>
+                                    </S.ProfissionalItem>
                                 ))
                             ) : (
                                 <S.Message>
@@ -163,7 +225,7 @@ const Profissionais = () => {
                                         : 'Você ainda não tem profissionais cadastrados.'}
                                 </S.Message>
                             )}
-                        </S.List>
+                        </S.ProfissionalList>
                         <p className="profissionais_length">
                             {filteredProfissionais.length > 1
                                 ? `${filteredProfissionais.length} Profissionais`
@@ -189,6 +251,7 @@ const Profissionais = () => {
                     profissional={selectedProfissional}
                     onClose={closeDetalhesModal}
                     onDelete={openDeleteModal}
+                    onSuccess={fetchFuncionarios}
                 />
             )}
         </>

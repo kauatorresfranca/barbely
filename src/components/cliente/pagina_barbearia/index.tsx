@@ -128,12 +128,6 @@ const PaginaBarbearia = () => {
     }, [slug])
 
     useEffect(() => {
-        if (barbearia) {
-            console.log('Descrição da barbearia:', barbearia)
-        }
-    }, [barbearia])
-
-    useEffect(() => {
         const fetchBarbearia = async () => {
             try {
                 const response = await fetch(`${api.baseURL}/barbearias/buscar-por-slug/${slug}/`)
@@ -145,6 +139,8 @@ const PaginaBarbearia = () => {
                         const isFullUrl =
                             data.imagem.startsWith('http') || data.imagem.startsWith('https')
                         setPreview(isFullUrl ? data.imagem : `${api.baseURL}${data.imagem}`)
+                    } else {
+                        setPreview(user) // Usar imagem padrão 'user' se não houver imagem
                     }
                 } else {
                     console.error('Erro ao buscar barbearia:', response.status, response.statusText)
@@ -249,7 +245,7 @@ const PaginaBarbearia = () => {
         ? cliente.fotoPerfil.startsWith('http') || cliente.fotoPerfil.startsWith('https')
             ? cliente.fotoPerfil
             : `${api.baseURL}${cliente.fotoPerfil}`
-        : user
+        : user // Usar imagem padrão 'user' se não houver fotoPerfil
 
     return (
         <div>
@@ -264,12 +260,13 @@ const PaginaBarbearia = () => {
                                         <img
                                             src={userImageSrc}
                                             alt="Foto do usuário"
-                                            onError={() =>
+                                            onError={(e) => {
                                                 console.error(
                                                     'Erro ao carregar imagem do usuário:',
                                                     userImageSrc,
                                                 )
-                                            }
+                                                e.currentTarget.src = user // Fallback para 'user' em caso de erro
+                                            }}
                                         />
                                         <p>
                                             <span>Olá,</span> {cliente?.user?.nome?.split(' ')[0]}
@@ -298,12 +295,19 @@ const PaginaBarbearia = () => {
                         <S.BarbeariaResume>
                             <S.ResumeGroup>
                                 <img
-                                    src={preview || 'https://via.placeholder.com/150x150'}
+                                    src={preview}
                                     alt="logo barbearia"
+                                    onError={(e) => {
+                                        console.error('Erro ao carregar imagem da barbearia:', preview)
+                                        e.currentTarget.src = user // Fallback para 'user' em caso de erro
+                                    }}
                                 />
                                 <div>
                                     <h2>{barbearia.nome_barbearia}</h2>
-                                    <p>{endereco || 'Endereço não disponível'}</p>
+                                    <p>
+                                        {endereco ||
+                                            'A barbearia ainda não tem um endereço configurado'}
+                                    </p>
                                     <h5>
                                         <i className="ri-store-2-line"></i>{' '}
                                         {isBarbeariaAberta() ? (
@@ -327,7 +331,7 @@ const PaginaBarbearia = () => {
                                 <p>
                                     {barbearia.descricao?.length > 0
                                         ? barbearia.descricao
-                                        : `Descrição da Barbearia`}
+                                        : 'A barbearia ainda não tem uma descrição configurada'}
                                 </p>
                             </S.AboutUs>
                             <S.Hours>
@@ -361,17 +365,21 @@ const PaginaBarbearia = () => {
                                 <h3>
                                     <i className="ri-scissors-2-fill"></i> Serviços
                                 </h3>
-                                <S.ServicesList>
-                                    {servicos.map((servico) => (
-                                        <S.Service key={servico.id}>
-                                            <div>
-                                                <h4>{servico.nome}</h4>
-                                                <p>{servico.duracao_minutos} min</p>
-                                            </div>
-                                            <p>R$ {servico.preco}</p>
-                                        </S.Service>
-                                    ))}
-                                </S.ServicesList>
+                                {servicos.length > 0 ? (
+                                    <S.ServicesList>
+                                        {servicos.map((servico) => (
+                                            <S.Service key={servico.id}>
+                                                <div>
+                                                    <h4>{servico.nome}</h4>
+                                                    <p>{servico.duracao_minutos} min</p>
+                                                </div>
+                                                <p>R$ {servico.preco}</p>
+                                            </S.Service>
+                                        ))}
+                                    </S.ServicesList>
+                                ) : (
+                                    <p>A barbearia ainda não tem serviços configurados</p>
+                                )}
                             </S.Services>
                         </S.BarbeariaInfos>
                     </S.BarbeariaProfile>
@@ -396,7 +404,11 @@ const PaginaBarbearia = () => {
                     <AuthModal
                         isOpen={authModalIsOpen}
                         onClose={() => setAuthModalIsOpen(false)}
-                        onLoginSuccess={() => setModalIsOpen(true)}
+                        onLoginSuccess={() => {
+                            setAuthModalIsOpen(false)
+                            window.location.reload()
+                            setModalIsOpen(true)
+                        }}
                     />
                 </S.Container>
             ) : (

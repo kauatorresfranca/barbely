@@ -9,6 +9,11 @@ export const Container = styled.div`
     display: flex;
     flex-direction: column;
     gap: 12px;
+
+    .empty {
+        font-size: 14px;
+        color: ${colors.texto};
+    }
 `
 
 export const Employee = styled.div``
@@ -25,7 +30,7 @@ export const EmployeeItem = styled.div<SelectableProps>`
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 60px;
+    height: 70px;
     width: 90%;
     padding: 8px;
     border: 2px solid ${({ $selected }) => ($selected ? colors.corPrimaria : 'transparent')};
@@ -37,7 +42,9 @@ export const EmployeeItem = styled.div<SelectableProps>`
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 
     img {
+        height: 35px;
         width: 35px;
+        border-radius: 50%;
     }
 
     &:hover {

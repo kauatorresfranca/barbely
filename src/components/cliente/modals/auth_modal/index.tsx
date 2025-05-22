@@ -25,11 +25,7 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess }: AuthModalProps) => {
         <S.Overlay isOpen={isOpen} onClick={handleOverlayClick}>
             <S.Modal>
                 <S.CloseButton onClick={onClose}>×</S.CloseButton>
-                <img
-                    src={logo}
-                    alt="Logo"
-                    style={{ width: '160px', position: 'absolute', top: '24px' }}
-                />
+                <img src={logo} alt="Logo" />
                 {isLoginView ? (
                     <FormularioLoginCliente
                         onLoginSuccess={onLoginSuccess}
