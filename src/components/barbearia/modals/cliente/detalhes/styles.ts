@@ -40,6 +40,14 @@ export const Modal = styled.div`
         text-align: center;
     }
 
+    .ri-user-3-fill {
+        padding: 40px;
+        background: ${colors.cinzaTransparent};
+        color: ${colors.texto};
+        font-size: 40px;
+        border-radius: 15px;
+    }
+
     @media (max-width: ${breakpoints.desktop}) {
         width: 90%;
     }
@@ -153,14 +161,6 @@ export const ClienteImage = styled.div`
         border-radius: 10px;
         object-fit: cover;
     }
-
-    i {
-        padding: 40px;
-        background: ${colors.cinzaTransparent};
-        color: ${colors.texto};
-        font-size: 40px;
-        border-radius: 15px;
-    }
 `
 
 export const ClientInfo = styled.div`
@@ -177,6 +177,10 @@ export const ClientInfo = styled.div`
     p {
         margin: 5px 0;
         color: ${colors.texto};
+    }
+
+    span {
+        color: green;
     }
 `
 

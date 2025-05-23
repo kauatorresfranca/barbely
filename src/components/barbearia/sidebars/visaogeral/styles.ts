@@ -4,7 +4,6 @@ import { breakpoints, colors } from '../../../../../styles'
 export const Container = styled.div`
     width: 100%;
     color: #fff;
-    padding: 24px; /* Adiciona padding padrão */
     box-sizing: border-box; /* Garante que o padding não aumente o width além de 100% */
 
     .subtitle {

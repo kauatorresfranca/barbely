@@ -137,6 +137,10 @@ export const FuncionariosHeader = styled.div`
 `
 
 export const FuncionarioTitle = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
     flex: 1;
     text-align: center;
     font-size: 16px;
@@ -146,6 +150,20 @@ export const FuncionarioTitle = styled.div`
     background: linear-gradient(-45deg, ${colors.cinzaEscuro}, ${colors.cinzaEscuro}AA);
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
+
+    img {
+        width: 30px;
+        height: 30px;
+        border-radius: 10px;
+        object-fit: cover;
+    }
+
+    i {
+        padding: 6px;
+        background: ${colors.cinzaTransparent};
+        color: ${colors.texto};
+        border-radius: 8px;
+    }
 `
 
 export const TimelinesContainer = styled.div`
@@ -218,10 +236,15 @@ export const AgendamentoBlock = styled.div`
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     transition: all 0.3s ease;
     border: 1px solid ${colors.cinzaTransparent};
+    cursor: pointer;
 
     &:hover {
         transform: translateY(-3px);
         box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .arrow {
+        color: ${colors.corPrimaria};
     }
 `
 
@@ -280,24 +303,6 @@ export const Button = styled.div`
     padding: 8px 14px;
     background: linear-gradient(45deg, ${colors.corPrimaria}, ${colors.corPrimaria}AA);
     color: ${colors.cinzaEscuro};
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 13px;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    border: 1px solid ${colors.cinzaTransparent};
-
-    &:hover {
-        background-color: ${colors.cinzaClaro};
-        border-color: ${colors.corPrimaria};
-        transform: translateY(-1px);
-    }
-`
-
-export const Select = styled.select`
-    padding: 8px 14px;
-    background: transparent;
-    color: ${colors.branco};
     border-radius: 8px;
     cursor: pointer;
     font-size: 13px;

@@ -112,7 +112,7 @@ export const InputGroup = styled.div`
 `
 
 export const ImagePreview = styled.div`
-    margin-bottom: 16px;
+    margin: 0px auto 16px auto;
     text-align: center;
 
     img {
@@ -121,13 +121,12 @@ export const ImagePreview = styled.div`
         border-radius: 8px;
         object-fit: cover;
     }
-`
 
-export const ButtonGroup = styled.div`
-    display: flex;
-    gap: 10px;
-    width: 100%;
-    margin-top: 16px;
+    i {
+        padding: 8px;
+        border-radius: 10px;
+        background-color: ${colors.cinzaClaro};
+    }
 `
 
 export const Button = styled.button`
@@ -135,6 +134,7 @@ export const Button = styled.button`
     color: ${colors.branco};
     border: none;
     padding: 12px 24px;
+    margin-top: 8px;
     border-radius: 8px;
     font-weight: bold;
     cursor: pointer;
@@ -150,16 +150,6 @@ export const Button = styled.button`
     &:disabled {
         background: ${colors.cinzaClaro};
         cursor: not-allowed;
-    }
-`
-
-export const CancelButton = styled(Button)`
-    background: ${colors.cinzaClaro};
-    color: ${colors.branco};
-
-    &:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     }
 `
 

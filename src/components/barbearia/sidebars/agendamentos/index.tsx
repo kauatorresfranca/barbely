@@ -522,6 +522,8 @@ const AgendaGrafico = () => {
                                 <S.FuncionariosHeader>
                                     {funcionarios.map((funcionario) => (
                                         <S.FuncionarioTitle key={funcionario.id}>
+                                            {funcionario.imagem ? (<img src={funcionario.imagem} alt="" />) : (
+                                                <i className="ri-user-3-fill"></i>)}
                                             {funcionario.nome}
                                         </S.FuncionarioTitle>
                                     ))}
@@ -577,6 +579,11 @@ const AgendaGrafico = () => {
                                                                 <S.AgendamentoBlock
                                                                     key={agendamento.id}
                                                                     style={{ top: `${top}px` }}
+                                                                    onClick={() =>
+                                                                                openModal(
+                                                                                    agendamento,
+                                                                                )
+                                                                            }
                                                                 >
                                                                     <S.AgendamentoInfo
                                                                         hora={
@@ -612,47 +619,7 @@ const AgendaGrafico = () => {
                                                                             </p>
                                                                         </div>
                                                                     </S.AgendamentoInfo>
-                                                                    <div
-                                                                        style={{
-                                                                            display: 'flex',
-                                                                            gap: '8px',
-                                                                        }}
-                                                                    >
-                                                                        <S.Button
-                                                                            onClick={() =>
-                                                                                openModal(
-                                                                                    agendamento,
-                                                                                )
-                                                                            }
-                                                                        >
-                                                                            Detalhes
-                                                                        </S.Button>
-                                                                        <S.Select
-                                                                            value={
-                                                                                agendamento.status
-                                                                            }
-                                                                            onChange={(e) =>
-                                                                                atualizarStatusAgendamento(
-                                                                                    agendamento.id,
-                                                                                    e.target
-                                                                                        .value as Agendamento['status'],
-                                                                                )
-                                                                            }
-                                                                        >
-                                                                            <option value="CONFIRMADO">
-                                                                                Confirmado
-                                                                            </option>
-                                                                            <option value="CANCELADO">
-                                                                                Cancelado
-                                                                            </option>
-                                                                            <option value="EXPIRADO">
-                                                                                Expirado
-                                                                            </option>
-                                                                            <option value="CONCLUIDO">
-                                                                                Concluído
-                                                                            </option>
-                                                                        </S.Select>
-                                                                    </div>
+                                                                    <i className="ri-arrow-right-s-line arrow"></i>
                                                                 </S.AgendamentoBlock>
                                                             )
                                                         })}

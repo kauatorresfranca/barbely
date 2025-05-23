@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { IMaskInput } from 'react-imask'
 import { authFetch } from '../../../../../utils/authFetch'
 import * as S from './styles'
@@ -17,10 +17,17 @@ const CriarProfissionalModal = ({ closeModal, onSuccess }: Props) => {
     const [preview, setPreview] = useState<string | null>(null)
     const [isLoading, setIsLoading] = useState(false)
     const [errorMessage, setErrorMessage] = useState<string | null>(null)
+    const fileInputRef = useRef<HTMLInputElement>(null)
 
     const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
         if (e.target === e.currentTarget) {
             closeModal()
+        }
+    }
+
+    const handleImageClick = () => {
+        if (fileInputRef.current) {
+            fileInputRef.current.click()
         }
     }
 
@@ -113,6 +120,25 @@ const CriarProfissionalModal = ({ closeModal, onSuccess }: Props) => {
                 <S.Form onSubmit={handleSubmit}>
                     {errorMessage && <S.ErrorMessage>{errorMessage}</S.ErrorMessage>}
                     <S.InputGroup>
+                        <label htmlFor="imagem_profissional">Foto do Profissional</label>
+                        <S.ImagePreview onClick={handleImageClick} style={{ cursor: 'pointer' }}>
+                            {preview ? (
+                                <img src={preview} alt="Prévia da imagem" />
+                            ) : (
+                                <i className="ri-user-3-fill" style={{ fontSize: '80px', color: '#fff' }} />
+                            )}
+                        </S.ImagePreview>
+                        <input
+                            type="file"
+                            id="imagem_profissional"
+                            name="imagem"
+                            accept="image/*"
+                            ref={fileInputRef}
+                            onChange={handleImagemChange}
+                            style={{ display: 'none' }}
+                        />
+                    </S.InputGroup>
+                    <S.InputGroup>
                         <label htmlFor="nome_profissional">Nome do Profissional</label>
                         <input
                             type="text"
@@ -147,29 +173,9 @@ const CriarProfissionalModal = ({ closeModal, onSuccess }: Props) => {
                             onAccept={(value) => setTelefone(value)}
                         />
                     </S.InputGroup>
-                    <S.InputGroup>
-                        <label htmlFor="imagem_profissional">Foto do Profissional</label>
-                        {preview && (
-                            <S.ImagePreview>
-                                <img src={preview} alt="Prévia da imagem" />
-                            </S.ImagePreview>
-                        )}
-                        <input
-                            type="file"
-                            id="imagem_profissional"
-                            name="imagem"
-                            accept="image/*"
-                            onChange={handleImagemChange}
-                        />
-                    </S.InputGroup>
-                    <S.ButtonGroup>
-                        <S.CancelButton type="button" onClick={closeModal} disabled={isLoading}>
-                            Cancelar
-                        </S.CancelButton>
                         <S.Button type="submit" disabled={isLoading}>
                             {isLoading ? 'Adicionando...' : 'Adicionar Profissional'}
                         </S.Button>
-                    </S.ButtonGroup>
                 </S.Form>
             </S.Modal>
         </S.Overlay>

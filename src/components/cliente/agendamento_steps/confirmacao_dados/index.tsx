@@ -14,7 +14,6 @@ type Props = {
 const ConfirmacaoStep = ({ setActiveTab, agendamentoData }: Props) => {
     const fusoHorario = 'America/Sao_Paulo'
 
-    // Verificar se os dados essenciais estão presentes
     if (!agendamentoData.servico) {
         console.error('Erro: Serviço não definido no agendamentoData', agendamentoData)
         alert('Erro: Dados do serviço não foram carregados. Por favor, reinicie o agendamento.')
@@ -22,7 +21,6 @@ const ConfirmacaoStep = ({ setActiveTab, agendamentoData }: Props) => {
         return null
     }
 
-    // Verificar se a data está presente
     if (!agendamentoData.data) {
         console.error('Erro: Data não definida no agendamentoData', agendamentoData)
         alert('Erro: Data não foi selecionada. Por favor, retorne e escolha uma data.')
@@ -54,6 +52,12 @@ const ConfirmacaoStep = ({ setActiveTab, agendamentoData }: Props) => {
 
     const handleNext = async () => {
         const token = sessionStorage.getItem('access_token_cliente')
+
+        if (!token) {
+            console.error('Token de autenticação não encontrado.')
+            alert('Você precisa estar logado para confirmar o agendamento.')
+            return
+        }
 
         console.log('Dados recebidos no ConfirmacaoStep:', agendamentoData)
 
@@ -88,8 +92,6 @@ const ConfirmacaoStep = ({ setActiveTab, agendamentoData }: Props) => {
                 hora_inicio: horaFormatada,
                 servico: agendamentoData.servico.id,
                 metodo_pagamento: metodoPagamento,
-                cliente_nome: agendamentoData.clienteNome || undefined,
-                cliente_email: agendamentoData.clienteEmail || undefined,
                 telefone: agendamentoData.telefone || undefined,
             }
 
@@ -99,7 +101,7 @@ const ConfirmacaoStep = ({ setActiveTab, agendamentoData }: Props) => {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    ...(token && { Authorization: `Bearer ${token}` }),
+                    Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify(payload),
             })

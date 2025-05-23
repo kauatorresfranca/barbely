@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { IMaskInput } from 'react-imask'
 import { Funcionario } from '../../../../../models/funcionario'
 import { authFetch } from '../../../../../utils/authFetch'
 import * as S from './styles'
 import api from '../../../../../services/api'
-import user from '../../../../../assets/images/user.png' // Importar imagem padrão
 
 interface DetalhesProps {
     profissional: Funcionario | null
@@ -26,6 +25,7 @@ const DetalhesProfissionalModal: React.FC<DetalhesProps> = ({
     const [imagem, setImagem] = useState<File | null>(null)
     const [preview, setPreview] = useState<string | null>(null)
     const [errorMessage, setErrorMessage] = useState<string | null>(null)
+    const fileInputRef = useRef<HTMLInputElement>(null)
 
     useEffect(() => {
         if (profissional) {
@@ -34,13 +34,13 @@ const DetalhesProfissionalModal: React.FC<DetalhesProps> = ({
             setTelefone(profissional.telefone || '')
             setImagem(null)
             setErrorMessage(null)
-            if (profissional.fotoPerfil) {
-                const fotoPerfil = profissional.fotoPerfil
+            if (profissional.imagem) {
+                const fotoPerfil = profissional.imagem
                 const isFullUrl = fotoPerfil.startsWith('http') || fotoPerfil.startsWith('https')
                 const imageUrl = isFullUrl ? fotoPerfil : `${api.baseURL}${fotoPerfil}`
                 setPreview(imageUrl)
             } else {
-                setPreview(user) // Usar imagem padrão se não houver foto
+                setPreview(null)
             }
         }
     }, [profissional])
@@ -56,10 +56,17 @@ const DetalhesProfissionalModal: React.FC<DetalhesProps> = ({
             setNome(profissional.nome || '')
             setEmail(profissional.email || '')
             setTelefone(profissional.telefone || '')
-            setPreview(profissional.fotoPerfil ? `${api.baseURL}${profissional.fotoPerfil}` : user)
+            setPreview(profissional.imagem ? `${api.baseURL}${profissional.imagem}` : null)
             setImagem(null)
         }
         setErrorMessage(null)
+    }
+
+    const handleImageClick = () => {
+        if (!isEditing) return
+        if (fileInputRef.current) {
+            fileInputRef.current.click()
+        }
     }
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -152,32 +159,37 @@ const DetalhesProfissionalModal: React.FC<DetalhesProps> = ({
             <S.Modal>
                 <S.CloseButton onClick={onClose}>×</S.CloseButton>
                 <h2>Detalhes do Profissional</h2>
-                <S.ProfissionalInfo>
-                    <S.ProfissionalImage>
-                        {preview ? (
-                            <img
-                                src={preview}
-                                alt="Foto do profissional"
-                                onError={(e) => {
-                                    console.error('Erro ao carregar imagem:', preview)
-                                    e.currentTarget.src = user
-                                }}
-                            />
-                        ) : (
-                            <i className="ri-user-3-fill"></i>
-                        )}
-                    </S.ProfissionalImage>
-                    <div>
-                        <h3>{profissional.nome}</h3>
-                        <p>Status do profissional: Ativo</p>
-                        <p>ID do profissional: {profissional.id}</p>
-                        <p>Profissional desde: {new Date().toLocaleDateString('pt-BR')}</p>
-                    </div>
-                </S.ProfissionalInfo>
-
                 {isEditing ? (
                     <form onSubmit={handleSubmit}>
                         {errorMessage && <S.ErrorMessage>{errorMessage}</S.ErrorMessage>}
+                        <S.InputGroup>
+                            <label htmlFor="imagem_profissional">Foto do Profissional</label>
+                            <S.ImagePreview
+                                onClick={handleImageClick}
+                                style={{ cursor: isEditing ? 'pointer' : 'default' }}
+                            >
+                                {preview ? (
+                                    <img
+                                        src={preview}
+                                        alt="Prévia da imagem"
+                                        onError={(e) => {
+                                            console.error('Erro ao carregar prévia:', preview)
+                                            e.currentTarget.src = preview
+                                        }}
+                                    />
+                                ) : (
+                                    <i className="ri-user-3-fill"></i>
+                                )}
+                            </S.ImagePreview>
+                            <input
+                                type="file"
+                                id="imagem_profissional"
+                                accept="image/*"
+                                ref={fileInputRef}
+                                onChange={handleImageChange}
+                                style={{ display: 'none' }}
+                            />
+                        </S.InputGroup>
                         <S.InputGroup>
                             <label htmlFor="nome_profissional">Nome do Profissional</label>
                             <input
@@ -210,27 +222,6 @@ const DetalhesProfissionalModal: React.FC<DetalhesProps> = ({
                                 placeholder="(00) 00000-0000"
                             />
                         </S.InputGroup>
-                        <S.InputGroup>
-                            <label htmlFor="imagem_profissional">Foto do Profissional</label>
-                            {preview && (
-                                <S.ImagePreview>
-                                    <img
-                                        src={preview}
-                                        alt="Prévia da imagem"
-                                        onError={(e) => {
-                                            console.error('Erro ao carregar prévia:', preview)
-                                            e.currentTarget.src = user
-                                        }}
-                                    />
-                                </S.ImagePreview>
-                            )}
-                            <input
-                                type="file"
-                                id="imagem_profissional"
-                                accept="image/*"
-                                onChange={handleImageChange}
-                            />
-                        </S.InputGroup>
                         <S.ButtonGroup>
                             <S.CancelButton type="button" onClick={handleCancel}>
                                 Cancelar
@@ -240,6 +231,28 @@ const DetalhesProfissionalModal: React.FC<DetalhesProps> = ({
                     </form>
                 ) : (
                     <>
+                        <S.ProfissionalInfo>
+                            <S.ProfissionalImage>
+                                {preview ? (
+                                    <img
+                                        src={preview}
+                                        alt="Foto do profissional"
+                                        onError={(e) => {
+                                            console.error('Erro ao carregar imagem:', preview)
+                                            e.currentTarget.src = preview
+                                        }}
+                                    />
+                                ) : (
+                                    <i className="ri-user-3-fill"></i>
+                                )}
+                            </S.ProfissionalImage>
+                            <div>
+                                <h3>{profissional.nome}</h3>
+                                <p>Status do profissional: Ativo</p>
+                                <p>ID do profissional: {profissional.id}</p>
+                                <p>Profissional desde: {new Date().toLocaleDateString('pt-BR')}</p>
+                            </div>
+                        </S.ProfissionalInfo>
                         <S.InfoSection>
                             <h3>Informações</h3>
                             <p>

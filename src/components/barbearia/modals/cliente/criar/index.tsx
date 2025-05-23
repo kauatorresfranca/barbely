@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import { IMaskInput } from 'react-imask'
 import { authFetch } from '../../../../../utils/authFetch'
 import * as S from './styles'
@@ -13,12 +13,38 @@ const ClienteNew: React.FC<ClienteEditProps> = ({ closeModal }) => {
     const [telefone, setTelefone] = useState('')
     const [email, setEmail] = useState('')
     const [senha, setSenha] = useState('')
+    const [imagem, setImagem] = useState<File | null>(null)
+    const [preview, setPreview] = useState<string | null>(null)
     const [errorMessage, setErrorMessage] = useState<string | null>(null)
     const [successMessage, setSuccessMessage] = useState<string | null>(null)
+    const fileInputRef = useRef<HTMLInputElement>(null)
 
     const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
         if (e.target === e.currentTarget) {
             closeModal()
+        }
+    }
+
+    const handleImageClick = () => {
+        if (fileInputRef.current) {
+            fileInputRef.current.click()
+        }
+    }
+
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0]
+        if (file) {
+            if (file.size > 5 * 1024 * 1024) {
+                setErrorMessage('A imagem não pode exceder 5MB.')
+                return
+            }
+            if (!file.type.startsWith('image/')) {
+                setErrorMessage('O arquivo deve ser uma imagem válida.')
+                return
+            }
+            setImagem(file)
+            setPreview(URL.createObjectURL(file))
+            setErrorMessage(null)
         }
     }
 
@@ -51,24 +77,21 @@ const ClienteNew: React.FC<ClienteEditProps> = ({ closeModal }) => {
             return
         }
 
-        const payload = {
-            user: {
-                nome,
-                telefone,
-                email,
-                password: senha,
-            },
-            barbearia: parseInt(barbeariaId),
+        const formData = new FormData()
+        formData.append('user.nome', nome)
+        formData.append('user.telefone', telefone)
+        formData.append('user.email', email)
+        formData.append('user.password', senha)
+        formData.append('barbearia', barbeariaId)
+        if (imagem) {
+            formData.append('imagem', imagem)
         }
 
         try {
-            console.log('Criando cliente com payload:', payload)
+            console.log('Criando cliente com FormData:', formData)
             const response = await authFetch(`${api.baseURL}/clientes/`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(payload),
+                body: formData,
             })
 
             if (response.ok) {
@@ -147,6 +170,31 @@ const ClienteNew: React.FC<ClienteEditProps> = ({ closeModal }) => {
                             onChange={(e) => setSenha(e.target.value)}
                             placeholder="Senha"
                             required
+                        />
+                    </S.InputGroup>
+                    <S.InputGroup>
+                        <label>Foto do Cliente</label>
+                        <div
+                            onClick={handleImageClick}
+                            style={{ cursor: 'pointer', marginBottom: '16px', textAlign: 'center' }}
+                        >
+                            {preview ? (
+                                <img
+                                    src={preview}
+                                    alt="Prévia da imagem"
+                                    style={{ maxWidth: '100%', maxHeight: '200px', borderRadius: '8px', objectFit: 'cover' }}
+                                />
+                            ) : (
+                                <i className="ri-user-3-fill" style={{ fontSize: '80px', color: '#fff' }} />
+                            )}
+                        </div>
+                        <input
+                            type="file"
+                            id="imagem_cliente"
+                            accept="image/*"
+                            ref={fileInputRef}
+                            onChange={handleImageChange}
+                            style={{ display: 'none' }}
                         />
                     </S.InputGroup>
                     <S.Button type="submit">Criar Cliente</S.Button>

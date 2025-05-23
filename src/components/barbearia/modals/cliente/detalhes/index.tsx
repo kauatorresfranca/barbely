@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Cliente } from '../../../../../models/cliente'
 import { authFetch } from '../../../../../utils/authFetch'
 import * as S from './styles'
@@ -16,8 +16,10 @@ const Detalhes: React.FC<DetalhesProps> = ({ cliente, onClose, onDelete }) => {
     const [nome, setNome] = useState(cliente?.user?.nome || '')
     const [telefone, setTelefone] = useState(cliente?.user?.telefone || '')
     const [email, setEmail] = useState(cliente?.user?.email || '')
-    const [errorMessage, setErrorMessage] = useState<string | null>(null)
+    const [imagem, setImagem] = useState<File | null>(null)
     const [preview, setPreview] = useState<string | null>(null)
+    const [errorMessage, setErrorMessage] = useState<string | null>(null)
+    const fileInputRef = useRef<HTMLInputElement>(null)
 
     useEffect(() => {
         if (cliente?.fotoPerfil) {
@@ -40,7 +42,40 @@ const Detalhes: React.FC<DetalhesProps> = ({ cliente, onClose, onDelete }) => {
         setNome(cliente?.user?.nome || '')
         setTelefone(cliente?.user?.telefone || '')
         setEmail(cliente?.user?.email || '')
+        setImagem(null)
+        if (cliente?.fotoPerfil) {
+            const fotoPerfil = cliente.fotoPerfil
+            const isFullUrl = fotoPerfil.startsWith('http') || fotoPerfil.startsWith('https')
+            const imageUrl = isFullUrl ? fotoPerfil : `${api.baseURL}${fotoPerfil}`
+            setPreview(imageUrl)
+        } else {
+            setPreview(null)
+        }
         setErrorMessage(null)
+    }
+
+    const handleImageClick = () => {
+        if (!isEditing) return
+        if (fileInputRef.current) {
+            fileInputRef.current.click()
+        }
+    }
+
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0]
+        if (file) {
+            if (file.size > 5 * 1024 * 1024) {
+                setErrorMessage('A imagem não pode exceder 5MB.')
+                return
+            }
+            if (!file.type.startsWith('image/')) {
+                setErrorMessage('O arquivo deve ser uma imagem válida.')
+                return
+            }
+            setImagem(file)
+            setPreview(URL.createObjectURL(file))
+            setErrorMessage(null)
+        }
     }
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -62,34 +97,37 @@ const Detalhes: React.FC<DetalhesProps> = ({ cliente, onClose, onDelete }) => {
             return
         }
 
+        const formData = new FormData()
+        if (nome !== cliente.user?.nome) {
+            formData.append('user.nome', nome)
+        }
+        if (email !== cliente.user?.email) {
+            formData.append('user.email', email)
+        }
+        if (telefone !== cliente.user?.telefone) {
+            formData.append('user.telefone', telefone)
+        }
+        formData.append('barbearia', cliente.barbearia.toString())
+        if (imagem) {
+            formData.append('imagem', imagem)
+        }
+
         try {
-            console.log('Atualizando cliente:', {
-                nome,
-                telefone,
-                email,
-                barbearia: cliente.barbearia,
-            })
-            const response = await authFetch(`${api.baseURL}/barbearia/clientes/${cliente.id}/`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    user: {
-                        nome,
-                        telefone,
-                        email,
-                    },
-                    barbearia: cliente.barbearia,
-                }),
+            console.log('Atualizando cliente com FormData:', formData)
+            const response = await authFetch(`${api.baseURL}/clientes/${cliente.id}/`, {
+                method: 'PATCH',
+                body: formData,
             })
 
             if (response.ok) {
+                const updatedCliente = await response.json()
                 if (cliente && cliente.user) {
-                    cliente.user.nome = nome
-                    cliente.user.telefone = telefone
-                    cliente.user.email = email
+                    cliente.user.nome = updatedCliente.user.nome
+                    cliente.user.telefone = updatedCliente.user.telefone
+                    cliente.user.email = updatedCliente.user.email
+                    cliente.fotoPerfil = updatedCliente.fotoPerfil
                 }
+                setPreview(updatedCliente.fotoPerfil ? `${api.baseURL}${updatedCliente.fotoPerfil}` : null)
                 setErrorMessage(null)
                 setIsEditing(false)
             } else {
@@ -126,28 +164,34 @@ const Detalhes: React.FC<DetalhesProps> = ({ cliente, onClose, onDelete }) => {
             <S.Modal>
                 <S.CloseButton onClick={onClose}>×</S.CloseButton>
                 <h2>Detalhes do Cliente</h2>
-                <S.ClientInfo>
-                    <S.ClienteImage>
-                        {preview ? (
-                            <img src={preview} alt="Foto do cliente" />
-                        ) : (
-                            <i className="ri-user-3-fill"></i>
-                        )}
-                    </S.ClienteImage>
-                    <div>
-                        <h3>{cliente.user?.nome}</h3>
-                         <p>Status do cliente: Ativo</p>
-                        <p>ID do cliente: {cliente.id}</p>
-                        <p>
-                            Cliente desde:{' '}
-                            {new Date(cliente.user.date_joined).toLocaleDateString('pt-BR')}
-                        </p>
-                    </div>
-                </S.ClientInfo>
-
                 {isEditing ? (
                     <form onSubmit={handleSubmit}>
                         {errorMessage && <S.ErrorMessage>{errorMessage}</S.ErrorMessage>}
+                        <S.InputGroup>
+                            <label htmlFor="imagem_cliente">Foto do Cliente</label>
+                            <div
+                                onClick={handleImageClick}
+                                style={{ cursor: isEditing ? 'pointer' : 'default', marginBottom: '16px', textAlign: 'center' }}
+                            >
+                                {preview ? (
+                                    <img
+                                        src={preview}
+                                        alt="Prévia da imagem"
+                                        style={{ maxWidth: '100%', maxHeight: '200px', borderRadius: '8px', objectFit: 'cover' }}
+                                    />
+                                ) : (
+                                    <i className="ri-user-3-fill"></i>
+                                )}
+                            </div>
+                            <input
+                                type="file"
+                                id="imagem_cliente"
+                                accept="image/*"
+                                ref={fileInputRef}
+                                onChange={handleImageChange}
+                                style={{ display: 'none' }}
+                            />
+                        </S.InputGroup>
                         <S.InputGroup>
                             <label htmlFor="nome_cliente">Nome do Cliente</label>
                             <input
@@ -191,6 +235,24 @@ const Detalhes: React.FC<DetalhesProps> = ({ cliente, onClose, onDelete }) => {
                     </form>
                 ) : (
                     <>
+                        <S.ClientInfo>
+                            <S.ClienteImage>
+                                {preview ? (
+                                    <img src={preview} alt="Foto do cliente" />
+                                ) : (
+                                    <i className="ri-user-3-fill"></i>
+                                )}
+                            </S.ClienteImage>
+                            <div>
+                                <h3>{cliente.user?.nome}</h3>
+                                <p>Status do cliente: <span>Ativo</span></p>
+                                <p>ID do cliente: {cliente.id}</p>
+                                <p>
+                                    Cliente desde:{' '}
+                                    {new Date(cliente.user.date_joined).toLocaleDateString('pt-BR')}
+                                </p>
+                            </div>
+                        </S.ClientInfo>
                         <S.InfoSection>
                             <h3>Informações</h3>
                             <p>
