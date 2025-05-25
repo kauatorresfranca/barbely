@@ -40,6 +40,11 @@ export const Modal = styled.div`
         text-align: center;
     }
 
+    .empty {
+        color: ${colors.texto};
+        font-size: 14px;
+    }
+
     .ri-user-3-fill {
         padding: 40px;
         background: ${colors.cinzaTransparent};
@@ -61,6 +66,15 @@ export const Modal = styled.div`
             transform: translateY(0);
             opacity: 1;
         }
+    }
+`
+
+export const EditModal = styled.form`
+    img {
+        width: 140px;
+        height: 140px;
+        border-radius: 10px;
+        object-fit: cover;
     }
 `
 
@@ -228,12 +242,63 @@ export const StatsSection = styled.div`
     }
 `
 
+export const StatsList = styled.div`
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+`
+
+export const StatsItem = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 14px;
+    background-color: ${colors.cinzaClaro};
+    border-radius: 10px;
+
+    h4 {
+        font-size: 12px;
+        color: ${colors.texto};
+    }
+
+    p {
+        font-size: 14px;
+        color: ${colors.branco};
+    }
+`
+
 export const HistorySection = styled.div`
     h3 {
         font-size: 1.2rem;
         margin-bottom: 10px;
         color: ${colors.branco};
     }
+`
+
+export const ShowMoreButton = styled.button`
+    border: none;
+    border-radius: 10px;
+    width: 100%;
+    padding: 12px;
+    cursor: pointer;
+    background-color: ${colors.texto};
+    color: ${colors.cinzaEscuro};
+    font-weight: 500;
+    transition: transform 0.2s, box-shadow 0.2s;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+`
+
+export const HistoryList = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
 `
 
 export const HistoryContainer = styled.div`

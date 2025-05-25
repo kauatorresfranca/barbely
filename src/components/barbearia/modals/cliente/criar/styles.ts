@@ -67,6 +67,24 @@ export const CloseButton = styled.button`
     color: #fff;
 `
 
+export const ImagePreview = styled.div`
+    margin: 0px auto 16px auto;
+    text-align: center;
+
+    img {
+        max-width: 100%;
+        max-height: 200px;
+        border-radius: 8px;
+        object-fit: cover;
+    }
+
+    i {
+        padding: 8px;
+        border-radius: 10px;
+        background-color: ${colors.cinzaClaro};
+    }
+`
+
 export const Button = styled.button`
     background: ${colors.corPrimaria};
     color: ${colors.branco};

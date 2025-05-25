@@ -132,6 +132,31 @@ const ClienteNew: React.FC<ClienteEditProps> = ({ closeModal }) => {
                     {errorMessage && <S.ErrorMessage>{errorMessage}</S.ErrorMessage>}
                     {successMessage && <S.SuccessMessage>{successMessage}</S.SuccessMessage>}
                     <S.InputGroup>
+                        <label>Foto do Cliente</label>
+                        <S.ImagePreview
+                            onClick={handleImageClick}
+                            style={{ cursor: 'pointer', marginBottom: '16px', textAlign: 'center' }}
+                        >
+                            {preview ? (
+                                <img
+                                    src={preview}
+                                    alt="Prévia da imagem"
+                                    style={{ maxWidth: '100%', maxHeight: '200px', borderRadius: '8px', objectFit: 'cover' }}
+                                />
+                            ) : (
+                                <i className="ri-user-3-fill" style={{ fontSize: '80px', color: '#fff' }} />
+                            )}
+                        </S.ImagePreview>
+                        <input
+                            type="file"
+                            id="imagem_cliente"
+                            accept="image/*"
+                            ref={fileInputRef}
+                            onChange={handleImageChange}
+                            style={{ display: 'none' }}
+                        />
+                    </S.InputGroup>
+                    <S.InputGroup>
                         <label>Nome</label>
                         <input
                             type="text"
@@ -170,31 +195,6 @@ const ClienteNew: React.FC<ClienteEditProps> = ({ closeModal }) => {
                             onChange={(e) => setSenha(e.target.value)}
                             placeholder="Senha"
                             required
-                        />
-                    </S.InputGroup>
-                    <S.InputGroup>
-                        <label>Foto do Cliente</label>
-                        <div
-                            onClick={handleImageClick}
-                            style={{ cursor: 'pointer', marginBottom: '16px', textAlign: 'center' }}
-                        >
-                            {preview ? (
-                                <img
-                                    src={preview}
-                                    alt="Prévia da imagem"
-                                    style={{ maxWidth: '100%', maxHeight: '200px', borderRadius: '8px', objectFit: 'cover' }}
-                                />
-                            ) : (
-                                <i className="ri-user-3-fill" style={{ fontSize: '80px', color: '#fff' }} />
-                            )}
-                        </div>
-                        <input
-                            type="file"
-                            id="imagem_cliente"
-                            accept="image/*"
-                            ref={fileInputRef}
-                            onChange={handleImageChange}
-                            style={{ display: 'none' }}
                         />
                     </S.InputGroup>
                     <S.Button type="submit">Criar Cliente</S.Button>

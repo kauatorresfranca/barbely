@@ -3,10 +3,12 @@ export interface Agendamento {
     cliente: number
     cliente_nome: string
     funcionario: number
+    funcionario_nome: string | null  // Adicionado para corresponder ao serializer
     servico: number
     servico_nome: string
     servico_duracao: number
     data: string
+    data_formatada?: string  // Adicionado para manter compatibilidade com o uso anterior
     hora_inicio: string
     status: 'CONFIRMADO' | 'CANCELADO' | 'EXPIRADO' | 'CONCLUIDO'
     criado_em: string
