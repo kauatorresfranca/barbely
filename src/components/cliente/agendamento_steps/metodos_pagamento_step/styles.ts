@@ -47,7 +47,7 @@ export const MetodoContent = styled.div`
     gap: 8px;
 
     .pix {
-        color: ${colors.verde};
+        color: #2de0ca;
     }
 
     .card {
@@ -55,7 +55,7 @@ export const MetodoContent = styled.div`
     }
 
     .cash {
-        color: green;
+        color: ${colors.verde};
     }
 `
 

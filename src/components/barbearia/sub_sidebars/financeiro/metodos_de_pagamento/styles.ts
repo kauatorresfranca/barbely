@@ -44,7 +44,7 @@ export const PaymentItem = styled.li`
     }
 
     .pix {
-        color: ${colors.verde};
+        color: #2de0ca;;
     }
 
     .card {
@@ -52,7 +52,7 @@ export const PaymentItem = styled.li`
     }
 
     .cash {
-        color: green;
+        color: ${colors.verde};
     }
 `
 
