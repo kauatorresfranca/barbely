@@ -383,47 +383,6 @@ const AgendaGrafico = () => {
         }
     }
 
-    const atualizarStatusAgendamento = async (
-        agendamentoId: number,
-        novoStatus: Agendamento['status'],
-    ): Promise<void> => {
-        try {
-            const token = sessionStorage.getItem('access_token_barbearia')
-            if (!token) {
-                throw new Error('Você precisa estar logado para atualizar o status.')
-            }
-
-            const res = await authFetch(`${api.baseURL}/agendamentos/${agendamentoId}/`, {
-                method: 'PATCH',
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ status: novoStatus }),
-            })
-
-            if (!res.ok) {
-                const erroData = await res.json()
-                throw new Error(erroData.error || 'Falha ao atualizar o status do agendamento')
-            }
-
-            setAgendamentos((prev) =>
-                prev.map((agendamento) =>
-                    agendamento.id === agendamentoId
-                        ? { ...agendamento, status: novoStatus }
-                        : agendamento,
-                ),
-            )
-            setToastMessage('Status do agendamento atualizado com sucesso!')
-            setShowToast(true)
-        } catch (err) {
-            const error = err as Error
-            console.error('Erro ao atualizar status:', error)
-            setToastMessage(error.message || 'Erro ao atualizar o status.')
-            setShowToast(true)
-        }
-    }
-
     useEffect(() => {
         const fetchData = async (): Promise<void> => {
             setIsLoading(true)

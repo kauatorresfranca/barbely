@@ -27,10 +27,12 @@ export const ButtonContainer = styled.div`
 `
 
 export const ToggleFormButton = styled.button`
-    padding: 8px;
-    height: 40px;
-    background: linear-gradient(45deg, ${colors.corPrimaria}, ${colors.corPrimaria}AA);
-    color: ${colors.branco};
+    background: ${colors.corPrimaria};
+    color: #000;
+    padding: 12px;
+    margin-top: 24px;
+    font-size: 16px;
+    font-weight: 500;
     border: none;
     border-radius: 4px;
     cursor: pointer;

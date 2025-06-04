@@ -44,7 +44,7 @@ const Profissionais = () => {
         setDetalhesModalIsOpen(false)
     }
 
-    const getFotoPerfilUrl = (fotoPerfil: string | null): string | null => {
+    const getFotoPerfilUrl = (fotoPerfil: string | null | undefined): string | null => {
         if (!fotoPerfil) return null
         const isFullUrl = fotoPerfil.startsWith('http') || fotoPerfil.startsWith('https')
         return isFullUrl ? fotoPerfil : `${api.baseURL}${fotoPerfil}`

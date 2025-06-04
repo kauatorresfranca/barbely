@@ -15,8 +15,8 @@ const Planos = () => {
       nome: "Básico",
       preco: "R$ 49,90/mês",
       precoAnual: "R$ 479,90/ano",
-      monthlyPriceId: "price_1RSY1fIOZGJoeO45WzvaApFA", // Atualizado
-      yearlyPriceId: "price_1RSY1gIOZGJoeO456ARh7UNk", // Atualizado
+      monthlyPriceId: "price_1RSY1fIOZGJoeO45WzvaApFA",
+      yearlyPriceId: "price_1RSY1gIOZGJoeO456ARh7UNk",
       recursos: [
         "Até 2 funcionários",
         "Até 50 agendamentos/mês",
@@ -29,8 +29,8 @@ const Planos = () => {
       nome: "Profissional",
       preco: "R$ 99,90/mês",
       precoAnual: "R$ 959,90/ano",
-      monthlyPriceId: "price_1RSY1gIOZGJoeO45K1Qk5aLt", // Atualizado
-      yearlyPriceId: "price_1RSY1hIOZGJoeO45yMV6cbrk", // Atualizado
+      monthlyPriceId: "price_1RSY1gIOZGJoeO45K1Qk5aLt",
+      yearlyPriceId: "price_1RSY1hIOZGJoeO45yMV6cbrk",
       recursos: [
         "Até 5 funcionários",
         "Até 150 agendamentos/mês",
@@ -46,8 +46,8 @@ const Planos = () => {
       nome: "Premium",
       preco: "R$ 199,90/mês",
       precoAnual: "R$ 1.919,90/ano",
-      monthlyPriceId: "price_1RSY1hIOZGJoeO45Ep1etc5d", // Atualizado
-      yearlyPriceId: "price_1RSY1iIOZGJoeO451I1vyzEM", // Atualizado
+      monthlyPriceId: "price_1RSY1hIOZGJoeO45Ep1etc5d",
+      yearlyPriceId: "price_1RSY1iIOZGJoeO451I1vyzEM",
       recursos: [
         "Funcionários ilimitados",
         "Agendamentos ilimitados",
@@ -93,10 +93,11 @@ const Planos = () => {
       }
       const { error: stripeError } = await stripe.redirectToCheckout({ sessionId });
       if (stripeError) {
-        setError(stripeError.message);
+        setError(stripeError.message || 'Erro desconhecido ao redirecionar para o checkout.');
       }
     } catch (err) {
-      setError("Erro ao processar a assinatura: " + err.message);
+      const error = err as Error;
+      setError(error.message || "Erro ao processar a assinatura.");
     } finally {
       setLoading(null);
     }
@@ -115,8 +116,8 @@ const Planos = () => {
         {planos.map((plano, index) => (
           <S.PlanoCard
             key={index}
-            atual={plano.atual.toString()}
-            recomendado={plano.recomendado.toString()}
+            atual={plano.atual}
+            recomendado={plano.recomendado}
           >
             {plano.recomendado && <S.RecomendadoBadge>Recomendado</S.RecomendadoBadge>}
             <h3>{plano.nome}</h3>

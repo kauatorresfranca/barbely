@@ -29,7 +29,7 @@ const PaginaBarbearia = () => {
     const [servicos, setServicos] = useState<Servico[]>([])
     const [endereco, setEndereco] = useState<string | null>(null)
     const [showDropdown, setShowDropdown] = useState(false)
-    const [preview, setPreview] = useState<string | null>(null)
+    const [preview, setPreview] = useState<string | undefined>(undefined)
     const dropdownRef = useRef<HTMLDivElement>(null)
 
     const toggleDropdown = () => {
