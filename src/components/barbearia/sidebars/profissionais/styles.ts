@@ -7,7 +7,7 @@ export const Container = styled.div`
     margin-bottom: 16px;
 
     .subtitle {
-        margin-top: 16px;
+        margin-top: 6px;
         margin-bottom: 8px;
         color: ${colors.texto};
         font-size: 14px;

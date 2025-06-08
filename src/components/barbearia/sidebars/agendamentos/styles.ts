@@ -1,5 +1,5 @@
-import styled from 'styled-components'
-import { breakpoints, colors } from '../../../../../styles'
+import styled from 'styled-components';
+import { breakpoints, colors } from '../../../../../styles';
 
 export const Container = styled.div`
     .subtitle {
@@ -14,7 +14,7 @@ export const Container = styled.div`
             font-size: 12px;
         }
     }
-`
+`;
 
 export const Filtro = styled.div`
     display: flex;
@@ -48,13 +48,13 @@ export const Filtro = styled.div`
             transform: scale(1.07);
         }
     }
-`
+`;
 
 export const MeusAgendamentosHeader = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: center;
-`
+`;
 
 export const CriarAgendamento = styled.button`
     height: 42px;
@@ -71,7 +71,7 @@ export const CriarAgendamento = styled.button`
     &:hover {
         transform: scale(1.03);
     }
-`
+`;
 
 export const DateNavigator = styled.div`
     display: flex;
@@ -80,7 +80,7 @@ export const DateNavigator = styled.div`
     border-radius: 8px;
     padding: 4px;
     gap: 8px;
-`
+`;
 
 export const ArrowButton = styled.button`
     background: transparent;
@@ -100,7 +100,7 @@ export const ArrowButton = styled.button`
     &:hover {
         background: ${colors.cinzaClaro}80;
     }
-`
+`;
 
 export const DateDisplay = styled.div`
     padding: 8px 16px;
@@ -121,20 +121,24 @@ export const DateDisplay = styled.div`
         font-size: 14px;
         min-width: 110px;
     }
-`
+`;
 
 export const HorariosContainer = styled.div`
     padding: 20px;
     background-color: ${colors.cinzaClaro};
     border-radius: 12px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-`
+`;
 
 export const FuncionariosHeader = styled.div`
     display: flex;
     gap: 10px;
     margin-left: 70px;
-`
+
+    @media (max-width: ${breakpoints.tablet}) {
+        margin-left: 0;
+    }
+`;
 
 export const FuncionarioTitle = styled.div`
     display: flex;
@@ -164,34 +168,34 @@ export const FuncionarioTitle = styled.div`
         color: ${colors.texto};
         border-radius: 8px;
     }
-`
+`;
 
 export const TimelinesContainer = styled.div`
     display: flex;
     position: relative;
     background: ${colors.cinzaClaro};
     border-radius: 0 0 12px 12px;
-`
+`;
 
 export const Timelines = styled.div`
     display: flex;
     gap: 10px;
     flex: 1;
-`
 
-export const Timeline = styled.div`
-    position: relative;
-    flex: 1;
-    border-left: 1px solid ${colors.cinzaTransparent};
-    border-right: 1px solid ${colors.cinzaTransparent};
-    background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.05));
-`
+    @media (max-width: 576px) {
+        margin-left: 0; /* Remove any left margin to compensate for hidden Horarios */
+    }
+`;
 
 export const Horarios = styled.div`
     width: 60px;
     position: relative;
     margin-right: 10px;
-`
+
+    @media (max-width: 576px) {
+        display: none; /* Hide hours on mobile */
+    }
+`;
 
 export const Hora = styled.div`
     position: absolute;
@@ -203,7 +207,7 @@ export const Hora = styled.div`
     border-radius: 12px;
     transform: translateY(-50%);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-`
+`;
 
 export const LinhaHora = styled.div<{ top: number }>`
     position: absolute;
@@ -212,12 +216,12 @@ export const LinhaHora = styled.div<{ top: number }>`
     top: ${({ top }) => `${top}px`};
     height: 1px;
     background: linear-gradient(to right, ${colors.cinzaTransparent}, transparent);
-`
+`;
 
 export const AgendamentosArea = styled.div`
     position: relative;
     flex: 1;
-`
+`;
 
 export const AgendamentoBlock = styled.div`
     position: absolute;
@@ -246,11 +250,17 @@ export const AgendamentoBlock = styled.div`
     .arrow {
         color: ${colors.corPrimaria};
     }
-`
+
+    @media (max-width: 576px) {
+        font-size: 12px; /* Adjust font size for better fit on mobile */
+        padding: 8px;
+        height: 38px;
+    }
+`;
 
 export const AgendamentoInfo = styled.div<{
-    hora: string
-    status: 'CONFIRMADO' | 'CANCELADO' | 'EXPIRADO' | 'CONCLUIDO'
+    hora: string;
+    status: 'CONFIRMADO' | 'CANCELADO' | 'EXPIRADO' | 'CONCLUIDO';
 }>`
     display: flex;
     align-items: center;
@@ -297,7 +307,20 @@ export const AgendamentoInfo = styled.div<{
         border-radius: 10px;
         display: inline-block;
     }
-`
+
+    @media (max-width: 576px) {
+        .cliente {
+            font-size: 13px;
+        }
+        .servico {
+            font-size: 11px;
+        }
+        .status {
+            font-size: 10px;
+            padding: 1px 6px;
+        }
+    }
+`;
 
 export const Button = styled.div`
     padding: 8px 14px;
@@ -315,9 +338,9 @@ export const Button = styled.div`
         border-color: ${colors.corPrimaria};
         transform: translateY(-1px);
     }
-`
+`;
 
-export const ErrorMessage = styled.p``
+export const ErrorMessage = styled.p``;
 
 export const LoadingContainer = styled.div`
     display: flex;
@@ -325,7 +348,7 @@ export const LoadingContainer = styled.div`
     align-items: center;
     padding: 2rem;
     min-height: 200px;
-`
+`;
 
 export const Message = styled.p`
     text-align: center;
@@ -333,13 +356,13 @@ export const Message = styled.p`
     color: #666;
     font-size: 1.1rem;
     font-weight: 500;
-`
+`;
 
 // Wrapper para o DateDisplay e o DatePicker
 export const DateWrapper = styled.div`
     position: relative;
     display: inline-block;
-`
+`;
 
 // Estilização do calendário
 export const CalendarContainer = styled.div`
@@ -360,7 +383,7 @@ export const CalendarContainer = styled.div`
             border-bottom: none;
             padding: 10px;
             border-radius: 8px 8px 0 0;
-            position: relative; /* Para posicionar as setas em relação ao header */
+            position: relative;
         }
 
         .react-datepicker__current-month {
@@ -390,8 +413,8 @@ export const CalendarContainer = styled.div`
         }
 
         .react-datepicker__navigation {
-            top: 12px; /* Ajusta a posição vertical das setas */
-            width: 40px; /* Reduz o tamanho da área clicável das setas */
+            top: 12px;
+            width: 40px;
             height: 24px;
             background-color: transparent;
             box-shadow: none;
@@ -404,7 +427,7 @@ export const CalendarContainer = styled.div`
         }
 
         .react-datepicker__navigation-icon::before {
-            width: 8px; /* Reduz o tamanho do ícone da seta */
+            width: 8px;
             height: 8px;
         }
 
@@ -412,4 +435,4 @@ export const CalendarContainer = styled.div`
             display: none;
         }
     }
-`
+`;

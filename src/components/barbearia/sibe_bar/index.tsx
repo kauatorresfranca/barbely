@@ -14,7 +14,7 @@ import PerfilBarbearia from '../sidebars/perfil_barbearia/index'
 import Configuracoes from '../sidebars/configuracoes/index'
 import api from '../../../services/api'
 import { authFetch } from '../../../utils/authFetch'
-import { Toast } from '../../../components/toast'
+import { Toast } from '../../toast'
 
 import * as S from './styles'
 

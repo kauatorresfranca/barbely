@@ -5,6 +5,42 @@ import { authFetch } from '../../../../../utils/authFetch';
 import * as S from './styles';
 import api from '../../../../../services/api';
 
+// Função para formatar o método de pagamento
+const formatarMetodoPagamento = (metodo: string | null): string => {
+    if (!metodo) {
+        return 'Não especificado';
+    }
+
+    switch (metodo.toLowerCase()) {
+        case 'pix':
+            return 'Pix';
+        case 'cartao_credito':
+            return 'Cartão de Crédito';
+        case 'cartao_debito':
+            return 'Cartão de Débito';
+        case 'dinheiro':
+            return 'Dinheiro';
+        default:
+            return metodo.charAt(0).toUpperCase() + metodo.slice(1).toLowerCase();
+    }
+};
+
+// Função para obter o ícone do método de pagamento
+const getIconePagamento = (metodo: string | null): string => {
+    switch (metodo) {
+        case 'pix':
+            return 'ri-pix-fill pix';
+        case 'cartao_credito':
+            return 'ri-bank-card-fill card';
+        case 'cartao_debito':
+            return 'ri-bank-card-fill card';
+        case 'dinheiro':
+            return 'ri-cash-line cash';
+        default:
+            return 'ri-question-fill';
+    }
+};
+
 interface DetalhesProps {
   profissional: Funcionario | null;
   onClose: () => void;
@@ -343,7 +379,10 @@ const DetalhesProfissionalModal: React.FC<DetalhesProps> = ({
                           </S.Info>
                           <S.Info>
                             <h4>Método de Pagamento</h4>
-                            <p>{agendamento.metodo_pagamento || 'Não especificado'}</p>
+                            <p>
+                              <i className={getIconePagamento(agendamento.metodo_pagamento)}></i>{' '}
+                              {formatarMetodoPagamento(agendamento.metodo_pagamento)}
+                            </p>
                           </S.Info>
                         </S.HistoryInfos>
                       </S.HistoryContent>

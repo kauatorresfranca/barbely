@@ -1,4 +1,4 @@
-import Dash from "../components/barbearia/dashboard"
+import Dash from "../components/barbearia/sibe_bar"
 
 const Dashboard = () => {
 

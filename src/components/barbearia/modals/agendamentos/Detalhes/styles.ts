@@ -108,3 +108,13 @@ export const InfoValue = styled.span<{
             : colors.branco};
     text-align: right;
 `
+
+export const Select = styled.select`
+    padding: 6px;
+    border-radius: 6px;
+    background-color: ${colors.cinzaEscuro};
+    color: ${colors.branco};
+    border: 1px solid ${colors.cinzaTransparent};
+    font-weight: 500;
+    cursor: pointer;
+`
